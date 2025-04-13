@@ -1,0 +1,17 @@
+# Node modules
+frontend/node_modules/
+
+# Python virtual environments
+backend/venv/
+
+# Django-related files
+*.pyc
+__pycache__/
+db.sqlite3
+
+# Environment variables
+*.env
+
+# OS/system files
+.DS_Store
+Thumbs.db
