@@ -42,7 +42,10 @@ INSTALLED_APPS = [
 
     'users',
     'books',
+    'store',
+    'carts',
     'orders',
+    'admin_logs',
 
     'corsheaders',
 ]
@@ -137,3 +140,9 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_ALL_ORIGINS = True  # Allow all origins
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+    ]
+}
