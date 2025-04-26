@@ -10,7 +10,7 @@ class Book(models.Model):
     age_group = models.CharField(max_length=50, blank=True, null=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     stock = models.IntegerField(default=0)
-    cover_image = models.TextField(blank=True, null=True)
+    cover_image = models.ImageField(upload_to='cover_images/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
