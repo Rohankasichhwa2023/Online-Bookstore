@@ -1,11 +1,12 @@
 from django.urls import path
-from .views import admin_login_api
+from . import views
 
 urlpatterns = [
     # User management
-    # path('register/', views.register_user, name='register_user'),
-    path('admin-login/', admin_login_api, name='admin_login_api'),
-    # path('login/', views.login_user, name='login_user'),
+    path('admin-login/', views.admin_login_api, name='admin_login_api'),
+    path('register/', views.register_user, name='register'),
+    path('login/', views.login_user, name='login'),
+
     # path('logout/', views.logout_user, name='logout_user'),
     # path('profile/<int:user_id>/', views.user_profile, name='user_profile'),
     

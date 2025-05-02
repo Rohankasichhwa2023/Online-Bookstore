@@ -1,11 +1,17 @@
 // src/pages/AdminDashboard.js
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminLogoutButton from '../components/AdminLogoutButton';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const adminUser = JSON.parse(localStorage.getItem('adminUser'));
+
+  useEffect(() => {
+    if (!adminUser) {
+      navigate('/admin-login');
+    }
+  }, [adminUser, navigate])
 
   if (!adminUser) {
     navigate('/admin-login');
@@ -18,6 +24,7 @@ const AdminDashboard = () => {
       <AdminLogoutButton />
       <br />
       <button onClick={() => navigate('/add-book')}>Add New Book</button>
+      <button onClick={() => navigate('/view-books')}>View Books</button>
     </div>
   );
 };
