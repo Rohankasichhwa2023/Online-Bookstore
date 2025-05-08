@@ -67,3 +67,33 @@ def remove_from_cart(request):
         return Response({'message': 'Item removed from cart.'}, status=status.HTTP_200_OK)
     except (Cart.DoesNotExist, CartItem.DoesNotExist):
         return Response({'error': 'Item not found in cart.'}, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['PUT'])
+def update_cart_items(request):
+    """
+    Expects JSON: { "user_id": X, "book_id": Y, "quantity": new_qty }
+    If new_qty <= 0, the item is removed.
+    """
+    user_id  = request.data.get('user_id')
+    book_id  = request.data.get('book_id')
+    new_qty  = int(request.data.get('quantity', 0))
+
+    try:
+        cart = Cart.objects.get(user__pk=user_id)
+        item = CartItem.objects.get(cart=cart, book__pk=book_id)
+    except (Cart.DoesNotExist, CartItem.DoesNotExist):
+        return Response({'error': 'Item not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+    if new_qty <= 0:
+        item.delete()
+        return Response({'message': 'Item removed.'}, status=status.HTTP_200_OK)
+
+    item.quantity = new_qty
+    item.save()
+    return Response({
+        'message': 'Quantity updated.',
+        'quantity': item.quantity,
+        'subtotal': float(item.price_snapshot) * item.quantity
+    }, status=status.HTTP_200_OK)
+
