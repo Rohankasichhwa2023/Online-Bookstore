@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 
 export default function LoginPage() {
@@ -16,19 +16,40 @@ export default function LoginPage() {
             localStorage.setItem('user', JSON.stringify(res.data.user));
             navigate("/home")
         } catch (err) {
-            setMessage(err.response.data.error || 'Login failed');
+            setMessage(err.response.data.error+'. Please try again.' || 'Login failed');
         }
     };
 
     return (
-        <div>
-            <h2>Login</h2>
-            {message && <p>{message}</p>}
-            <form onSubmit={handleSubmit}>
-                <input name="username" onChange={handleChange} placeholder="Username" required />
-                <input name="password" type="password" onChange={handleChange} placeholder="Password" required />
-                <button type="submit">Login</button>
-            </form>
+        <div className="container">
+            <div className="form-box">
+                <form onSubmit={handleSubmit}>
+                    <div className="header">
+                        <img src="/logo/blue.png" alt="Best Reads Logo" height="52px" />&nbsp;
+                        <h2 style={{ color: '#0E4783', margin: '0px'}}>best reads</h2>
+                    </div>
+
+                    <p className="title">Welcome Back!</p>
+                    <p className="error-text" aria-live="polite">{message || '\u00A0'}</p>
+                    
+                    <div className="text-field">
+                        <div className="form-group">
+                            <label>Username</label>
+                            <input name="username" onChange={handleChange} placeholder="Enter your username" required />
+                        </div>
+
+                        <div className="form-group">
+                            <label>Password</label>
+                            <input name="password" type="password" onChange={handleChange} placeholder="Enter your password" required />
+                        </div>
+                    </div>
+
+                    <div style={{marginTop: '1em'}}>
+                        <button type="submit" className="submit-button">Log in</button>
+                        <p>Don't have an account? <Link to="/register" style={{color: '#0E4783'}}>Sign up</Link></p>
+                    </div>
+                    </form>
+            </div>
         </div>
     );
 }
