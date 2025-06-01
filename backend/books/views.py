@@ -1,9 +1,9 @@
-from .models import Book, Genre, BookGenre
+from .models import Book, Genre, BookGenre, Favorite
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import BookSerializer
+from .serializers import BookSerializer, FavoriteSerializer
 
 @api_view(['GET'])
 def get_all_books(request):
@@ -112,3 +112,104 @@ def update_book(request, pk):
         return Response({'error': 'Book not found.'}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+def add_favorite(request):
+    data = request.data
+    user_id = data.get('user_id')
+    book_id = data.get('book_id')
+
+    # 1) Validate presence of user_id and book_id
+    if user_id is None or book_id is None:
+        return Response(
+            {"error": "Both 'user_id' and 'book_id' are required."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    # 2) Check that the Book actually exists
+    try:
+        book = Book.objects.get(pk=book_id)
+    except Book.DoesNotExist:
+        return Response(
+            {"error": f"Book with id={book_id} not found."},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+    # 3) Check if a Favorite row for (user_id, book_id) already exists
+    existing = Favorite.objects.filter(user_id=user_id, book_id=book_id).first()
+    if existing:
+        # Already favorited → return 200 OK with a message
+        serializer = FavoriteSerializer(existing, context={'request': request})
+        return Response(
+            {"message": "Already in favorites.", "favorite": serializer.data},
+            status=status.HTTP_200_OK
+        )
+
+    # 4) Create a new Favorite
+    serializer = FavoriteSerializer(data={'user': user_id, 'book': book_id})
+    if serializer.is_valid():
+        fav = serializer.save()
+        return Response(
+            {"message": "Book added to favorites.", "favorite": FavoriteSerializer(fav, context={'request': request}).data},
+            status=status.HTTP_201_CREATED
+        )
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def list_favorites(request):
+    """
+    GET /books/list-favorites/?user_id=<int>
+    Returns a list of Book objects that the given user has favorited.
+    """
+    user_id = request.query_params.get('user_id')
+    if not user_id:
+        return Response(
+            {"error": "'user_id' query parameter is required."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    # Retrieve all Favorite rows for this user, then extract the related Book
+    favorites = Favorite.objects.filter(user_id=user_id).select_related('book')
+    books = [fav.book for fav in favorites]
+
+    serializer = BookSerializer(books, many=True, context={'request': request})
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+def remove_favorite(request):
+    """
+    POST /books/remove-favorite/
+    Expects JSON:
+        {
+          "user_id": <int>,
+          "book_id": <int>
+        }
+    Deletes the corresponding Favorite row (if it exists) and returns a message.
+    """
+    user_id = request.data.get('user_id')
+    book_id = request.data.get('book_id')
+
+    if user_id is None or book_id is None:
+        return Response(
+            {"error": "Both 'user_id' and 'book_id' are required."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    # Try to find the Favorite row
+    favorite_qs = Favorite.objects.filter(user_id=user_id, book_id=book_id)
+    if not favorite_qs.exists():
+        return Response(
+            {"error": "Favorite record not found."},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+    # Delete it
+    favorite_qs.delete()
+    return Response(
+        {"message": "Book removed from favorites."},
+        status=status.HTTP_200_OK
+    )

@@ -10,15 +10,21 @@ const CartPage = () => {
 
     useEffect(() => {
         if (!User) return navigate('/login');
+
+        const fetchCart = async () => {
+            try {
+                const res = await axios.get('http://localhost:8000/carts/view-cart/', {
+                    params: { user_id: User.id }
+                });
+                setItems(res.data);
+            } catch (err) {
+                console.error('Error fetching cart:', err);
+            }
+        };
+
         fetchCart();
     }, [User, navigate]);
 
-    const fetchCart = async () => {
-        const res = await axios.get('http://localhost:8000/carts/view-cart/', {
-            params: { user_id: User.id }
-        });
-        setItems(res.data);
-    };
 
     const total = items.reduce((sum, it) => sum + it.subtotal, 0).toFixed(2);
 
@@ -30,11 +36,17 @@ const CartPage = () => {
                 user_id: User.id,
                 book_id: bookId
             });
-            fetchCart(); // Refresh cart after removal
+
+            // Re-fetch the updated cart
+            const res = await axios.get('http://localhost:8000/carts/view-cart/', {
+                params: { user_id: User.id }
+            });
+            setItems(res.data);
         } catch (err) {
             console.error('Error removing item:', err);
         }
     };
+
     const changeQuantity = async (bookId, newQty) => {
         try {
             await axios.put('http://localhost:8000/carts/update-item/', {
