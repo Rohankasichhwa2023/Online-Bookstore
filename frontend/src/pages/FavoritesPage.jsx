@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import UserLogoutButton from '../components/UserLogoutButton';
 import CartButton from '../components/CartButton';
-import './FavoritesPage.css';
+import 'E:/bookstore/Online-Bookstore/frontend/src/css/FavoritesPage.css';
 
 const FavoritesPage = () => {
     const navigate = useNavigate();

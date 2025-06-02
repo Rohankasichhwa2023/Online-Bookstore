@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
+import 'E:/bookstore/Online-Bookstore/frontend/src/css/LoginPage.css';
 
 export default function RegisterPage() {
     const navigate = useNavigate();

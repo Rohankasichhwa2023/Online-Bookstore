@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
+import 'E:/bookstore/Online-Bookstore/frontend/src/css/LoginPage.css';
 
 export default function LoginPage() {
     const navigate = useNavigate();
@@ -48,7 +49,7 @@ export default function LoginPage() {
                         <button type="submit" className="submit-button">Log in</button>
                         <p>Don't have an account? <Link to="/register" style={{color: '#0E4783'}}>Sign up</Link></p>
                     </div>
-                    </form>
+                </form>
             </div>
         </div>
     );

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import UserLogoutButton from '../components/UserLogoutButton';
 import axios from 'axios';
+import Navbar from '../components/Navbar';
+import UserLogoutButton from '../components/UserLogoutButton';
 import CartButton from '../components/CartButton';
-import './HomePage.css';
 import FavoriteButton from '../components/Favorite';
+import 'E:/bookstore/Online-Bookstore/frontend/src/css/HomePage.css';
 
 const Home = () => {
     const navigate = useNavigate();
@@ -69,47 +70,51 @@ const Home = () => {
     if (!User) return null;
 
     return (
-        <div className="homepage-container">
-            <h2>Welcome, {User.username}!</h2>
-            <UserLogoutButton />
-            <CartButton />
-            <FavoriteButton />
+        <>
+            <Navbar/>
+            <div className="homepage-container">
+                
+                <h2>Welcome, {User.username}!</h2>
+                <UserLogoutButton />
+                <CartButton />
+                <FavoriteButton />
 
 
-            <h3>All Books</h3>
-            <div className="book-grid">
-                {books.map((book) => (
-                    <div className="book-card" key={book.id}>
-                        {book.cover_image && (
-                            <img
-                                src={book.cover_image}
-                                alt={book.title}
-                                className="book-cover"
-                            />
-                        )}
-                        <h4>{book.title}</h4>
-                        <p><strong>Author:</strong> {book.author}</p>
-                        <p><strong>Price:</strong> Rs. {book.price}</p>
+                <h3>All Books</h3>
+                <div className="book-grid">
+                    {books.map((book) => (
+                        <div className="book-card" key={book.id}>
+                            {book.cover_image && (
+                                <img
+                                    src={book.cover_image}
+                                    alt={book.title}
+                                    className="book-cover"
+                                />
+                            )}
+                            <h4>{book.title}</h4>
+                            <p><strong>Author:</strong> {book.author}</p>
+                            <p><strong>Price:</strong> Rs. {book.price}</p>
 
-                        <div className="button-group">
-                            <button
-                                onClick={() => handleAddToCart(book.id)}
-                                className="btn primary-btn"
-                            >
-                                Add to Cart
-                            </button>
+                            <div className="button-group">
+                                <button
+                                    onClick={() => handleAddToCart(book.id)}
+                                    className="btn primary-btn"
+                                >
+                                    Add to Cart
+                                </button>
 
-                            <button
-                                onClick={() => handleAddToFavorite(book.id)}
-                                className="btn secondary-btn"
-                            >
-                                Favorite
-                            </button>
+                                <button
+                                    onClick={() => handleAddToFavorite(book.id)}
+                                    className="btn secondary-btn"
+                                >
+                                    Favorite
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
             </div>
-        </div>
+        </>
     );
 };
 
