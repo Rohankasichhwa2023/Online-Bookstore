@@ -13,21 +13,28 @@ import HomePage from './pages/HomePage';
 import CartPage from './pages/CartPage';
 import FavoritesPage from './pages/FavoritesPage';
 
+import { CartProvider } from './context/CartContext';
+import { FavoritesProvider } from './context/FavoritesContext';
+
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/admin-login" element={<AdminLogin />} />
-        <Route path="/admin-dashboard" element={<AdminDashboard />} />
-        <Route path="/add-book" element={<AddBookPage />} />
-        <Route path="/view-books" element={<ViewBookPage />} />
-        <Route path="/edit-book/:id" element={<EditBookPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/home" element={<HomePage />} />
-        <Route path="/cart" element={<CartPage />} />
-        <Route path="/favorites" element={<FavoritesPage />} />
-      </Routes>
+      <CartProvider>
+        <FavoritesProvider>
+          <Routes>
+            <Route path="/admin-login" element={<AdminLogin />} />
+            <Route path="/admin-dashboard" element={<AdminDashboard />} />
+            <Route path="/add-book" element={<AddBookPage />} />
+            <Route path="/view-books" element={<ViewBookPage />} />
+            <Route path="/edit-book/:id" element={<EditBookPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/home" element={<HomePage />} />
+            <Route path="/cart" element={<CartPage />} />
+            <Route path="/favorites" element={<FavoritesPage />} />
+          </Routes>
+        </FavoritesProvider>
+      </CartProvider>
     </BrowserRouter>
   );
 }

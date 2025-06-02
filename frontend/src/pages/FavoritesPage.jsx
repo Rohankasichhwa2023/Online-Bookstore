@@ -4,29 +4,33 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import UserLogoutButton from '../components/UserLogoutButton';
 import CartButton from '../components/CartButton';
-import 'E:/bookstore/Online-Bookstore/frontend/src/css/FavoritesPage.css';
+import FavoriteButton from '../components/Favorite';
+import { useFavorites } from '../context/FavoritesContext';
+import '../css/FavoritesPage.css';
 
 const FavoritesPage = () => {
     const navigate = useNavigate();
-    const User = JSON.parse(localStorage.getItem('user'));
+    const [user] = useState(() => JSON.parse(localStorage.getItem('user')));
     const [favorites, setFavorites] = useState([]);
+    const { updateFavorites } = useFavorites();
 
     useEffect(() => {
-        if (!User) {
+        if (!user) {
             navigate('/login');
             return;
         }
+        // Fetch the list of favorite books
         fetchFavorites();
-    }, [User, navigate]);
+
+        // Also re-fetch the favorites count in context
+        updateFavorites();
+    }, [navigate, user, updateFavorites]);
 
     const fetchFavorites = async () => {
         try {
-            const res = await axios.get(
-                'http://localhost:8000/books/list-favorites/',
-                {
-                    params: { user_id: User.id },
-                }
-            );
+            const res = await axios.get('http://localhost:8000/books/list-favorites/', {
+                params: { user_id: user.id }
+            });
             setFavorites(res.data);
         } catch (err) {
             console.error('Error fetching favorites:', err);
@@ -35,16 +39,13 @@ const FavoritesPage = () => {
 
     const handleRemoveFavorite = async (bookId) => {
         try {
-            const res = await axios.post(
-                'http://localhost:8000/books/remove-favorite/',
-                {
-                    user_id: User.id,
-                    book_id: bookId,
-                }
-            );
-            // Show server’s message, then refresh list:
+            const res = await axios.post('http://localhost:8000/books/remove-favorite/', {
+                user_id: user.id,
+                book_id: bookId
+            });
             alert(res.data.message || 'Removed from favorites.');
-            fetchFavorites();
+            fetchFavorites();       // update this page’s list
+            await updateFavorites(); // update global count
         } catch (err) {
             console.error('Error removing favorite:', err);
             if (err.response && err.response.data) {
@@ -56,13 +57,14 @@ const FavoritesPage = () => {
         }
     };
 
-    if (!User) return null;
+    if (!user) return null;
 
     return (
         <div className="favorites-container">
-            <h2>{User.username}’s Favorites</h2>
+            <h2>{user.username}’s Favorites</h2>
             <UserLogoutButton />
             <CartButton />
+            <FavoriteButton />
 
             {favorites.length === 0 ? (
                 <p>You have not favorited any books yet.</p>

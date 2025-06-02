@@ -1,29 +1,13 @@
 // src/components/Favorite.jsx
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { useFavorites } from '../context/FavoritesContext';
 
 const FavoriteButton = () => {
     const navigate = useNavigate();
-    const [count, setCount] = useState(0);
-    const User = JSON.parse(localStorage.getItem('user'));
-
-    useEffect(() => {
-        if (!User) return;
-        const fetchCount = async () => {
-            try {
-                const res = await axios.get('http://localhost:8000/books/list-favorites/', {
-                    params: { user_id: User.id }
-                });
-                setCount(res.data.length);
-            } catch (err) {
-                console.error('Failed to fetch favorite count', err);
-            }
-        };
-        fetchCount();
-    }, [User]);
-
-    if (!User) return null;
+    const { count } = useFavorites();
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user) return null;
 
     return (
         <button

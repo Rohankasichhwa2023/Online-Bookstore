@@ -6,9 +6,9 @@ const AddBookPage = () => {
   const navigate = useNavigate();
 
   const [availableGenres, setAvailableGenres] = useState([]);
-  const [selectedGenres, setSelectedGenres]     = useState([]);
-  const [newGenres, setNewGenres]               = useState('');    // comma-list
-  const [bookData, setBookData]                 = useState({
+  const [selectedGenres, setSelectedGenres] = useState([]);
+  const [newGenres, setNewGenres] = useState('');    // comma-list
+  const [bookData, setBookData] = useState({
     title: '', author: '', description: '',
     pages: '', language: '', age_group: '',
     price: '', stock: '', cover_image: null,
@@ -80,7 +80,7 @@ const AddBookPage = () => {
         <input name="price" type="number" placeholder="Price" step="0.01" onChange={handleChange} required />
         <input name="stock" type="number" placeholder="Stock" onChange={handleChange} required />
         <input name="cover_image" type="file" onChange={handleChange} />
-        
+
 
         <label>
           Select Genres

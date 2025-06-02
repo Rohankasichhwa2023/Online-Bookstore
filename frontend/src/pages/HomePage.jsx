@@ -1,3 +1,4 @@
+// src/pages/HomePage.jsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -5,20 +6,29 @@ import Navbar from '../components/Navbar';
 import UserLogoutButton from '../components/UserLogoutButton';
 import CartButton from '../components/CartButton';
 import FavoriteButton from '../components/Favorite';
-import 'E:/bookstore/Online-Bookstore/frontend/src/css/HomePage.css';
+import { useCart } from '../context/CartContext';
+import { useFavorites } from '../context/FavoritesContext';
+import '../css/HomePage.css';
 
-const Home = () => {
+const HomePage = () => {
     const navigate = useNavigate();
     const User = JSON.parse(localStorage.getItem('user'));
     const [books, setBooks] = useState([]);
+    const { updateCart } = useCart();
+    const { updateFavorites } = useFavorites();
 
     useEffect(() => {
-        if (!User) {
+        const userData = JSON.parse(localStorage.getItem('user'));
+        if (!userData) {
             navigate('/login');
             return;
         }
         fetchBooks();
-    }, [User, navigate]);
+
+        // Immediately re‐fetch global counts for this user
+        updateCart();
+        updateFavorites();
+    }, [navigate, updateCart, updateFavorites]);
 
     const fetchBooks = async () => {
         try {
@@ -31,14 +41,12 @@ const Home = () => {
 
     const handleAddToCart = async (bookId) => {
         try {
-            await axios.post(
-                'http://localhost:8000/carts/add-to-cart/',
-                {
-                    user_id: User.id,
-                    book_id: bookId,
-                    quantity: 1,
-                }
-            );
+            await axios.post('http://localhost:8000/carts/add-to-cart/', {
+                user_id: User.id,
+                book_id: bookId,
+                quantity: 1
+            });
+            await updateCart(); // refresh count immediately
             alert('Book added to cart.');
         } catch (err) {
             console.error('Could not add to cart:', err);
@@ -48,13 +56,11 @@ const Home = () => {
 
     const handleAddToFavorite = async (bookId) => {
         try {
-            const res = await axios.post(
-                'http://localhost:8000/books/add-favorite/',
-                {
-                    user_id: User.id,
-                    book_id: bookId,
-                }
-            );
+            const res = await axios.post('http://localhost:8000/books/add-favorite/', {
+                user_id: User.id,
+                book_id: bookId
+            });
+            await updateFavorites(); // refresh favorite count immediately
             alert(res.data.message || 'Book favorited.');
         } catch (err) {
             console.error('Error adding to favorites:', err);
@@ -71,14 +77,12 @@ const Home = () => {
 
     return (
         <>
-            <Navbar/>
+            <Navbar />
             <div className="homepage-container">
-                
                 <h2>Welcome, {User.username}!</h2>
                 <UserLogoutButton />
                 <CartButton />
                 <FavoriteButton />
-
 
                 <h3>All Books</h3>
                 <div className="book-grid">
@@ -92,9 +96,12 @@ const Home = () => {
                                 />
                             )}
                             <h4>{book.title}</h4>
-                            <p><strong>Author:</strong> {book.author}</p>
-                            <p><strong>Price:</strong> Rs. {book.price}</p>
-
+                            <p>
+                                <strong>Author:</strong> {book.author}
+                            </p>
+                            <p>
+                                <strong>Price:</strong> Rs. {book.price}
+                            </p>
                             <div className="button-group">
                                 <button
                                     onClick={() => handleAddToCart(book.id)}
@@ -102,7 +109,6 @@ const Home = () => {
                                 >
                                     Add to Cart
                                 </button>
-
                                 <button
                                     onClick={() => handleAddToFavorite(book.id)}
                                     className="btn secondary-btn"
@@ -118,4 +124,4 @@ const Home = () => {
     );
 };
 
-export default Home;
+export default HomePage;

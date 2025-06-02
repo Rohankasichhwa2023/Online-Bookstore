@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import 'E:/bookstore/Online-Bookstore/frontend/src/css/Navbar.css';
+import '../css/Navbar.css';
 
 function Navbar() {
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import 'E:/bookstore/Online-Bookstore/frontend/src/css/LoginPage.css';
+import '../css/LoginPage.css';
 
 export default function LoginPage() {
     const navigate = useNavigate();
@@ -17,7 +17,7 @@ export default function LoginPage() {
             localStorage.setItem('user', JSON.stringify(res.data.user));
             navigate("/home")
         } catch (err) {
-            setMessage(err.response.data.error+'. Please try again.' || 'Login failed');
+            setMessage(err.response.data.error + '. Please try again.' || 'Login failed');
         }
     };
 
@@ -27,12 +27,12 @@ export default function LoginPage() {
                 <form onSubmit={handleSubmit}>
                     <div className="header">
                         <img src="/logo/blue.png" alt="Best Reads Logo" height="52px" />&nbsp;
-                        <h2 style={{ color: '#0E4783', margin: '0px'}}>best reads</h2>
+                        <h2 style={{ color: '#0E4783', margin: '0px' }}>best reads</h2>
                     </div>
 
                     <p className="title">Welcome Back!</p>
                     <p className="error-text" aria-live="polite">{message || '\u00A0'}</p>
-                    
+
                     <div className="text-field">
                         <div className="form-group">
                             <label>Username</label>
@@ -45,9 +45,9 @@ export default function LoginPage() {
                         </div>
                     </div>
 
-                    <div style={{marginTop: '1em'}}>
+                    <div style={{ marginTop: '1em' }}>
                         <button type="submit" className="submit-button">Log in</button>
-                        <p>Don't have an account? <Link to="/register" style={{color: '#0E4783'}}>Sign up</Link></p>
+                        <p>Don't have an account? <Link to="/register" style={{ color: '#0E4783' }}>Sign up</Link></p>
                     </div>
                 </form>
             </div>

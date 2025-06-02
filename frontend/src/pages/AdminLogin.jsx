@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import 'E:/bookstore/Online-Bookstore/frontend/src/css/LoginPage.css';
+import '../css/LoginPage.css';
 
 
 const AdminLogin = () => {
@@ -32,27 +32,27 @@ const AdminLogin = () => {
       <div className="form-box">
         <form onSubmit={handleLogin}>
           <div className="header">
-              <img src="/logo/blue.png" alt="Best Reads Logo" height="52px" />&nbsp;
-              <h2 style={{ color: '#0E4783', margin: '0px'}}>best reads</h2>
+            <img src="/logo/blue.png" alt="Best Reads Logo" height="52px" />&nbsp;
+            <h2 style={{ color: '#0E4783', margin: '0px' }}>best reads</h2>
           </div>
 
           <p className="title">Hello Admin!</p>
           <p className="error-text" aria-live="polite">{error || '\u00A0'}</p>
-          
-          <div className="text-field">
-              <div className="form-group">
-                  <label>Username</label>
-                  <input type="text" placeholder="Enter your username" onChange={e => setUsername(e.target.value)} required />
-              </div>
 
-              <div className="form-group">
-                  <label>Password</label>
-                  <input type="password" placeholder="Enter your password" onChange={e => setPassword(e.target.value)} required />
-              </div>
+          <div className="text-field">
+            <div className="form-group">
+              <label>Username</label>
+              <input type="text" placeholder="Enter your username" onChange={e => setUsername(e.target.value)} required />
+            </div>
+
+            <div className="form-group">
+              <label>Password</label>
+              <input type="password" placeholder="Enter your password" onChange={e => setPassword(e.target.value)} required />
+            </div>
           </div>
-          
-          <div style={{marginTop: '1em'}}>
-              <button type="submit" className="submit-button">Log in</button>
+
+          <div style={{ marginTop: '1em' }}>
+            <button type="submit" className="submit-button">Log in</button>
           </div>
         </form>
       </div>
