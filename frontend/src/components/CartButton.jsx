@@ -2,6 +2,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import "../css/Navbar.css";
 
 const CartButton = () => {
     const navigate = useNavigate();
@@ -10,19 +11,10 @@ const CartButton = () => {
     if (!user) return null;
 
     return (
-        <button
-            onClick={() => navigate('/cart')}
-            style={{
-                position: 'fixed',
-                top: 16,
-                right: 16,
-                padding: '8px 12px',
-                borderRadius: '4px',
-                cursor: 'pointer'
-            }}
-        >
-            Cart ({count})
-        </button>
+        <div style={{display: "flex", gap: "4px"}}>
+            <img src="/icons/add-to-cart.png" alt="Cart" className="icon" onClick={() => navigate('/cart')}/>
+            <p style={{margin: "0px", fontWeight: "500", color: "#BD4444"}}><sup>{count>0?count:"\u00A0"}</sup></p>
+        </div>
     );
 };
 

@@ -2,6 +2,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useFavorites } from '../context/FavoritesContext';
+import "../css/Navbar.css";
 
 const FavoriteButton = () => {
     const navigate = useNavigate();
@@ -10,20 +11,10 @@ const FavoriteButton = () => {
     if (!user) return null;
 
     return (
-        <button
-            onClick={() => navigate('/favorites')}
-            style={{
-                position: 'fixed',
-                top: 16,
-                right: 100,
-                padding: '8px 12px',
-                borderRadius: '4px',
-                border: '1px solid #ccc',
-                cursor: 'pointer'
-            }}
-        >
-            Favorites ({count})
-        </button>
+        <div style={{display: "flex", gap: "4px"}}>
+            <img src="/icons/add-to-fav.png" alt="Favorite" className="icon" onClick={() => navigate('/favorites')}/>
+            <p style={{margin: "0px", fontWeight: "500", color: "#BD4444"}}><sup>{count>0?count:"\u00A0"}</sup></p>
+        </div>
     );
 };
 

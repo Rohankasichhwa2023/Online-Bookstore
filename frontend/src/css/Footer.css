@@ -1,0 +1,35 @@
+.footer-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    background-color: #ECECF4;
+    height: 44px;
+    box-sizing: border-box;
+    padding: 0px 40px 0px 40px;
+}
+
+.footer-left {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.brand-title {
+    color: #0E4783;
+    font-size: 20px;
+    margin: 0;
+}
+
+.footer-right {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.icon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}

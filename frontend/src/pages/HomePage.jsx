@@ -3,9 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Navbar from '../components/Navbar';
-import UserLogoutButton from '../components/UserLogoutButton';
-import CartButton from '../components/CartButton';
-import FavoriteButton from '../components/Favorite';
+import Footer from '../components/Footer';
 import { useCart } from '../context/CartContext';
 import { useFavorites } from '../context/FavoritesContext';
 import '../css/HomePage.css';
@@ -77,49 +75,93 @@ const HomePage = () => {
 
     return (
         <>
-            <Navbar />
+            <Navbar/>
             <div className="homepage-container">
-                <h2>Welcome, {User.username}!</h2>
-                <UserLogoutButton />
-                <CartButton />
-                <FavoriteButton />
-
-                <h3>All Books</h3>
-                <div className="book-grid">
-                    {books.map((book) => (
-                        <div className="book-card" key={book.id}>
-                            {book.cover_image && (
-                                <img
-                                    src={book.cover_image}
-                                    alt={book.title}
-                                    className="book-cover"
-                                />
-                            )}
-                            <h4>{book.title}</h4>
-                            <p>
-                                <strong>Author:</strong> {book.author}
-                            </p>
-                            <p>
-                                <strong>Price:</strong> Rs. {book.price}
-                            </p>
-                            <div className="button-group">
-                                <button
-                                    onClick={() => handleAddToCart(book.id)}
-                                    className="btn primary-btn"
-                                >
-                                    Add to Cart
-                                </button>
-                                <button
-                                    onClick={() => handleAddToFavorite(book.id)}
-                                    className="btn secondary-btn"
-                                >
-                                    Favorite
-                                </button>
-                            </div>
+                <div className="frame1" style={{backgroundImage: "url('/bg-image/1.png')"}}>
+                    <div className="frame1-content">
+                        <div>
+                            <h1>What books are you looking for?</h1>
+                            <p>Not sure what to read next? Explore books from our shop.</p>
                         </div>
-                    ))}
+                        <div>
+                            <button className="explore-books-btn" onClick={() => navigate('/shop')}><img src="/icons/explore.png" className="icon"/> Explore books</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="frame2">
+                    <div className="frame2-image" style={{ backgroundImage: "url('/bg-image/2.png')" }}>
+                        <h1>Our Story</h1>
+                    </div>
+                    <div className="frame2-text">
+                        <p>Best Reads began with a simple idea to make books more accessible to everyone, everywhere. What started as a small physical bookstore grew into a vision to connect readers with the stories they love through a seamless online experience. We believe books have the power to entertain, educate, and inspire. From thrilling fiction and insightful self-help to manga, history, and beyond, our collection is curated to meet the diverse interests of readers aged 13 to 35 and beyond. At Best Reads, we’re not just selling books we’re building a space where people can discover, connect, and grow through reading.</p>
+                    </div>
+                </div>
+
+                <div className="frame3">
+                    <div className="frame3-text">
+                        <p>Our goal is to become a trusted and loved online bookstore that offers a wide range of books at fair prices while making reading more convenient and enjoyable for everyone. <strong>Happy Reading!!</strong></p>
+                    </div>
+
+                    <div className="frame3-image" style={{ backgroundImage: "url('/bg-image/3.png')" }}>
+                        <h1>Our Goal</h1>
+                    </div>
+                </div>
+
+                <div className="frame4">
+                    <div className="contact-info">
+                        <h2>Get in touch</h2>
+
+                        <div className="contact-item">
+                            <div style={{display: "flex", gap: "12px"}}>
+                                <img src="/icons/location.png" className="icon" />
+                                <h3>Location</h3>
+                            </div>
+                            <p>Kathmandu, Nepal</p>
+                        </div>
+
+                        <div className="contact-item">
+                            <div style={{display: "flex", gap: "12px"}}>
+                                <img src="/icons/email.png" className="icon" />
+                                <h3>Email</h3>
+                            </div>
+                            <p>bestreads@gmail.com</p>
+                        </div>
+
+                        <div className="contact-item">
+                            <div style={{display: "flex", gap: "12px"}}>
+                                <img src="/icons/phone.png" className="icon" />
+                                <h3>Phone</h3>
+                            </div>
+                            <p>01-44112233</p>
+                        </div>
+
+                        <div className="contact-item">
+                            <div style={{display: "flex", gap: "12px"}}>
+                                <img src="/icons/policy.png" className="icon" />
+                                <h3>Return Policy</h3>
+                            </div>
+                            <p>Return accepted within 7 days.</p>
+                        </div>
+
+                        <button className="contact-btn" onClick={() => navigate('/contact')}>Contact us</button>
+                    </div>
+
+                    <div>
+                        <iframe
+                        title="Best Reads Location"
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3532.056535293293!2d85.32452037534318!3d27.710326776198486!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39eb190f7c1d30e1%3A0xd622b0b929c769dc!2sKathmandu%2C%20Nepal!5e0!3m2!1sen!2snp!4v1685530123456!5m2!1sen!2snp"
+                        width="500"
+                        height="420"
+                        style={{ border: "0", borderRadius: "12px" }}
+                        allowFullScreen=""
+                        loading="lazy"
+                        referrerPolicy="no-referrer-when-downgrade"
+                        ></iframe>
+                    </div>
                 </div>
             </div>
+            <Footer/>
         </>
     );
 };

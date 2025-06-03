@@ -1,54 +1,171 @@
 .homepage-container {
-    padding: 20px;
+    padding-top: 148px;
 }
 
-.book-grid {
+.frame1 {
+    background-size: cover; 
+    background-position: center;
+    background-repeat: no-repeat; 
+    height: 400px;
+    border-radius: 12px;
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-bottom: 144px;
+    box-sizing: border-box;
     display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
+    justify-content: center;
+    align-items: center;
 }
 
-.book-card {
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 16px;
-    width: 250px;
-    background: #fff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.book-cover {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-    border-radius: 4px;
-    margin-bottom: 8px;
-}
-
-.button-group {
+.frame1-content {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 196px;
+}
+
+.frame1 h1 {
+    color: white;
+    font-size: 44px;
+    margin: 0;
+}
+
+.frame1 p {
+    font-size: 16px;
+    margin: 0;
     margin-top: 10px;
-}
-
-.btn {
-    padding: 8px 12px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-.primary-btn {
-    background-color: #2d72d9;
     color: white;
 }
 
-.secondary-btn {
-    background-color: #e0e0e0;
-    color: #333;
+.explore-books-btn {
+    display: flex;
+    align-items: center;
+    justify-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border: 1px solid white;
+    background-color: white;
+    color: #0E4783;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: background-color 0.3s, color 0.3s;
 }
 
-.btn:hover {
-    opacity: 0.9;
+.explore-books-btn:hover {
+    transform: scale(1.02);
+    background-color: #ECECF4;
+}
+
+.icon {
+    width: 20px;
+    height: 20px;
+}
+
+.frame2, .frame3 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0px 20px 144px 20px;
+    gap: 20px;
+    height: 540px;
+}
+
+.frame2-image, .frame3-image{
+    flex: 1;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 90%;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.frame2-image h1, .frame3-image h1{
+    font-size: 44px;
+    color: white;
+}
+
+.frame2-text, .frame3-text{
+    flex: 1;
+    line-height: 2;
+}
+
+.frame2-text p, .frame3-text p{
+    font-size: 18px;
+}
+
+.frame4 {
+    background-color: #ECECF4;
+    border-radius: 12px;
+    margin-top: 0px;
+    margin-left: 200px;
+    margin-right: 200px;
+    margin-bottom: 144px;
+    box-sizing: border-box;
+    height: 484px;
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap:100px;
+}
+
+.contact-item {
+    margin-bottom: 28px;
+}
+
+.contact-info h2{
+    font-size: 28px;
+    font-weight: 500;
+    margin: 0px 0px 24px 0px;
+    color:#0E4783;
+}
+
+.contact-info h3{
+    font-size: 18px;
+    font-weight: 500;
+    margin: 0px;
+    color:#0E4783;
+}
+
+.contact-info p{
+    font-weight: 400;
+    font-size: 16px;
+    color:#0E4783;
+    padding: 0px;
+    text-align: left;
+    margin-left: 0px;
+}
+
+.contact-btn{
+    display: flex;
+    align-items: center;
+    justify-items: center;
+    gap: 12px;
+    padding: 14px 28px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: background-color 0.3s, color 0.3s;
+    color: white;
+    background-color: #0E4783;
+    border: 1px solid #0E4783;
+}
+
+.contact-btn:hover{
+    transform: scale(1.02);
+}
+
+.policy {
+    width: 24px;
+    height: 24px;
 }
