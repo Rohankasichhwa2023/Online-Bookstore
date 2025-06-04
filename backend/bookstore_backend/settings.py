@@ -138,8 +138,13 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# CORS Settings
+CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",  # or wherever your React dev server runs
+]
+CORS_ALLOW_CREDENTIALS = True
 
-CORS_ALLOW_ALL_ORIGINS = True  # Allow all origins
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [

@@ -1,12 +1,13 @@
 # books/serializers.py
 
 from rest_framework import serializers
-from .models import Book, Genre, BookGenre,Favorite
+from .models import Book, Genre, BookGenre, Favorite, Rating
 
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
         fields = ['id', 'name']
+
 
 class BookSerializer(serializers.ModelSerializer):
     cover_image = serializers.ImageField(use_url=True)
@@ -31,11 +32,19 @@ class BookSerializer(serializers.ModelSerializer):
         ]
 
     def get_genres(self, obj):
-        genres = Genre.objects.filter(bookgenre__book=obj)
-        return GenreSerializer(genres, many=True).data
+        qs = Genre.objects.filter(bookgenre__book=obj)
+        return GenreSerializer(qs, many=True).data
+
 
 class FavoriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Favorite
         fields = ['id', 'user', 'book', 'created_at']
         read_only_fields = ['id', 'created_at']
+
+
+class RatingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Rating
+        fields = ['id', 'user', 'book', 'rating', 'created_at']
+        read_only_fields = ['id', 'user', 'created_at']

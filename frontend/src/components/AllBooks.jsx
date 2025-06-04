@@ -1,3 +1,5 @@
+// src/components/AllBooks.jsx
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -25,8 +27,38 @@ const AllBooks = () => {
 
     const fetchBooks = async () => {
         try {
+            // 1) Fetch all books
             const res = await axios.get('http://localhost:8000/books/all-books/');
-            setBooks(res.data);
+            const booksData = res.data;
+
+            // 2) For each book, fetch its rating info
+            const booksWithRatings = await Promise.all(
+                booksData.map(async (book) => {
+                    try {
+                        const ratingRes = await axios.get(
+                            `http://localhost:8000/books/rating/${book.id}/`
+                        );
+                        return {
+                            ...book,
+                            average_rating: ratingRes.data.average_rating,
+                            rating_count: ratingRes.data.rating_count,
+                        };
+                    } catch (ratingErr) {
+                        console.error(
+                            `Error fetching rating for book ${book.id}:`,
+                            ratingErr
+                        );
+                        // If rating fetch fails, default to 0/0
+                        return {
+                            ...book,
+                            average_rating: 0,
+                            rating_count: 0,
+                        };
+                    }
+                })
+            );
+
+            setBooks(booksWithRatings);
         } catch (err) {
             console.error('Error fetching books:', err);
         }
@@ -66,67 +98,103 @@ const AllBooks = () => {
         }
     };
 
+    const renderStars = (averageRating) => {
+        const fullStars = Math.floor(averageRating);
+        const halfStar = averageRating - fullStars >= 0.5;
+        const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+
+        return (
+            <>
+                {Array.from({ length: fullStars }, (_, i) => (
+                    <img key={`full-${i}`} src="/icons/star.png" className="icon" alt="★" />
+                ))}
+                {halfStar && <img src="/icons/star-half.png" className="icon" alt="☆" />}
+                {Array.from({ length: emptyStars }, (_, i) => (
+                    <img key={`empty-${i}`} src="/icons/star-empty.png" className="icon" alt="☆" />
+                ))}
+            </>
+        );
+    };
+
     if (!User) return null;
 
     return (
         <div className="book-grid">
             {books.map((book) => (
-                <div className="book-card" key={book.id} onClick={() => navigate(`/book/${book.id}`)}>
-                        {/* Book Cover Image */}
+                <div
+                    className="book-card"
+                    key={book.id}
+                    onClick={() => navigate(`/book/${book.id}`)}
+                >
+                    {/* Book Cover */}
+                    <div>
+                        {book.cover_image && (
+                            <img
+                                src={book.cover_image}
+                                alt={book.title}
+                                className="book-cover"
+                            />
+                        )}
+                    </div>
+
+                    {/* Rating Section */}
+                    <div
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '6px',
+                        }}
+                    >
+                        <div style={{ display: 'flex', gap: '4px' }}>
+                            {renderStars(book.average_rating || 0)}
+                        </div>
+                        <span style={{ fontSize: '14px', color: '#6d6d6d' }}>
+                            ({book.rating_count || 0})
+                        </span>
+                    </div>
+
+                    {/* Book Details */}
+                    <div className="book-details">
+                        <p className="book-title">{book.title}</p>
+                        <p className="book-author">{book.author}</p>
+                        <p className="book-price">Rs {book.price}</p>
+                    </div>
+
+                    {/* Buttons */}
+                    <div className="book-footer">
                         <div>
-                            {book.cover_image && (
-                                <img
-                                    src={book.cover_image}
-                                    alt={book.title}
-                                    className="book-cover"
-                                />
-                            )}
+                            <button
+                                className="btn-favorite"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleAddToFavorite(book.id);
+                                }}
+                            >
+                                <img src="/icons/add-to-fav.png" className="icon" alt="♡" />
+                            </button>
                         </div>
-
-                        {/* Book Rating */}
-                        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}>                                    
-                            <div style={{ display: "flex", gap: "4px" }}>
-                                {Array.from({ length: 5 }, (_, i) => (
-                                <img key={i} src="/icons/star.png" className="icon" />
-                                ))}
-                            </div>
-                            <span style={{ fontSize: "14px", color: "#6d6d6d" }}>(26)</span>                                        
-                        </div>
-
-                        {/* Book Details */}
-                        <div className="book-details">
-                            <p className="book-title">{book.title}</p>
-                            <p className="book-author">{book.author}</p>
-                            <p className="book-price">Rs {book.price}</p>
-                        </div>
-
-                        <div className="book-footer">
-                            <div>
-                                <button
-                                    className="btn-favorite"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleAddToFavorite(book.id);
-                                    }}
-                                >
-                                    <img src="/icons/add-to-fav.png" className="icon"/>
-                                </button>
-                            </div>
-
-                            <div>
-                                <button
-                                    className="btn-add-cart"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleAddToCart(book.id);
-                                    }}
-                                >
-                                    Add to Cart <div><img src="/icons/add-to-cart-white.png" className="icon"/></div>
-                                </button>
-                            </div>
+                        <div>
+                            <button
+                                className="btn-add-cart"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleAddToCart(book.id);
+                                }}
+                            >
+                                Add to Cart
+                                <div>
+                                    <img
+                                        src="/icons/add-to-cart-white.png"
+                                        className="icon"
+                                        alt="＋"
+                                    />
+                                </div>
+                            </button>
                         </div>
                     </div>
-                ))}
+                </div>
+            ))}
         </div>
     );
 };
