@@ -84,7 +84,7 @@ const HomePage = () => {
                             <p>Not sure what to read next? Explore books from our shop.</p>
                         </div>
                         <div>
-                            <button className="explore-books-btn" onClick={() => navigate('/shop')}><img src="/icons/explore.png" className="icon" /> Explore books</button>
+                            <button className="explore-books-btn" onClick={() => navigate('/shop')}><div><img src="/icons/explore.png" className="icon"/></div><div>Explore books</div></button>
                         </div>
                     </div>
                 </div>
@@ -160,11 +160,7 @@ const HomePage = () => {
                                 loading="lazy"
                                 referrerPolicy="no-referrer-when-downgrade"
                             ></iframe>
-                            <p style={{ textAlign: "center", marginTop: "10px" }}>
-                                <strong>Best Reads</strong><br />
-                                Kathmandu, Nepal
-                            </p>
-
+                        
                         </div>
 
                     </div>

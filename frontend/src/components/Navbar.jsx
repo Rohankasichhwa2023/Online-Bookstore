@@ -1,11 +1,14 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import '../css/Navbar.css';
 import CartButton from './CartButton';
 import Favorite from './Favorite';
 
 function Navbar() {
+    const location = useLocation();
+
+    const isActive = (path) => location.pathname === path;
 
     return (
         <div className="navbar">
@@ -16,13 +19,13 @@ function Navbar() {
                 <h2 className="brand-title">best reads</h2>
             </div>
             <div className="navbar-center">
-                <div className="nav-item active">
+                <div className={`nav-item ${isActive("/home") ? "active" : ""}`}>
                     <Link to="/home">Home</Link>
                 </div>
-                <div className="nav-item">
+                <div className={`nav-item ${isActive("/shop") ? "active" : ""}`}>
                     <Link to="/shop">Shop</Link>
                 </div>
-                <div className="nav-item">
+                <div className={`nav-item ${isActive("/contact") ? "active" : ""}`}>
                     <Link to="/contact">Contact Us</Link>
                 </div>
             </div>
