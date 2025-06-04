@@ -75,16 +75,16 @@ const HomePage = () => {
 
     return (
         <>
-            <Navbar/>
+            <Navbar />
             <div className="homepage-container">
-                <div className="frame1" style={{backgroundImage: "url('/bg-image/1.png')"}}>
+                <div className="frame1" style={{ backgroundImage: "url('/bg-image/1.png')" }}>
                     <div className="frame1-content">
                         <div>
                             <h1>What books are you looking for?</h1>
                             <p>Not sure what to read next? Explore books from our shop.</p>
                         </div>
                         <div>
-                            <button className="explore-books-btn" onClick={() => navigate('/shop')}><img src="/icons/explore.png" className="icon"/> Explore books</button>
+                            <button className="explore-books-btn" onClick={() => navigate('/shop')}><img src="/icons/explore.png" className="icon" /> Explore books</button>
                         </div>
                     </div>
                 </div>
@@ -113,7 +113,7 @@ const HomePage = () => {
                         <h2>Get in touch</h2>
 
                         <div className="contact-item">
-                            <div style={{display: "flex", gap: "12px"}}>
+                            <div style={{ display: "flex", gap: "12px" }}>
                                 <img src="/icons/location.png" className="icon" />
                                 <h3>Location</h3>
                             </div>
@@ -121,7 +121,7 @@ const HomePage = () => {
                         </div>
 
                         <div className="contact-item">
-                            <div style={{display: "flex", gap: "12px"}}>
+                            <div style={{ display: "flex", gap: "12px" }}>
                                 <img src="/icons/email.png" className="icon" />
                                 <h3>Email</h3>
                             </div>
@@ -129,7 +129,7 @@ const HomePage = () => {
                         </div>
 
                         <div className="contact-item">
-                            <div style={{display: "flex", gap: "12px"}}>
+                            <div style={{ display: "flex", gap: "12px" }}>
                                 <img src="/icons/phone.png" className="icon" />
                                 <h3>Phone</h3>
                             </div>
@@ -137,7 +137,7 @@ const HomePage = () => {
                         </div>
 
                         <div className="contact-item">
-                            <div style={{display: "flex", gap: "12px"}}>
+                            <div style={{ display: "flex", gap: "12px" }}>
                                 <img src="/icons/policy.png" className="icon" />
                                 <h3>Return Policy</h3>
                             </div>
@@ -148,20 +148,29 @@ const HomePage = () => {
                     </div>
 
                     <div>
-                        <iframe
-                        title="Best Reads Location"
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3532.056535293293!2d85.32452037534318!3d27.710326776198486!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39eb190f7c1d30e1%3A0xd622b0b929c769dc!2sKathmandu%2C%20Nepal!5e0!3m2!1sen!2snp!4v1685530123456!5m2!1sen!2snp"
-                        width="500"
-                        height="420"
-                        style={{ border: "0", borderRadius: "12px" }}
-                        allowFullScreen=""
-                        loading="lazy"
-                        referrerPolicy="no-referrer-when-downgrade"
-                        ></iframe>
+                        <div>
+
+                            <iframe
+                                title="Best Reads Location"
+                                src="https://www.google.com/maps?q=27.710326,85.324520(Best%20Reads)&z=15&output=embed"
+                                width="500"
+                                height="420"
+                                style={{ border: "0", borderRadius: "12px" }}
+                                allowFullScreen=""
+                                loading="lazy"
+                                referrerPolicy="no-referrer-when-downgrade"
+                            ></iframe>
+                            <p style={{ textAlign: "center", marginTop: "10px" }}>
+                                <strong>Best Reads</strong><br />
+                                Kathmandu, Nepal
+                            </p>
+
+                        </div>
+
                     </div>
                 </div>
             </div>
-            <Footer/>
+            <Footer />
         </>
     );
 };

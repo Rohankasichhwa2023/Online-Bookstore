@@ -2,6 +2,7 @@ from .models import Book, Genre, BookGenre, Favorite
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
 from rest_framework import status
 from .serializers import BookSerializer, FavoriteSerializer
 
@@ -11,6 +12,14 @@ def get_all_books(request):
     serializer = BookSerializer(books, many=True, context={'request': request})
     return Response(serializer.data)
 
+@api_view(['GET'])
+def get_book_detail(request, pk):
+    book = get_object_or_404(Book, pk=pk)
+    serializer = BookSerializer(book, context={'request': request})
+    
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+    
 
 @api_view(['GET'])
 def list_genres(request):

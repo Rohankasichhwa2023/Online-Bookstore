@@ -12,9 +12,12 @@ import LoginPage from './pages/LoginPage';
 import HomePage from './pages/HomePage';
 import CartPage from './pages/CartPage';
 import FavoritesPage from './pages/FavoritesPage';
+import ShopPage from './pages/ShopPage';
+import BookDetailsPage from './pages/BookDetailsPage';
 
 import { CartProvider } from './context/CartContext';
 import { FavoritesProvider } from './context/FavoritesContext';
+
 
 function App() {
   return (
@@ -30,6 +33,8 @@ function App() {
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/home" element={<HomePage />} />
+            <Route path="/shop" element={<ShopPage />} />
+            <Route path="/book/:id" element={<BookDetailsPage />} />
             <Route path="/cart" element={<CartPage />} />
             <Route path="/favorites" element={<FavoritesPage />} />
           </Routes>

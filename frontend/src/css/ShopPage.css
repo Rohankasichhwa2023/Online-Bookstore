@@ -1,0 +1,157 @@
+/* src/css/ShopPage.css */
+
+/* Container */
+.ShopPage-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.ShopPage-container h2 {
+    font-size: 28px;
+    margin-bottom: 16px;
+    color: #0E4783;
+}
+
+.ShopPage-container h3 {
+    font-size: 24px;
+    margin: 24px 0 16px;
+    color: #0E4783;
+}
+
+/* Book grid */
+.book-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+}
+
+/* Individual book card */
+.book-card {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 16px;
+    box-sizing: border-box;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: box-shadow 0.3s;
+}
+
+.book-card:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.book-cover {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-bottom: 12px;
+}
+
+.book-card h4 {
+    font-size: 18px;
+    margin: 8px 0;
+    text-align: center;
+    color: #333;
+}
+
+.book-card p {
+    font-size: 14px;
+    color: #555;
+    margin: 4px 0;
+    text-align: center;
+}
+
+/* Button group */
+.button-group {
+    margin-top: auto;
+    display: flex;
+    gap: 8px;
+}
+
+/* Primary and secondary buttons */
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.primary-btn {
+    background-color: #0E4783;
+    color: #fff;
+}
+
+.primary-btn:hover {
+    transform: scale(1.02);
+    background-color: #0C3A6A;
+}
+
+.secondary-btn {
+    background-color: #fff;
+    color: #0E4783;
+    border: 1px solid #0E4783;
+}
+
+.secondary-btn:hover {
+    transform: scale(1.02);
+    background-color: #F0F4FB;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .ShopPage-container {
+        padding: 16px;
+    }
+
+    .ShopPage-container h2 {
+        font-size: 24px;
+        margin-bottom: 12px;
+    }
+
+    .ShopPage-container h3 {
+        font-size: 20px;
+        margin: 16px 0 12px;
+    }
+
+    .book-cover {
+        height: 180px;
+    }
+
+    .btn {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .ShopPage-container {
+        padding: 12px;
+    }
+
+    .ShopPage-container h2 {
+        font-size: 20px;
+        margin-bottom: 8px;
+    }
+
+    .ShopPage-container h3 {
+        font-size: 18px;
+        margin: 12px 0 8px;
+    }
+
+    .book-cover {
+        height: 160px;
+    }
+
+    .btn {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+}
