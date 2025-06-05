@@ -1,13 +1,14 @@
 .navbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: fixed;
-    width: 100%;
-    background-color: #ECECF4;
-    height: 52px;
-    box-sizing: border-box;
-    padding: 0px 40px 0px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: fixed;
+  width: 100%;
+  background-color: #ECECF4;
+  height: 52px;
+  box-sizing: border-box;
+  padding: 0px 40px;
+  z-index: 1000;
 }
 
 .navbar-left {
@@ -31,7 +32,7 @@
 
 .brand-title {
     color: #0E4783;
-    font-size: 24px;
+    font-size: 20px;
     margin: 0;
 }
 

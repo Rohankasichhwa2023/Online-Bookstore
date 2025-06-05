@@ -1,4 +1,3 @@
-// src/components/Favorite.jsx
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useFavorites } from '../context/FavoritesContext';

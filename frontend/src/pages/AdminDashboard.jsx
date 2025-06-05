@@ -1,4 +1,3 @@
-// src/pages/AdminDashboard.js
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminLogoutButton from '../components/AdminLogoutButton';

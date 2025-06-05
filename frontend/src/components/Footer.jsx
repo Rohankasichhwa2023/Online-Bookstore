@@ -7,7 +7,7 @@ function Footer() {
         <div className="footer-container">
             <div className="footer-left">
                 <img src="/icons/copyright.png" alt="Copyright" className="icon" />
-                <h2 className="brand-title">2025&nbsp;&nbsp;&nbsp;best reads</h2>
+                <h2 className="footer-title">2025&nbsp;&nbsp;&nbsp;best reads</h2>
             </div>
 
             <div className="footer-right">

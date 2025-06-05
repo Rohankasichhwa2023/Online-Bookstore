@@ -1,4 +1,3 @@
-// src/pages/HomePage.jsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -34,40 +33,6 @@ const HomePage = () => {
             setBooks(res.data);
         } catch (err) {
             console.error('Error fetching books:', err);
-        }
-    };
-
-    const handleAddToCart = async (bookId) => {
-        try {
-            await axios.post('http://localhost:8000/carts/add-to-cart/', {
-                user_id: User.id,
-                book_id: bookId,
-                quantity: 1
-            });
-            await updateCart(); // refresh count immediately
-            alert('Book added to cart.');
-        } catch (err) {
-            console.error('Could not add to cart:', err);
-            alert('Could not add to cart.');
-        }
-    };
-
-    const handleAddToFavorite = async (bookId) => {
-        try {
-            const res = await axios.post('http://localhost:8000/books/add-favorite/', {
-                user_id: User.id,
-                book_id: bookId
-            });
-            await updateFavorites(); // refresh favorite count immediately
-            alert(res.data.message || 'Book favorited.');
-        } catch (err) {
-            console.error('Error adding to favorites:', err);
-            if (err.response && err.response.data) {
-                const detail = err.response.data.error || JSON.stringify(err.response.data);
-                alert(`Could not add to favorites: ${detail}`);
-            } else {
-                alert('Could not add to favorites.');
-            }
         }
     };
 
