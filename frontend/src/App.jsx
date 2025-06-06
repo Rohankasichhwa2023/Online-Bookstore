@@ -16,6 +16,10 @@ import BookDetailsPage from './pages/BookDetailsPage';
 
 import { CartProvider } from './context/CartContext';
 import { FavoritesProvider } from './context/FavoritesContext';
+import CheckoutPage from './pages/CheckoutPage';
+import PaymentSuccess from './pages/PaymentSuccess';
+import PaymentFail from './pages/PaymentFail';
+import PollPaymentStatus from './pages/PollPaymentStatus';
 
 
 function App() {
@@ -35,6 +39,10 @@ function App() {
             <Route path="/shop" element={<ShopPage />} />
             <Route path="/book/:id" element={<BookDetailsPage />} />
             <Route path="/cart" element={<CartPage />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/payment-success/:id" element={<PaymentSuccess />} />
+            <Route path="/payment-fail/:id" element={<PaymentFail />} />
+            <Route path="/orders/status/:id" element={<PollPaymentStatus />} />
             <Route path="/favorites" element={<FavoritesPage />} />
           </Routes>
         </FavoritesProvider>

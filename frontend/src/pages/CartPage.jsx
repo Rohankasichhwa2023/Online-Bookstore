@@ -1,3 +1,4 @@
+// src/pages/CartPage.jsx
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -21,7 +22,7 @@ const CartPage = () => {
     const fetchCart = async () => {
         try {
             const res = await axios.get('http://localhost:8000/carts/view-cart/', {
-                params: { user_id: user.id }
+                params: { user_id: user.id },
             });
             setItems(res.data);
         } catch (err) {
@@ -37,10 +38,10 @@ const CartPage = () => {
         try {
             await axios.post('http://localhost:8000/carts/removeitem-cart/', {
                 user_id: user.id,
-                book_id: bookId
+                book_id: bookId,
             });
             const res = await axios.get('http://localhost:8000/carts/view-cart/', {
-                params: { user_id: user.id }
+                params: { user_id: user.id },
             });
             setItems(res.data);
             await updateCart(); // update global count now that one was removed
@@ -50,19 +51,18 @@ const CartPage = () => {
     };
 
     const changeQuantity = async (bookId, newQty) => {
+        if (newQty < 1) return;
         try {
             await axios.put('http://localhost:8000/carts/update-item/', {
                 user_id: user.id,
                 book_id: bookId,
-                quantity: newQty
+                quantity: newQty,
             });
-            const updatedItems = newQty > 0
-                ? items.map(it =>
-                    it.book.id === bookId
-                        ? { ...it, quantity: newQty, subtotal: it.book.price_snapshot * newQty }
-                        : it
-                )
-                : items.filter(it => it.book.id !== bookId);
+            const updatedItems = items.map((it) =>
+                it.book.id === bookId
+                    ? { ...it, quantity: newQty, subtotal: it.book.price_snapshot * newQty }
+                    : it
+            );
             setItems(updatedItems);
             await updateCart(); // update global count (in case newQty = 0 removes it)
         } catch (err) {
@@ -70,18 +70,49 @@ const CartPage = () => {
         }
     };
 
+    const proceedToCheckout = async () => {
+        try {
+            // 1) Call backend to create the order; send user_id in the body
+            const res = await axios.post(
+                'http://localhost:8000/orders/create/',
+                { user_id: user.id },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                }
+            );
+            const { order_id, total_amount } = res.data;
+
+            // 2) Navigate to Checkout and pass orderId + totalAmount
+            navigate('/checkout', {
+                state: { orderId: order_id, totalAmount: total_amount },
+            });
+        } catch (err) {
+            console.error('Error creating order:', err.response || err);
+            // Optionally show an error message to the user
+        }
+    };
+
     return (
-        <div>
+        <div style={{ padding: '20px' }}>
             <h2>{user.username}’s Cart</h2>
 
             {items.length === 0 ? (
                 <p>Your cart is empty.</p>
             ) : (
                 <div>
-                    {items.map(it => (
+                    {items.map((it) => (
                         <div
                             key={it.id}
-                            style={{ border: '1px solid black', marginBottom: '10px', padding: '10px' }}
+                            style={{
+                                border: '1px solid #ccc',
+                                borderRadius: '4px',
+                                marginBottom: '10px',
+                                padding: '10px',
+                                display: 'flex',
+                                gap: '16px',
+                            }}
                         >
                             <img
                                 src={it.book.cover_image}
@@ -90,24 +121,60 @@ const CartPage = () => {
                                     width: '80px',
                                     height: '100px',
                                     objectFit: 'cover',
-                                    marginRight: '16px'
                                 }}
                             />
-                            <div>
+                            <div style={{ flexGrow: 1 }}>
                                 <h4>{it.book.title}</h4>
-                                <p>Qty: {it.quantity}</p>
-                                <p>Unit Price: Rs. {it.book.price_snapshot}</p>
+                                <p>
+                                    <strong>Qty:</strong> {it.quantity}
+                                </p>
+                                <p>
+                                    <strong>Unit Price:</strong> Rs. {it.book.price_snapshot}
+                                </p>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                    <button onClick={() => changeQuantity(it.book.id, it.quantity - 1)}>–</button>
+                                    <button
+                                        onClick={() => changeQuantity(it.book.id, it.quantity - 1)}
+                                        disabled={it.quantity <= 1}
+                                    >
+                                        –
+                                    </button>
                                     <span>{it.quantity}</span>
                                     <button onClick={() => changeQuantity(it.book.id, it.quantity + 1)}>+</button>
                                 </div>
-                                <p>Subtotal: Rs. {it.subtotal.toFixed(2)}</p>
-                                <button onClick={() => removeFromCart(it.book.id)}>Remove</button>
+                                <p>
+                                    <strong>Subtotal:</strong> Rs. {it.subtotal.toFixed(2)}
+                                </p>
+                                <button
+                                    onClick={() => removeFromCart(it.book.id)}
+                                    style={{
+                                        background: 'red',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '6px 12px',
+                                        borderRadius: '4px',
+                                        cursor: 'pointer',
+                                    }}
+                                >
+                                    Remove
+                                </button>
                             </div>
                         </div>
                     ))}
                     <h3>Total: Rs. {total}</h3>
+                    <button
+                        onClick={proceedToCheckout}
+                        style={{
+                            marginTop: '20px',
+                            padding: '10px 20px',
+                            backgroundColor: '#007bff',
+                            color: '#fff',
+                            border: 'none',
+                            borderRadius: '4px',
+                            cursor: 'pointer',
+                        }}
+                    >
+                        Proceed to Checkout
+                    </button>
                 </div>
             )}
         </div>

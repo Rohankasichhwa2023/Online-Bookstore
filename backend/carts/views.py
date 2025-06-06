@@ -1,6 +1,9 @@
+# carts/views.py
+
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
+
 from .models import Cart, CartItem
 from books.models import Book
 from users.models import User
@@ -11,13 +14,27 @@ def add_to_cart(request):
     book_id = request.data.get('book_id')
     quantity = int(request.data.get('quantity', 1))
 
+    # 1) Validate user and book
     try:
         user = User.objects.get(pk=user_id)
         book = Book.objects.get(pk=book_id)
     except (User.DoesNotExist, Book.DoesNotExist):
         return Response({'error': 'Invalid user or book.'}, status=status.HTTP_400_BAD_REQUEST)
 
-    cart, _ = Cart.objects.get_or_create(user=user)
+    # 2) Try to find an ACTIVE cart for this user
+    cart = Cart.objects.filter(user=user, status='active').first()
+    if not cart:
+        # a) If no active cart exists, check if any cart row exists for the user
+        cart = Cart.objects.filter(user=user).first()
+        if cart:
+            # b) Flip its status back to 'active'
+            cart.status = 'active'
+            cart.save()
+        else:
+            # c) No cart row exists at all, so create a new one
+            cart = Cart.objects.create(user=user, status='active')
+
+    # 3) Create or update the CartItem in that ACTIVE cart
     item, created = CartItem.objects.get_or_create(
         cart=cart,
         book=book,
@@ -34,7 +51,7 @@ def add_to_cart(request):
 def view_cart(request):
     user_id = request.query_params.get('user_id')
     try:
-        cart = Cart.objects.get(user__pk=user_id)
+        cart = Cart.objects.get(user__pk=user_id, status='active')
     except Cart.DoesNotExist:
         return Response([], status=status.HTTP_200_OK)
 
@@ -47,7 +64,7 @@ def view_cart(request):
                 'id': item.book.id,
                 'title': item.book.title,
                 'cover_image': request.build_absolute_uri(item.book.cover_image.url)
-                                 if item.book.cover_image else None,
+                    if item.book.cover_image else None,
                 'price_snapshot': float(item.price_snapshot),
             },
             'quantity': item.quantity,
@@ -55,13 +72,14 @@ def view_cart(request):
         })
     return Response(data, status=status.HTTP_200_OK)
 
+
 @api_view(['POST'])
 def remove_from_cart(request):
     user_id = request.data.get('user_id')
     book_id = request.data.get('book_id')
 
     try:
-        cart = Cart.objects.get(user__pk=user_id)
+        cart = Cart.objects.get(user__pk=user_id, status='active')
         item = CartItem.objects.get(cart=cart, book__pk=book_id)
         item.delete()
         return Response({'message': 'Item removed from cart.'}, status=status.HTTP_200_OK)
@@ -71,16 +89,12 @@ def remove_from_cart(request):
 
 @api_view(['PUT'])
 def update_cart_items(request):
-    """
-    Expects JSON: { "user_id": X, "book_id": Y, "quantity": new_qty }
-    If new_qty <= 0, the item is removed.
-    """
     user_id  = request.data.get('user_id')
     book_id  = request.data.get('book_id')
     new_qty  = int(request.data.get('quantity', 0))
 
     try:
-        cart = Cart.objects.get(user__pk=user_id)
+        cart = Cart.objects.get(user__pk=user_id, status='active')
         item = CartItem.objects.get(cart=cart, book__pk=book_id)
     except (Cart.DoesNotExist, CartItem.DoesNotExist):
         return Response({'error': 'Item not found.'}, status=status.HTTP_404_NOT_FOUND)
@@ -96,4 +110,3 @@ def update_cart_items(request):
         'quantity': item.quantity,
         'subtotal': float(item.price_snapshot) * item.quantity
     }, status=status.HTTP_200_OK)
-
