@@ -13,7 +13,7 @@ function Navbar() {
         <div className="navbar">
             <div className="navbar-left">
                 <div className="logo-box">
-                    <img src="/logo/blue.png" alt="best reads" className="logo-image" />
+                    <img src="/logo/white2.png" alt="best reads" className="logo-image" />
                 </div>
                 <h2 className="brand-title">best reads</h2>
             </div>
@@ -25,14 +25,14 @@ function Navbar() {
                     <Link to="/shop">Shop</Link>
                 </div>
                 <div className={`nav-item ${isActive("/contact") ? "active" : ""}`}>
-                    <Link to="/contact">Contact Us</Link>
+                    <Link to="/request-book">Request&nbsp;&nbsp;book</Link>
                 </div>
             </div>
             <div className="navbar-right">
                 <CartButton/>
                 <Favorite/>
-                <img src="/icons/notification.png" alt="Notification" className="icon" />
-                <img src="/icons/user.png" alt="User" className="icon" />
+                <img src="/icons/notification-white.png" alt="Notification" className="icon" />
+                <img src="/icons/user-white.png" alt="User" className="icon" />
             </div>
         </div>
     );

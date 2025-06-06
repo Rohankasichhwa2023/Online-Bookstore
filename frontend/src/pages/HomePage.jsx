@@ -49,7 +49,7 @@ const HomePage = () => {
                             <p>Not sure what to read next? Explore books from our shop.</p>
                         </div>
                         <div>
-                            <button className="explore-books-btn" onClick={() => navigate('/shop')}><div><img src="/icons/explore.png" className="icon"/></div><div>Explore books</div></button>
+                            <button className="explore-books-btn" onClick={() => navigate('/shop')}><div>Explore books</div><div><img src="/icons/explore.png" className="icon-explore"/></div></button>
                         </div>
                     </div>
                 </div>
@@ -65,7 +65,7 @@ const HomePage = () => {
 
                 <div className="frame3">
                     <div className="frame3-text">
-                        <p>Our goal is to become a trusted and loved online bookstore that offers a wide range of books at fair prices while making reading more convenient and enjoyable for everyone. <strong>Happy Reading!!</strong></p>
+                        <p>Our goal is to become a trusted and loved online bookstore that offers a wide range of books at fair prices while making reading more convenient and enjoyable for everyone. <strong style={{color: "#0E4783"}}>Happy Reading!!</strong></p>
                     </div>
 
                     <div className="frame3-image" style={{ backgroundImage: "url('/bg-image/3.png')" }}>
@@ -102,14 +102,13 @@ const HomePage = () => {
                         </div>
 
                         <div className="contact-item">
-                            <div style={{ display: "flex", gap: "12px" }}>
-                                <img src="/icons/policy.png" className="icon" />
+                            <div style={{ display: "flex", gap: "8px" }}>
+                                <img src="/icons/policy.png" className="icon-policy" />
                                 <h3>Return Policy</h3>
                             </div>
                             <p>Return accepted within 7 days.</p>
                         </div>
 
-                        <button className="contact-btn" onClick={() => navigate('/contact')}>Contact us</button>
                     </div>
 
                     <div>

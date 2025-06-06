@@ -42,22 +42,27 @@
     display: flex;
     align-items: center;
     justify-items: center;
-    gap: 8px;
-    padding: 12px 24px;
+    gap: 4px;
+    padding: 8px 16px;
     border: 1px solid white;
     background-color: white;
-    color: #0E4783;
+    color: #0a3b6b;
     border: none;
     border-radius: 6px;
     cursor: pointer;
     font-size: 16px;
     font-weight: 600;
     transition: background-color 0.3s, color 0.3s;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .explore-books-btn:hover {
     transform: scale(1.02);
-    background-color: #ECECF4;
+}
+
+.icon-explore {
+    width: 24px;
+    height: 24px;
 }
 
 .icon {
@@ -93,6 +98,7 @@
 .frame3-image h1 {
     font-size: 44px;
     color: white;
+    margin: 0px;
 }
 
 .frame2-text,
@@ -130,7 +136,7 @@
     font-size: 28px;
     font-weight: 700;
     margin: 0px 0px 24px 0px;
-    color: #0E4783;
+    color: #0a3b6b;
 }
 
 .contact-info h3 {
@@ -143,34 +149,13 @@
 .contact-info p {
     font-weight: 400;
     font-size: 16px;
-    color: #0E4783;
+    color: #0a3b6b;
     padding: 0px;
     text-align: left;
     margin-left: 0px;
 }
 
-.contact-btn {
-    display: flex;
-    align-items: center;
-    justify-items: center;
-    gap: 12px;
-    padding: 14px 28px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 600;
-    transition: background-color 0.3s, color 0.3s;
-    color: white;
-    background-color: #0E4783;
-    border: 1px solid #0E4783;
-}
-
-.contact-btn:hover {
-    transform: scale(1.02);
-}
-
-.policy {
+.icon-policy {
     width: 24px;
     height: 24px;
 }

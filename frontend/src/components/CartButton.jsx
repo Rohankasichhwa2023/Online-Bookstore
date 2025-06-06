@@ -11,8 +11,8 @@ const CartButton = () => {
 
     return (
         <div style={{display: "flex", gap: "4px"}}>
-            <img src="/icons/add-to-cart.png" alt="Cart" className="icon" onClick={() => navigate('/cart')}/>
-            <p style={{margin: "0px", fontWeight: "500", color: "#BD4444"}}><sup>{count>0?count:"\u00A0"}</sup></p>
+            <img src="/icons/add-to-cart-white.png" alt="Cart" className="icon" onClick={() => navigate('/cart')}/>
+            <p style={{margin: "0px", fontWeight: "500", color: "white"}}><sup>{count>0?count:"\u00A0"}</sup></p>
         </div>
     );
 };

@@ -11,9 +11,9 @@ const ShopPage = () => {
         <>
             <Navbar />
             <div className="ShopPage-container">
-                <h1>Best Sellers</h1>
+                <h1 style={{marginBottom: "14px"}}>Best Sellers</h1>
                 <BestSellers />
-                <h1>Top Rated</h1>
+                <h1 style={{marginBottom: "20px"}}>Top Rated</h1>
                 <TopRated />
                 <h1>All Books</h1>
                 <AllBooks />

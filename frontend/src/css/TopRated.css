@@ -40,8 +40,9 @@
   width: 327px;
   height: 500px;
   top: 20px;
-  left: calc(50% - 163.5px); /* 327px / 2 */
+  left: calc(50% - 163.5px);
   z-index: 3;
+  cursor: pointer;
 }
 
 /* Right-mid */
@@ -62,22 +63,15 @@
   z-index: 1;
 }
 
-/* Navigation Buttons */
 .left-right-btn2 {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
   border: none;
-  color: white;
-  background-color: #0E4783;
   border-radius: 50%;
-  font-size: 32px;
-  font-weight: 500;
   padding: 10px;
   width: 60px;
   height: 60px;
-  text-align: center;
-  line-height: 0;
   cursor: pointer;
   z-index: 10;
 }
@@ -88,4 +82,14 @@
 
 .left-right-btn2:last-of-type {
   right: 100px;
+}
+
+.left-right-btn2:hover {
+  background-color: #d0d0e2;
+}
+
+.book-name {
+  margin:0px 0px 12px 0px;
+  font-size: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }

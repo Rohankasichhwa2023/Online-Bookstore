@@ -6,8 +6,8 @@ function Footer() {
     return (
         <div className="footer-container">
             <div className="footer-left">
-                <img src="/icons/copyright.png" alt="Copyright" className="icon" />
-                <h2 className="footer-title">2025&nbsp;&nbsp;&nbsp;best reads</h2>
+                <img src="/icons/copyright.png" alt="Copyright" style={{height: "20px", width: "20px"}} />
+                <h2 className="footer-title">2025 best reads</h2>
             </div>
 
             <div className="footer-right">

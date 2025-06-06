@@ -10,6 +10,14 @@ export default function BestSellers() {
         "/book-images/5.jpg"
     ];
 
+    const bookNames = [
+        "Night circus",
+        "Atomic Habits",
+        "A brief History of Time",
+        "Mistborn",
+        "Becomming"
+    ];
+
     const [mainIndex, setMainIndex] = useState(0);
 
     const shiftLeft = () => {
@@ -21,17 +29,22 @@ export default function BestSellers() {
     };
 
     return (
-        <div className="image-gallery">
-        <button onClick={shiftLeft} className="left-right-btn">&lt;</button>
-        {imageSources.map((src, index) => (
-            <img
-            key={index}
-            src={src}
-            alt={`Image ${index + 1}`}
-            className={index === mainIndex ? "main-image" : "side-image"}
-            />
-        ))}
-        <button onClick={shiftRight} className="left-right-btn">&gt;</button>
-        </div>
+        <>
+            {/* Display current book name */}
+            <p className="best-seller-name">{bookNames[mainIndex]}</p>
+
+            <div className="image-gallery">
+                <button onClick={shiftLeft} className="left-right-btn"><img src="/icons/left.png"/></button>
+                {imageSources.map((src, index) => (
+                    <img
+                    key={index}
+                    src={src}
+                    alt={`Image ${index + 1}`}
+                    className={index === mainIndex ? "main-image" : "side-image"}
+                    />
+                ))}
+                <button onClick={shiftRight} className="left-right-btn"><img src="/icons/right.png"/></button>
+            </div>
+        </>
     );
 }

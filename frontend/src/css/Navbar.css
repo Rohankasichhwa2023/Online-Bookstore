@@ -4,7 +4,7 @@
   justify-content: space-between;
   position: fixed;
   width: 100%;
-  background-color: #ECECF4;
+  background-color: #0E4783;
   height: 52px;
   box-sizing: border-box;
   padding: 0px 40px;
@@ -14,7 +14,8 @@
 .navbar-left {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 4px;
+    margin-right: 98px;
 }
 
 .logo-box {
@@ -31,13 +32,13 @@
 }
 
 .brand-title {
-    color: #0E4783;
+    color: white;
     font-size: 20px;
     margin: 0;
 }
 
 .navbar-center {
-    height: 36px;
+    height: 32px;
     display: flex;
     align-items: center;
     gap: 32px;
@@ -51,11 +52,11 @@
 
 .nav-item a {
     text-decoration: none;
-    color: #0E4783;
+    color: white;
 }
 
 .nav-item.active {
-    border-bottom: 2px solid #0E4783;
+    border-bottom: 2px solid white;
     display: flex;
     align-items: center;
     height: 100%;
@@ -65,6 +66,7 @@
     display: flex;
     align-items: center;
     gap: 24px;
+    margin-left: 78.779px;
 }
 
 .icon {
