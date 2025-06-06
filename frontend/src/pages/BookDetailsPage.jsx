@@ -4,9 +4,8 @@ import axios from 'axios';
 import { useCart } from '../context/CartContext';
 import { useFavorites } from '../context/FavoritesContext';
 import Navbar from '../components/Navbar';
-import UserLogoutButton from '../components/UserLogoutButton';
-import CartButton from '../components/CartButton';
-import FavoriteButton from '../components/Favorite';
+import Footer from '../components/Footer';
+import "../css/BookDetailPage.css"
 
 const BookDetailsPage = () => {
     const { id } = useParams();
@@ -18,6 +17,7 @@ const BookDetailsPage = () => {
     const [genres, setGenres] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [tempRating, setTempRating] = useState(0);
     const [userRating, setUserRating] = useState(null);
     const [averageRating, setAverageRating] = useState(null);
     const [ratingCount, setRatingCount] = useState(0);
@@ -84,7 +84,11 @@ const BookDetailsPage = () => {
         }
     };
 
-    const handleRating = async (value) => {
+    const handleRating = (value) => {
+        setTempRating(value);
+    };
+
+    const handlePost = async (tempRating) => {
         const user = JSON.parse(localStorage.getItem('user'));
         try {
             // 1) POST new rating to /books/rate/<book_id>/
@@ -95,15 +99,15 @@ const BookDetailsPage = () => {
                 },
                 body: JSON.stringify({
                     user_id: user.id,
-                    rating: value,
+                    rating: tempRating,
                 }),
             });
 
             const data = await response.json();
 
             if (response.ok) {
-                // 2) Immediately update "Your Rating" UI
-                setUserRating(value);
+                // 2) Immediately update UI
+                setUserRating(tempRating);
 
                 // 3) Re‐fetch book‐detail so averageRating, ratingCount, and userRating stay in sync
                 const res2 = await fetch(
@@ -113,6 +117,7 @@ const BookDetailsPage = () => {
                 setAverageRating(updatedData.average_rating);
                 setRatingCount(updatedData.rating_count);
                 setUserRating(updatedData.user_rating);
+                alert('Rating posted successfully!');
             } else {
                 alert(`Error: ${data.error || 'Unable to rate book.'}`);
             }
@@ -128,97 +133,131 @@ const BookDetailsPage = () => {
     return (
         <>
             <Navbar />
-            <div className="BookDetails-container">
-                <UserLogoutButton />
-                <CartButton />
-                <FavoriteButton />
+            <div className="book-detail">
+                <div>
+                    <button className="back-btn" onClick={() => navigate(-1)}><img src="/icons/left.png" className="icon" alt="Back" /></button>
+                </div>
+                <div className="book-detail-left">
+                    <img src={book.cover_image} alt={book.title} className="book-image"/>
+                    
+                    <div style={{border: "1px solid #dee2e6", borderRadius: "8px"}}>
+                        <div className="user-rate">
+                            
+                            <div style={{textAlign: "center"}}>
+                                <h6 style={{color: "#052c65"}}>Rate this book</h6>
+                            </div>
+                            
+                            <div style={{display: "flex", justifyContent: "center"}}>
+                                <div style={{ display: 'flex', gap: '6px' }}>
+                                    {[1, 2, 3, 4, 5].map((value) => (
+                                        <img
+                                            key={value}
+                                            src={
+                                                value <= (tempRating || userRating || 0) ? '/icons/star.png' : '/icons/star-empty.png'
+                                            }
+                                            alt=""
+                                            className="icon"
+                                            style={{ cursor: 'pointer', height: '20px' }}
+                                            onClick={() => handleRating(value)}
+                                        />
+                                    ))}
+                                </div>
+                            </div>
 
-                <div className="BookDetails-content">
-                    <div className="BookDetails-image">
-                        {book.cover_image ? (
-                            <img src={book.cover_image} alt={book.title} />
-                        ) : (
-                            <div className="no-cover">No Cover Image</div>
-                        )}
+                            <div style={{textAlign: "right"}}>
+                                <button class="post-btn" onClick={() => handlePost(tempRating)}>Post</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                
+                <div className="book-detail-right">
+
+                    <div>
+                        <h1 className="book-title">{book.title}</h1>
+                        <p className="author-name">{book.author}</p>
                     </div>
 
-                    <div className="BookDetails-info">
-                        <h1>{book.title}</h1>
-                        <p>
-                            <strong>Author:</strong> {book.author}
-                        </p>
-                        <p>{book.description || 'No description available.'}</p>
-                        <p>
-                            <strong>Pages:</strong> {book.pages || '—'}
-                        </p>
-                        <p>
-                            <strong>Language:</strong> {book.language}
-                        </p>
-                        <p>
-                            <strong>Age Group:</strong> {book.age_group || '—'}
-                        </p>
-                        <p>
-                            <strong>Price:</strong> Rs. {book.price}
-                        </p>
-                        <p>
-                            <strong>Stock:</strong> {book.stock}
-                        </p>
-                        <p>
-                            <strong>Genres:</strong> {genres.map((g) => g.name).join(', ') || '—'}
-                        </p>
-                        <p>
-                            <strong>Uploaded At:</strong> {new Date(book.created_at).toLocaleDateString()}
-                        </p>
-
-                        <div style={{ marginTop: '10px' }}>
-                            <strong>Average Rating:</strong>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                                {[1, 2, 3, 4, 5].map((i) => (
-                                    <img
-                                        key={i}
-                                        src={
-                                            i <= Math.round(averageRating || 0)
-                                                ? '/icons/star.png'
-                                                : '/icons/star-empty.png'
-                                        }
-                                        alt=""
-                                        className="icon"
-                                        style={{ height: '20px' }}
-                                    />
-                                ))}
-                                <span>({ratingCount})</span>
-                            </div>
+                    <div className="rate-fav-bar">                     
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                            {[1, 2, 3, 4, 5].map((i) => (
+                                <img
+                                    key={i}
+                                    src={
+                                        i <= Math.round(averageRating || 0)
+                                            ? '/icons/star.png'
+                                            : '/icons/star-empty.png'
+                                    }
+                                    alt=""
+                                    className="icon"
+                                    style={{ height: '20px' }}
+                                />
+                            ))}
+                            <span style={{color: "#6d6d6d"}}>({ratingCount})</span>
                         </div>
-
-                        <div style={{ marginTop: '10px' }}>
-                            <strong>Your Rating:</strong>
-                            <div style={{ display: 'flex', gap: '5px' }}>
-                                {[1, 2, 3, 4, 5].map((value) => (
-                                    <img
-                                        key={value}
-                                        src={
-                                            value <= (userRating || 0) ? '/icons/star.png' : '/icons/star-empty.png'
-                                        }
-                                        alt=""
-                                        className="icon"
-                                        style={{ cursor: 'pointer', height: '20px' }}
-                                        onClick={() => handleRating(value)}
-                                    />
-                                ))}
-                            </div>
+                        <div>
+                            <button className="btn-favorite" onClick={handleAddToFavorite}><img className="icon" src="/icons/add-to-fav.png" /></button>
                         </div>
+                    </div>
 
-                        <div className="BookDetails-buttons">
-                            <button className="btn primary-btn" onClick={handleAddToCart}>
-                                Add to Cart
-                            </button>
-                            <button className="btn secondary-btn" onClick={handleAddToFavorite}>
-                                Favorite
-                            </button>
+                    <div>
+                        <div className="accordion" id="accordionExample">
+                            <div className="accordion-item">
+                                <h2 className="accordion-header" id="headingOne">
+                                <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                    <strong>Details</strong>
+                                </button>
+                                </h2>
+                                <div id="collapseOne" className="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                    <div className="accordion-body1">
+                                        <p style={{textAlign: "left", lineHeight: "1.5", marginBottom: "8px"}}>{book.description}</p>
+                                        <div className="book-info">
+                                            <h3>Genre</h3>
+                                            <p>{genres.map((g) => g.name).join(', ')}</p>
+                                        </div>
+                                        <div className="book-info">
+                                            <h3>Language</h3>
+                                            <p>{book.language}</p>
+                                        </div>
+                                        <div className="book-info">
+                                            <h3>Pages</h3>
+                                            <p>{book.pages} pages</p>
+                                        </div>
+                                        <div className="book-info">
+                                            <h3>Age group</h3>
+                                            <p>{book.age_group} years old</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="accordion-item">
+                                <h2 className="accordion-header" id="headingTwo">
+                                <button className="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                                    <strong>Purchase</strong>
+                                </button>
+                                </h2>
+                                <div id="collapseTwo" className="accordion-collapse collapse show" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                    <div className="accordion-body2">
+                                    
+                                        <div className="up-one">
+                                            <p><strong>Rs {book.price}</strong></p>
+                                        </div>
+
+                                        <div className="down-one">
+                                            <p className="stock" style={{ color: book.stock > 0 ? "#4CAF50" : "#E74242" }}>{book.stock>0?"in stock":"out of stock"}</p>
+                                            <button onClick={handleAddToCart}><div>Add to cart</div><div><img src="/icons/add-to-cart-white.png" className="icon"/></div></button>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <Footer/>
         </>
     );
 };

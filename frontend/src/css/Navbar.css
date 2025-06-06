@@ -15,7 +15,6 @@
     display: flex;
     align-items: center;
     gap: 4px;
-    margin-right: 98px;
 }
 
 .logo-box {
@@ -65,8 +64,7 @@
 .navbar-right {
     display: flex;
     align-items: center;
-    gap: 24px;
-    margin-left: 78.779px;
+    gap: 20px;
 }
 
 .icon {

@@ -179,10 +179,10 @@ const AllBooks = () => {
                     </div>
 
                     {/* Book Details */}
-                    <div className="book-details">
-                        <p className="book-title">{book.title}</p>
-                        <p className="book-author">{book.author}</p>
-                        <p className="book-price">Rs {book.price}</p>
+                    <div className="book-details2">
+                        <p className="book-title2">{book.title}</p>
+                        <p className="book-author2">{book.author}</p>
+                        <p className="book-price2">Rs {book.price}</p>
                     </div>
 
                     {/* Buttons */}

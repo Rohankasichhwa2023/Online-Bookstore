@@ -8,10 +8,8 @@
 .book-card {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  gap: 2px;
-  height: 400px;
-  width: 240px;
+  gap: 4px;
+  width: 260px;
   padding: 16px;
   border: 1px solid #e0e0e0;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
@@ -27,11 +25,11 @@
   margin:0px;
 }
 
-.book-details {
+.book-details2 {
   line-height: 1.4;
 }
 
-.book-title {
+.book-title2 {
   text-align: left;
   margin:0px;
   padding:0px;
@@ -39,14 +37,15 @@
   font-weight: 500;
 }
 
-.book-author {
+.book-author2 {
   text-align: left;
   margin:0px;
   padding:0px;
   color: #6d6d6d;
+  font-size: 14px;
 }
 
-.book-price {
+.book-price2 {
   text-align:right;
   margin:0px;
   padding:0px;
