@@ -1,4 +1,5 @@
 // src/pages/CartPage.jsx
+
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -9,6 +10,7 @@ const CartPage = () => {
     const { updateCart } = useCart();
     const [user] = useState(() => JSON.parse(localStorage.getItem('user')));
     const [items, setItems] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         if (!user) {
@@ -70,12 +72,16 @@ const CartPage = () => {
         }
     };
 
-    const proceedToCheckout = async () => {
+    const createOrderAndNavigate = async (paymentMethod) => {
+        setLoading(true);
         try {
-            // 1) Call backend to create the order; send user_id in the body
+            // 1) Create order with specified payment method
             const res = await axios.post(
                 'http://localhost:8000/orders/create/',
-                { user_id: user.id },
+                {
+                    user_id: user.id,
+                    payment_method: paymentMethod,
+                },
                 {
                     headers: {
                         'Content-Type': 'application/json',
@@ -84,13 +90,19 @@ const CartPage = () => {
             );
             const { order_id, total_amount } = res.data;
 
-            // 2) Navigate to Checkout and pass orderId + totalAmount
+            // 2) Navigate to Checkout page, passing orderId, totalAmount, and paymentMethod
             navigate('/checkout', {
-                state: { orderId: order_id, totalAmount: total_amount },
+                state: {
+                    orderId: order_id,
+                    totalAmount: total_amount,
+                    paymentMethod,
+                },
             });
         } catch (err) {
             console.error('Error creating order:', err.response || err);
-            // Optionally show an error message to the user
+            alert('Failed to create order. Please try again.');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -161,20 +173,38 @@ const CartPage = () => {
                         </div>
                     ))}
                     <h3>Total: Rs. {total}</h3>
-                    <button
-                        onClick={proceedToCheckout}
-                        style={{
-                            marginTop: '20px',
-                            padding: '10px 20px',
-                            backgroundColor: '#007bff',
-                            color: '#fff',
-                            border: 'none',
-                            borderRadius: '4px',
-                            cursor: 'pointer',
-                        }}
-                    >
-                        Proceed to Checkout
-                    </button>
+
+                    <div style={{ marginTop: '20px', display: 'flex', gap: '16px' }}>
+                        <button
+                            onClick={() => createOrderAndNavigate('esewa')}
+                            disabled={loading}
+                            style={{
+                                padding: '10px 20px',
+                                backgroundColor: '#28a745',
+                                color: '#fff',
+                                border: 'none',
+                                borderRadius: '4px',
+                                cursor: loading ? 'not-allowed' : 'pointer',
+                            }}
+                        >
+                            {loading ? 'Processing…' : 'Checkout with eSewa'}
+                        </button>
+
+                        <button
+                            onClick={() => createOrderAndNavigate('khalti')}
+                            disabled={loading}
+                            style={{
+                                padding: '10px 20px',
+                                backgroundColor: '#6633cc',
+                                color: '#fff',
+                                border: 'none',
+                                borderRadius: '4px',
+                                cursor: loading ? 'not-allowed' : 'pointer',
+                            }}
+                        >
+                            {loading ? 'Processing…' : 'Checkout with Khalti'}
+                        </button>
+                    </div>
                 </div>
             )}
         </div>

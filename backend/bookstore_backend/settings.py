@@ -155,3 +155,11 @@ REST_FRAMEWORK = {
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# Khalti sandbox (UAT) keys — copy exactly from test-admin.khalti.com → API Keys → Sandbox
+KHALTI_SECRET_KEY = "76ad4d93f88649bbb9e6e057d928df2b"
+KHALTI_PUBLIC_KEY = "9ab28ddf77854b8e9e0f0fa46355bff2"
+
+# Khalti sandbox endpoints
+KHALTI_INITIATE_URL = "https://a.khalti.com/api/v2/epayment/initiate/"
+KHALTI_LOOKUP_URL   = "https://a.khalti.com/api/v2/epayment/lookup/"

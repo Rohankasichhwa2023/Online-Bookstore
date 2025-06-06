@@ -20,6 +20,9 @@ import CheckoutPage from './pages/CheckoutPage';
 import PaymentSuccess from './pages/PaymentSuccess';
 import PaymentFail from './pages/PaymentFail';
 import PollPaymentStatus from './pages/PollPaymentStatus';
+import OrderSuccessPage from './pages/OrderSuccessPage';
+import OrderFailPage from './pages/OrderFailPage';
+import OrdersPage from './pages/OrdersPage';
 
 
 function App() {
@@ -44,6 +47,9 @@ function App() {
             <Route path="/payment-fail/:id" element={<PaymentFail />} />
             <Route path="/orders/status/:id" element={<PollPaymentStatus />} />
             <Route path="/favorites" element={<FavoritesPage />} />
+            <Route path="/orders" element={<OrdersPage />} />
+            <Route path="/order-success/:orderId" element={<OrderSuccessPage />} />
+            <Route path="/order-fail/:orderId" element={<OrderFailPage />} />
           </Routes>
         </FavoritesProvider>
       </CartProvider>

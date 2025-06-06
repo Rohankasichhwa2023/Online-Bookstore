@@ -11,6 +11,8 @@ const AllBooks = () => {
     const [books, setBooks] = useState([]);
     const { updateCart } = useCart();
     const { updateFavorites } = useFavorites();
+    const [favoriteBookIds, setFavoriteBookIds] = useState([]);
+
 
     useEffect(() => {
         const userData = JSON.parse(localStorage.getItem('user'));
@@ -19,6 +21,7 @@ const AllBooks = () => {
             return;
         }
         fetchBooks();
+        fetchFavorites();
         updateCart();
         updateFavorites();
     }, [navigate, updateCart, updateFavorites]);
@@ -79,22 +82,32 @@ const AllBooks = () => {
 
     const handleAddToFavorite = async (bookId) => {
         try {
+            // Optimistically update UI
+            setFavoriteBookIds((prev) =>
+                prev.includes(bookId)
+                    ? prev.filter((id) => id !== bookId)
+                    : [...prev, bookId]
+            );
+
+            // Send request to backend
             const res = await axios.post('http://localhost:8000/books/add-favorite/', {
                 user_id: User.id,
                 book_id: bookId,
             });
+
+            // Optional: delay to allow backend to finish processing before refetching
+            setTimeout(() => {
+                fetchFavorites(); // sync actual state after backend updates
+            }, 300); // 300ms delay
+
             await updateFavorites();
             alert(res.data.message || 'Book favorited.');
         } catch (err) {
             console.error('Error adding to favorites:', err);
-            if (err.response && err.response.data) {
-                const detail = err.response.data.error || JSON.stringify(err.response.data);
-                alert(`Could not add to favorites: ${detail}`);
-            } else {
-                alert('Could not add to favorites.');
-            }
+            alert('Could not add to favorites.');
         }
     };
+
 
     const renderStars = (averageRating) => {
         const fullStars = Math.floor(averageRating);
@@ -113,6 +126,19 @@ const AllBooks = () => {
             </>
         );
     };
+
+    const fetchFavorites = async () => {
+        try {
+            const res = await axios.get('http://localhost:8000/books/list-favorites/', {
+                params: { user_id: User.id }
+            });
+            const favoriteIds = res.data.map(fav => fav.book_id);
+            setFavoriteBookIds(favoriteIds);  // THIS must reflect accurate state
+        } catch (err) {
+            console.error('Error fetching favorites:', err);
+        }
+    };
+
 
     if (!User) return null;
 
@@ -169,8 +195,17 @@ const AllBooks = () => {
                                     handleAddToFavorite(book.id);
                                 }}
                             >
-                                <img src="/icons/add-to-fav.png" className="icon" alt="♡" />
+                                <img
+                                    src={
+                                        favoriteBookIds.includes(book.id)
+                                            ? '/icons/add-to-fav-filled.png'
+                                            : '/icons/add-to-fav.png'
+                                    }
+                                    className="icon"
+                                    alt="♡"
+                                />
                             </button>
+
                         </div>
                         <div>
                             <button

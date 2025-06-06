@@ -24,13 +24,16 @@ function Navbar() {
                 <div className={`nav-item ${isActive("/shop") ? "active" : ""}`}>
                     <Link to="/shop">Shop</Link>
                 </div>
+                <div className={`nav-item ${isActive("/orders") ? "active" : ""}`}>
+                    <Link to="/orders">Orders</Link>
+                </div>
                 <div className={`nav-item ${isActive("/contact") ? "active" : ""}`}>
-                    <Link to="/request-book">Request&nbsp;&nbsp;book</Link>
+                    <Link to="/request-book">Request  book</Link>
                 </div>
             </div>
             <div className="navbar-right">
-                <CartButton/>
-                <Favorite/>
+                <CartButton />
+                <Favorite />
                 <img src="/icons/notification-white.png" alt="Notification" className="icon" />
                 <img src="/icons/user-white.png" alt="User" className="icon" />
             </div>
