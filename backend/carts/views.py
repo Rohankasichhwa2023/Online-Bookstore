@@ -46,7 +46,6 @@ def add_to_cart(request):
 
     return Response({'message': 'Added to cart.'}, status=status.HTTP_200_OK)
 
-
 @api_view(['GET'])
 def view_cart(request):
     user_id = request.query_params.get('user_id')
@@ -57,21 +56,32 @@ def view_cart(request):
 
     items = CartItem.objects.filter(cart=cart)
     data = []
+
     for item in items:
+        book = item.book
+        genres = book.bookgenre_set.all().values_list('genre__name', flat=True)  # list of genre names
+
         data.append({
             'id': item.id,
             'book': {
-                'id': item.book.id,
-                'title': item.book.title,
-                'cover_image': request.build_absolute_uri(item.book.cover_image.url)
-                    if item.book.cover_image else None,
+                'id': book.id,
+                'title': book.title,
+                'cover_image': request.build_absolute_uri(book.cover_image.url)
+                    if book.cover_image else None,
                 'price_snapshot': float(item.price_snapshot),
+                'author': book.author,
+                'genre': list(genres),  # list of genre names
+                'language': book.language,
+                'pages': book.pages,
+                'age_group': book.age_group,
+                'book_stock': book.stock,
+                'in_stock': book.stock > 0  # boolean based on stock
             },
             'quantity': item.quantity,
             'subtotal': float(item.price_snapshot) * item.quantity,
         })
-    return Response(data, status=status.HTTP_200_OK)
 
+    return Response(data, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
 def remove_from_cart(request):

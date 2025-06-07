@@ -24,7 +24,7 @@ function Navbar() {
                 <div className={`nav-item ${isActive("/shop") ? "active" : ""}`}>
                     <Link to="/shop">Shop</Link>
                 </div>
-                <div className={`nav-item ${isActive("/contact") ? "active" : ""}`}>
+                <div className={`nav-item ${isActive("/request-book") ? "active" : ""}`}>
                     <Link to="/request-book">Request book</Link>
                 </div>
             </div>

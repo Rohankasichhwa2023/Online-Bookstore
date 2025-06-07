@@ -50,7 +50,7 @@
     border-radius: 6px;
     cursor: pointer;
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 500;
     transition: background-color 0.3s, color 0.3s;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
@@ -133,7 +133,6 @@
 
 .contact-info h2 {
     font-size: 28px;
-    font-weight: 700;
     margin: 0px 0px 24px 0px;
     color: #0a3b6b;
 }
@@ -146,7 +145,6 @@
 }
 
 .contact-info p {
-    font-weight: 400;
     font-size: 16px;
     color: #0a3b6b;
     padding: 0px;

@@ -84,6 +84,7 @@
   border-radius: 6px;
   cursor: pointer;
   font-size: 14px;
+  font-weight: 500;
   transition: background-color 0.3s, color 0.3s;
   color: white;
   background-color: #0E4783;

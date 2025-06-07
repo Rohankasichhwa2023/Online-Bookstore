@@ -1,6 +1,8 @@
-// src/components/RequestBook.jsx
 import React, { useState } from 'react';
 import axios from 'axios';
+import Navbar from "../components/Navbar.jsx";
+import Footer from "../components/Footer.jsx";
+import "../css/RequestBook.css";
 
 export default function RequestBook() {
     const [user] = useState(() => JSON.parse(localStorage.getItem('user')));
@@ -26,7 +28,7 @@ export default function RequestBook() {
             };
             const res = await axios.post('http://localhost:8000/books/request-book/', payload);
             if (res.status === 201) {
-                setMessage('Request submitted successfully.');
+                setMessage('Thank you. We will get to your request soon!');
                 setFormData({ book_name: '', book_author: '', language: '' });
             }
         } catch (err) {
@@ -36,38 +38,53 @@ export default function RequestBook() {
     };
 
     return (
-        <div>
-            <h2>Request a Book</h2>
-            {message && <p>{message}</p>}
-            <form onSubmit={handleSubmit}>
-                <label>
-                    Book Name
-                    <input
-                        name="book_name"
-                        value={formData.book_name}
-                        onChange={handleChange}
-                        required
-                    />
-                </label>
-                <label>
-                    Author (optional)
-                    <input
-                        name="book_author"
-                        value={formData.book_author}
-                        onChange={handleChange}
-                    />
-                </label>
-                <label>
-                    Language (optional)
-                    <input
-                        name="language"
-                        value={formData.language}
-                        onChange={handleChange}
-                    />
-                </label>
-                <button type="submit">Submit Request</button>
-            </form>
-        </div>
+        <>
+            <Navbar/>
+            <div className="request-book-container">
+                <h1>Let us know what book you want in store!</h1>
+                <p>{message || '\u00A0'}</p>
+                <div className="form-box">
+                    <form onSubmit={handleSubmit}>
+                        <div className="text-field">
+                            <div className="form-group">
+                                <label>Book Name</label>
+                                <input
+                                    name="book_name"
+                                    value={formData.book_name}
+                                    onChange={handleChange}
+                                    placeholder="Enter book name"
+                                    required
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>Author Name</label>
+                                <input
+                                    name="book_author"
+                                    value={formData.book_author}
+                                    onChange={handleChange}
+                                    placeholder="Enter author's name"
+                                />
+                            </div>
+                            
+                            <div className="form-group">
+                                <label>Language</label>
+                                <input
+                                    name="language"
+                                    value={formData.language}
+                                    onChange={handleChange}
+                                    placeholder="Enter language preference"
+                                />
+                            </div>
+                            <div style={{ marginTop: '1em' }}>
+                                <button type="submit" className="submit-button">Submit Request</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <Footer/>
+        </>
     );
 }
 

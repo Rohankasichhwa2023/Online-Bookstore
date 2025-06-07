@@ -7,7 +7,7 @@
   background-color: #0E4783;
   height: 52px;
   box-sizing: border-box;
-  padding: 0px 40px;
+  padding: 0px 60px;
   z-index: 1000;
 }
 
@@ -64,7 +64,7 @@
 .navbar-right {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 28px;
 }
 
 .icon {

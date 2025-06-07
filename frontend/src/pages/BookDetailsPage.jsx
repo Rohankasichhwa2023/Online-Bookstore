@@ -211,7 +211,7 @@ const BookDetailsPage = () => {
                                 </h2>
                                 <div id="collapseOne" className="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                                     <div className="accordion-body1">
-                                        <p style={{textAlign: "left", lineHeight: "1.5", marginBottom: "8px"}}>{book.description}</p>
+                                        <p style={{textAlign: "left", lineHeight: "1.5", margin: "0px 0px 12px 0px", fontSize: "16px"}}>{book.description}</p>
                                         <div className="book-info">
                                             <h3>Genre</h3>
                                             <p>{genres.map((g) => g.name).join(', ')}</p>
@@ -247,7 +247,7 @@ const BookDetailsPage = () => {
 
                                         <div className="down-one">
                                             <p className="stock" style={{ color: book.stock > 0 ? "#4CAF50" : "#E74242" }}>{book.stock>0?"in stock":"out of stock"}</p>
-                                            <button onClick={handleAddToCart}><div>Add to cart</div><div><img src="/icons/add-to-cart-white.png" className="icon"/></div></button>
+                                            <button onClick={handleAddToCart} disabled={book.stock==0}><div>Add to cart</div><div><img src="/icons/add-to-cart-white.png" className="icon"/></div></button>
                                         </div>
                                         
                                     </div>

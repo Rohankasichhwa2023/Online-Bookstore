@@ -214,6 +214,7 @@ const AllBooks = () => {
                                     e.stopPropagation();
                                     handleAddToCart(book.id);
                                 }}
+                                disabled={book.stock==0}
                             >
                                 Add to Cart
                                 <div>

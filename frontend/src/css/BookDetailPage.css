@@ -59,7 +59,7 @@
 
 .author-name{
     text-align: left;
-    font-size: 14px;
+    font-size: 16px;
     color: #6d6d6d;
     margin: 0px 0px 12px 0px;
 }
@@ -86,22 +86,19 @@
 .book-info{
     display: flex;
     align-items: center;
-    line-height: 2;
-}
-
-.book-info h3, p{
-    font-size: 16px;
-    margin: 0px;
+    line-height: 1.5;
 }
 
 .book-info h3{
+    font-size: 16px;
+    margin: 0px;
     color: black;
     width:100px;
 }
 
 .book-info p{
+    font-size: 14px;
     color: #6d6d6d;
-    opacity: (0.5);
 }
 
 .up-one, .down-one{
@@ -137,6 +134,10 @@
     transition: background-color 0.3s, color 0.3s;
     color: white;
     background-color: #0E4783;
+}
+
+.down-one button:hover{
+    transform: scale(1.02);
 }
 
 .icon{

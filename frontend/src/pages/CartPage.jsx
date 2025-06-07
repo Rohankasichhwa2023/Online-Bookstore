@@ -1,9 +1,10 @@
-// src/pages/CartPage.jsx
-
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import Navbar from "../components/Navbar.jsx";
+import Footer from "../components/Footer.jsx";
+import '../css/CartPage.css';
 
 const CartPage = () => {
     const navigate = useNavigate();
@@ -18,7 +19,7 @@ const CartPage = () => {
             return;
         }
         fetchCart();
-        updateCart(); // immediately fetch the global count for this user
+        updateCart();
     }, [navigate, user, updateCart]);
 
     const fetchCart = async () => {
@@ -46,7 +47,7 @@ const CartPage = () => {
                 params: { user_id: user.id },
             });
             setItems(res.data);
-            await updateCart(); // update global count now that one was removed
+            await updateCart();
         } catch (err) {
             console.error('Error removing item:', err);
         }
@@ -66,7 +67,7 @@ const CartPage = () => {
                     : it
             );
             setItems(updatedItems);
-            await updateCart(); // update global count (in case newQty = 0 removes it)
+            await updateCart();
         } catch (err) {
             console.error('Error updating quantity:', err);
         }
@@ -75,7 +76,6 @@ const CartPage = () => {
     const createOrderAndNavigate = async (paymentMethod) => {
         setLoading(true);
         try {
-            // 1) Create order with specified payment method
             const res = await axios.post(
                 'http://localhost:8000/orders/create/',
                 {
@@ -89,8 +89,6 @@ const CartPage = () => {
                 }
             );
             const { order_id, total_amount } = res.data;
-
-            // 2) Navigate to Checkout page, passing orderId, totalAmount, and paymentMethod
             navigate('/checkout', {
                 state: {
                     orderId: order_id,
@@ -107,107 +105,74 @@ const CartPage = () => {
     };
 
     return (
-        <div style={{ padding: '20px' }}>
-            <h2>{user.username}’s Cart</h2>
-
-            {items.length === 0 ? (
-                <p>Your cart is empty.</p>
-            ) : (
-                <div>
-                    {items.map((it) => (
-                        <div
-                            key={it.id}
-                            style={{
-                                border: '1px solid #ccc',
-                                borderRadius: '4px',
-                                marginBottom: '10px',
-                                padding: '10px',
-                                display: 'flex',
-                                gap: '16px',
-                            }}
-                        >
-                            <img
-                                src={it.book.cover_image}
-                                alt={it.book.title}
-                                style={{
-                                    width: '80px',
-                                    height: '100px',
-                                    objectFit: 'cover',
-                                }}
-                            />
-                            <div style={{ flexGrow: 1 }}>
-                                <h4>{it.book.title}</h4>
-                                <p>
-                                    <strong>Qty:</strong> {it.quantity}
-                                </p>
-                                <p>
-                                    <strong>Unit Price:</strong> Rs. {it.book.price_snapshot}
-                                </p>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                    <button
-                                        onClick={() => changeQuantity(it.book.id, it.quantity - 1)}
-                                        disabled={it.quantity <= 1}
-                                    >
-                                        –
-                                    </button>
-                                    <span>{it.quantity}</span>
-                                    <button onClick={() => changeQuantity(it.book.id, it.quantity + 1)}>+</button>
+        <>
+            <Navbar/>
+            <div className="cart-container">
+                {items.length === 0 ? (
+                    <div className="empty-cart">
+                        <p>Your cart is empty.</p>
+                        <button className="explore-books-btn" onClick={() => navigate('/shop')}><div>Explore books</div><div><img src="/icons/explore-white.png" className="icon-explore" /></div></button>                    
+                    </div>
+                ) : (
+                    <div className="filled-cart">
+                        <div className="left-side">
+                            <h1 style={{margin: "0px", padding: "0px 0px 24px 0px", fontSize: "24px", borderBottom: "2px solid #ccc"}}>My Bag</h1>
+                            {items.map((it) => (
+                                <div key={it.id} className="cart-item">
+                                    <img src={it.book.cover_image} alt={it.book.title} className="cover"/>
+                                    <div className="cart-details">
+                                        <div>
+                                            <p className="price">Rs {it.subtotal.toFixed(2)}</p>
+                                            <p className="title">{it.book.title}</p>
+                                            <p className="author">{it.book.author}</p>
+                                            <div className="book-info"><h3>Genre</h3><p>{(it.book.genre || []).join(', ')}</p></div>
+                                            <div className="book-info"><h3>Language</h3><p>{it.book.language}</p></div>
+                                            <div className="book-info"><h3>Pages</h3><p>{it.book.pages}</p></div>
+                                            <div className="book-info"><h3>Age Group</h3><p>{it.book.age_group}</p></div>
+                                                                                           
+                                            <p style={{ color: it.book.in_stock ? '#4CAF50' : '#E74242', marginTop: "16px"}}>
+                                                {it.book.in_stock ? 'In Stock' : 'Out of Stock'} <span>({it.book.book_stock})</span>
+                                            </p>
+                                            <div className="cart-quantity">
+                                                <button className="plus-minus-btn" onClick={() => changeQuantity(it.book.id, it.quantity - 1)} disabled={it.quantity <= 1}><img src="/icons/minus.png" className="icon2"/></button>
+                                                <span>{it.book.in_stock ? it.quantity: 0}</span>
+                                                <button className="plus-minus-btn" onClick={() => changeQuantity(it.book.id, it.quantity + 1)} disabled={it.quantity >= it.book.book_stock}><img src="/icons/plus.png" className="icon2"/></button>
+                                            </div>
+                                        </div>
+                                        <button className="close-btn" onClick={() => removeFromCart(it.book.id)}><img src="/icons/close.png" className="icon2"/></button>
+                                    </div>
                                 </div>
-                                <p>
-                                    <strong>Subtotal:</strong> Rs. {it.subtotal.toFixed(2)}
-                                </p>
+                            ))}
+                        </div>
+
+                        <div className="right-side">
+                            <div className="total"><h1 style={{margin: "0px", padding: "0px 0px 24px 0px", fontSize: "24px"}}>Total</h1><p className="price">Rs {total}</p></div>
+
+                            <div className="checkout-buttons">
                                 <button
-                                    onClick={() => removeFromCart(it.book.id)}
-                                    style={{
-                                        background: 'red',
-                                        color: 'white',
-                                        border: 'none',
-                                        padding: '6px 12px',
-                                        borderRadius: '4px',
-                                        cursor: 'pointer',
-                                    }}
+                                    onClick={() => createOrderAndNavigate('esewa')}
+                                    disabled={loading}
+                                    className={`checkout-btn checkout-esewa`}
+                                    style={{ cursor: loading ? 'not-allowed' : 'pointer' }}
                                 >
-                                    Remove
+                                    {loading ? 'Processing…' : 'Checkout with eSewa'}
+                                </button>
+
+                                <button
+                                    onClick={() => createOrderAndNavigate('khalti')}
+                                    disabled={loading}
+                                    className={`checkout-btn checkout-khalti`}
+                                    style={{ cursor: loading ? 'not-allowed' : 'pointer' }}
+                                >
+                                    {loading ? 'Processing…' : 'Checkout with Khalti'}
                                 </button>
                             </div>
                         </div>
-                    ))}
-                    <h3>Total: Rs. {total}</h3>
-
-                    <div style={{ marginTop: '20px', display: 'flex', gap: '16px' }}>
-                        <button
-                            onClick={() => createOrderAndNavigate('esewa')}
-                            disabled={loading}
-                            style={{
-                                padding: '10px 20px',
-                                backgroundColor: '#28a745',
-                                color: '#fff',
-                                border: 'none',
-                                borderRadius: '4px',
-                                cursor: loading ? 'not-allowed' : 'pointer',
-                            }}
-                        >
-                            {loading ? 'Processing…' : 'Checkout with eSewa'}
-                        </button>
-
-                        <button
-                            onClick={() => createOrderAndNavigate('khalti')}
-                            disabled={loading}
-                            style={{
-                                padding: '10px 20px',
-                                backgroundColor: '#6633cc',
-                                color: '#fff',
-                                border: 'none',
-                                borderRadius: '4px',
-                                cursor: loading ? 'not-allowed' : 'pointer',
-                            }}
-                        >
-                            {loading ? 'Processing…' : 'Checkout with Khalti'}
-                        </button>
                     </div>
-                </div>
-            )}
-        </div>
+                )}
+            </div>
+            <Footer/>
+        </>
     );
 };
 

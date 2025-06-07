@@ -25,12 +25,12 @@ export default function RegisterPage() {
     };
 
     return (
-        <div className="container">
-            <div className="form-box">
+        <div className="container" style={{marginTop: "12px", marginBottom: "0px"}}>
+            <div className="form-box" style={{marginBottom: "12px"}}>
                 <form onSubmit={handleSubmit}>
                     <div className="header">
                         <img src="/logo/blue.png" alt="Best Reads Logo" height="52px" />&nbsp;
-                        <h2 style={{ fontWeight: "700", color: '#0E4783', margin: '0px' }}>best reads</h2>
+                        <h2 style={{color: '#0E4783', margin: '0px' }}>best reads</h2>
                     </div>
 
                     <p className="title">Create Account</p>
