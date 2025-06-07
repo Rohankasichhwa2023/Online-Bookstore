@@ -3,19 +3,19 @@ import "../css/TopRated.css";
 
 export default function TopRated() {
   const imageSources = [
-    "/book-images/1.jpg",
-    "/book-images/2.jpg",
-    "/book-images/3.jpg",
-    "/book-images/4.jpg",
-    "/book-images/5.jpg"
+    "/book-images/hp1.jpg",
+    "/book-images/hp2.jpg",
+    "/book-images/hp3.jpg",
+    "/book-images/hp4.jpg",
+    "/book-images/hp5.jpg"
   ];
 
   const bookNames = [
-    "Night circus",
-    "Atomic Habits",
-    "A brief History of Time",
-    "Mistborn",
-    "Becomming"
+    "Harry Potter and the Philosopher's Stone",
+    "Harry Potter and the Chamber of Secrets",
+    "Harry Potter and the Prisoner of Azkaban",
+    "Harry Potter and the Goblet of Fire",
+    "Harry Potter and the Order of the Phoenix"
   ];
 
   const [mainIndex, setMainIndex] = useState(2);
@@ -32,26 +32,26 @@ export default function TopRated() {
     <>
       {/* Display current book name */}
       <p className="book-name">{bookNames[mainIndex]}</p>
-      
+
       <div className="absolute-gallery">
-      <button className="left-right-btn2" onClick={shiftLeft}><img src="/icons/left.png"/></button>
+        <button className="left-right-btn2" onClick={shiftLeft}><img src="/icons/left.png" /></button>
 
-      {imageSources.map((src, index) => {
-        const offset = index - mainIndex;
-        if (Math.abs(offset) > 2) return null;
+        {imageSources.map((src, index) => {
+          const offset = index - mainIndex;
+          if (Math.abs(offset) > 2) return null;
 
-        return (
-          <img
-            key={index}
-            src={src}
-            alt={bookNames[index]}
-            className={`gallery-image image-${offset}`}
-          />
-        );
-      })}
+          return (
+            <img
+              key={index}
+              src={src}
+              alt={bookNames[index]}
+              className={`gallery-image image-${offset}`}
+            />
+          );
+        })}
 
-      <button className="left-right-btn2" onClick={shiftRight}><img src="/icons/right.png"/></button>
-    </div>
+        <button className="left-right-btn2" onClick={shiftRight}><img src="/icons/right.png" /></button>
+      </div>
     </>
   );
 }

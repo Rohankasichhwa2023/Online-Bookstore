@@ -4,11 +4,14 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.decorators import permission_classes
+
 from django.db.models import Avg, Count
 
 from django.contrib.auth import get_user_model
-from .models import Book, Rating, Genre, BookGenre, Favorite
-from .serializers import BookSerializer, FavoriteSerializer
+from .models import Book, Rating, Genre, BookGenre, Favorite, BookRequest
+from .serializers import BookSerializer, FavoriteSerializer, BookRequestSerializer
 
 User = get_user_model()
 
@@ -288,3 +291,19 @@ def get_book_rating(request, book_id):
         "average_rating": round(agg['avg'], 2) if agg['avg'] else 0,
         "rating_count": agg['count']
     })
+
+
+@api_view(['GET', 'POST'])
+def request_book(request):
+
+    if request.method == 'GET':
+        qs = BookRequest.objects.all().order_by('-created_at')
+        serializer = BookRequestSerializer(qs, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    # POST
+    serializer = BookRequestSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()  # status defaults to 'pending'
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

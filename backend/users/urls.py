@@ -6,7 +6,10 @@ urlpatterns = [
     path('admin-login/', views.admin_login_api, name='admin_login_api'),
     path('register/', views.register_user, name='register'),
     path('login/', views.login_user, name='login'),
-
+    path('usersInfoEdit/<int:pk>/', views.user_detail, name='user_detail'),
+    path('change-password/<int:pk>/', views.change_password, name='change_password'),
+    path('addresses/',           views.addresses_list, name='addresses_list'),
+    path('addresses/<int:pk>/',  views.address_detail,  name='address_detail'),
     # path('logout/', views.logout_user, name='logout_user'),
     # path('profile/<int:user_id>/', views.user_profile, name='user_profile'),
     

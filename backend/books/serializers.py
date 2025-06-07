@@ -1,7 +1,7 @@
 # books/serializers.py
 
 from rest_framework import serializers
-from .models import Book, Genre, BookGenre, Favorite, Rating
+from .models import Book, Genre, BookGenre, Favorite, Rating, BookRequest
 
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
@@ -48,3 +48,11 @@ class RatingSerializer(serializers.ModelSerializer):
         model = Rating
         fields = ['id', 'user', 'book', 'rating', 'created_at']
         read_only_fields = ['id', 'user', 'created_at']
+
+
+
+class BookRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BookRequest
+        fields = ['id', 'user', 'book_name', 'book_author', 'language', 'status', 'created_at']
+        read_only_fields = ['id', 'status', 'created_at']

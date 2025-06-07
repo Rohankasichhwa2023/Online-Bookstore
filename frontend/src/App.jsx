@@ -23,6 +23,10 @@ import PollPaymentStatus from './pages/PollPaymentStatus';
 import OrderSuccessPage from './pages/OrderSuccessPage';
 import OrderFailPage from './pages/OrderFailPage';
 import OrdersPage from './pages/OrdersPage';
+import RequestBook from './pages/RequestBook';
+import EditPersonalInfo from './pages/EditPersonalInfo';
+import ChangePassword from './pages/ChangePassword';
+import AddressForm from './pages/AddressForm';
 
 
 function App() {
@@ -50,6 +54,10 @@ function App() {
             <Route path="/orders" element={<OrdersPage />} />
             <Route path="/order-success/:orderId" element={<OrderSuccessPage />} />
             <Route path="/order-fail/:orderId" element={<OrderFailPage />} />
+            <Route path="/request-book" element={<RequestBook />} />
+            <Route path="/edit-personal-info" element={<EditPersonalInfo />} />
+            <Route path="/change-password" element={<ChangePassword />} />
+            <Route path="/address" element={<AddressForm />} />
           </Routes>
         </FavoritesProvider>
       </CartProvider>

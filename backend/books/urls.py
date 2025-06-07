@@ -18,4 +18,6 @@ urlpatterns = [
     # **Ratings endpoints:**
     path('rate/<int:book_id>/', views.rate_book, name='rate-book'),
     path('rating/<int:book_id>/', views.get_book_rating, name='get-book-rating'),
+
+    path('request-book/', views.request_book, name='request-book'),
 ]

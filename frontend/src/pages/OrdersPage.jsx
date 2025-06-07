@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import Navbar from '../components/Navbar';
 
 const OrdersPage = () => {
     const navigate = useNavigate();
@@ -103,6 +102,9 @@ const OrdersPage = () => {
                             <div style={orderHeaderStyle}>
                                 <div><strong>Order ID:</strong> {order.id}</div>
                                 <div><strong>Date:</strong> {new Date(order.order_date).toLocaleString()}</div>
+                                <div><strong>Shipping Address:</strong>{order.address
+                                    ? `${order.address.address_line}, ${order.address.city}`
+                                    : 'No shipping address provided'}</div>
                                 <div><strong>Status:</strong> {capitalize(order.status)}</div>
                                 <div><strong>Payment Method:</strong> {capitalize(order.payment_method)}</div>
                                 <div><strong>Payment Status:</strong> {capitalize(order.payment_status)}</div>

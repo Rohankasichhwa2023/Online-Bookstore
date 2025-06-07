@@ -20,7 +20,7 @@ from rest_framework            import status
 from carts.models    import Cart, CartItem
 from users.models    import User, Address
 from .models         import Order, OrderItem, Payment
-from .serializers import OrderSerializer
+from .serializers import OrderSerializer, AddressSerializer
 
 
 
@@ -65,17 +65,7 @@ def _verify_esewa_signature(signed_str: str, received_sig: str, secret_key: byte
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def create_order(request):
-    """
-    Expects JSON: {
-      "user_id": <int>,
-      "payment_method": "esewa"  or  "khalti"
-    }
-    - Finds the active cart for that user.
-    - Creates Order + OrderItem rows.
-    - Creates a Payment stub (method = chosen), but only generate transaction_id if eSewa.
-    - Empties the cart.
-    - Returns: { order_id, total_amount }
-    """
+
     user_id = request.data.get('user_id')
     pay_method = request.data.get('payment_method', 'esewa').lower()
 
@@ -106,6 +96,9 @@ def create_order(request):
 
     # 3) Create Order
     default_address = Address.objects.filter(user=user, is_default=True).first()
+    if not default_address:
+        default_address = Address.objects.filter(user=user).first()
+    
     order = Order.objects.create(
         user=user,
         shipping_address=default_address,
@@ -145,11 +138,12 @@ def create_order(request):
     cart_items.delete()
     cart.status = 'purchased'
     cart.save()
-
+    shipping_address_data = AddressSerializer(default_address).data if default_address else None
     return Response(
         {
             'order_id':     order.id,
-            'total_amount': format(total_amount, '.2f')
+            'total_amount': format(total_amount, '.2f'),
+            'shipping_address': shipping_address_data
         },
         status=status.HTTP_201_CREATED
     )
