@@ -4,12 +4,14 @@ function UserLogoutButton() {
     const navigate = useNavigate();
 
     const handleLogout = () => {
-        localStorage.removeItem('user'); // Remove user info
-        navigate('/login'); // Redirect to login page
+        if (window.confirm("Are you sure you want to logout?")) {
+            localStorage.removeItem('user'); // Clear user data
+            navigate('/login'); // Redirect to login
+        }
     };
 
     return (
-        <button onClick={handleLogout}>
+        <button onClick={handleLogout} className="dropdown-item">
             Logout
         </button>
     );

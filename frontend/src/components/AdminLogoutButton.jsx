@@ -4,8 +4,10 @@ function AdminLogoutButton() {
     const navigate = useNavigate();
 
     const handleLogout = () => {
-        localStorage.removeItem('adminUser'); // Remove admin info
-        navigate('/admin-login'); // Redirect to login page
+        if (window.confirm("Are you sure you want to logout?")) {
+            localStorage.removeItem('adminUser'); // Remove admin info
+            navigate('/admin-login'); // Redirect to login page
+        }
     };
 
     return (

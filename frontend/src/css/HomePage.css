@@ -38,7 +38,7 @@
     color: white;
 }
 
-.explore-books-btn {
+.explore-books-btn2 {
     display: flex;
     align-items: center;
     justify-items: center;
@@ -55,7 +55,7 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.explore-books-btn:hover {
+.explore-books-btn2:hover {
     transform: scale(1.02);
 }
 

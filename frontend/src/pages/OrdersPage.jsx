@@ -1,6 +1,9 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
+import "../css/OrdersPage.css";
 
 const OrdersPage = () => {
     const navigate = useNavigate();
@@ -92,8 +95,9 @@ const OrdersPage = () => {
 
     return (
         <>
-            <div style={{ padding: '20px' }}>
-                <h2>{user.username}’s Orders</h2>
+            <Navbar/>
+            <div className="order-history-container">
+                <h1>Order History</h1>
                 {orders.length === 0 ? (
                     <p>You have not placed any orders yet.</p>
                 ) : (
@@ -152,6 +156,7 @@ const OrdersPage = () => {
                     ))
                 )}
             </div>
+            <Footer/>
         </>
     );
 };

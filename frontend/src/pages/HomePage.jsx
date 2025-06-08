@@ -7,7 +7,6 @@ import Footer from '../components/Footer';
 import { useCart } from '../context/CartContext';
 import { useFavorites } from '../context/FavoritesContext';
 import '../css/HomePage.css';
-import UserLogoutButton from '../components/UserLogoutButton';
 
 const HomePage = () => {
     const navigate = useNavigate();
@@ -43,16 +42,6 @@ const HomePage = () => {
     return (
         <>
             <Navbar />
-
-            <div className="profile-links-section" style={{ padding: "40px 0", textAlign: "center" }}>
-                <div style={{ display: 'flex', justifyContent: 'center', gap: '30px', marginTop: '20px' }}>
-                    <Link to="/orders" className="profile-link">Order History</Link>
-                    <Link to="/edit-personal-info" className="profile-link">Edit Personal Info</Link>
-                    <Link to="/change-password" className="profile-link">Change Password</Link>
-                    <Link to="/address" className="profile-link">Manage Addresses</Link>
-                    <UserLogoutButton />
-                </div>
-            </div>
             <div className="homepage-container">
                 <div className="frame1" style={{ backgroundImage: "url('/bg-image/1.png')" }}>
                     <div className="frame1-content">
@@ -61,7 +50,7 @@ const HomePage = () => {
                             <p>Not sure what to read next? Explore books from our shop.</p>
                         </div>
                         <div>
-                            <button className="explore-books-btn" onClick={() => navigate('/shop')}><div>Explore books</div><div><img src="/icons/explore.png" className="icon-explore" /></div></button>
+                            <button className="explore-books-btn2" onClick={() => navigate('/shop')}><div>Explore books</div><div><img src="/icons/explore.png" className="icon-explore" /></div></button>
                         </div>
                     </div>
                 </div>

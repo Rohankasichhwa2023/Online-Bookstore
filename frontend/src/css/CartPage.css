@@ -3,7 +3,8 @@
 }
 
 .empty-cart {
-    margin-bottom: 402px;
+    padding-top: 182px;
+    margin-bottom: 220px;
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -88,6 +89,7 @@
     padding: 0px 0px 24px 0px;
     display: flex;
     gap: 24px;
+    cursor: pointer;
 }
 
 .cart-item:last-child {

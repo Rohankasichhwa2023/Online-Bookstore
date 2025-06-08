@@ -73,3 +73,9 @@
     object-fit: contain;
     cursor: pointer;
 }
+
+.user-btn{
+    border: none;
+    background-color: #0E4783;
+    padding: 0px;
+}

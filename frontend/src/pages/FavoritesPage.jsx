@@ -1,36 +1,56 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import UserLogoutButton from '../components/UserLogoutButton';
-import CartButton from '../components/CartButton';
-import FavoriteButton from '../components/Favorite';
 import { useFavorites } from '../context/FavoritesContext';
-import '../css/FavoritesPage.css';
+import { useCart } from '../context/CartContext';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
+import '../css/AllBooks.css';
 
 const FavoritesPage = () => {
     const navigate = useNavigate();
     const [user] = useState(() => JSON.parse(localStorage.getItem('user')));
     const [favorites, setFavorites] = useState([]);
     const { updateFavorites } = useFavorites();
+    const { updateCart } = useCart();
 
     useEffect(() => {
         if (!user) {
             navigate('/login');
             return;
         }
-        // Fetch the list of favorite books
         fetchFavorites();
-
-        // Also re-fetch the favorites count in context
         updateFavorites();
-    }, [navigate, user, updateFavorites]);
+        updateCart();
+    }, [navigate, user, updateFavorites, updateCart]);
 
     const fetchFavorites = async () => {
         try {
             const res = await axios.get('http://localhost:8000/books/list-favorites/', {
                 params: { user_id: user.id }
             });
-            setFavorites(res.data);
+
+            // Also fetch ratings for each favorite
+            const favoritesWithRatings = await Promise.all(
+                res.data.map(async (book) => {
+                    try {
+                        const ratingRes = await axios.get(`http://localhost:8000/books/rating/${book.id}/`);
+                        return {
+                            ...book,
+                            average_rating: ratingRes.data.average_rating,
+                            rating_count: ratingRes.data.rating_count,
+                        };
+                    } catch {
+                        return {
+                            ...book,
+                            average_rating: 0,
+                            rating_count: 0,
+                        };
+                    }
+                })
+            );
+
+            setFavorites(favoritesWithRatings);
         } catch (err) {
             console.error('Error fetching favorites:', err);
         }
@@ -43,55 +63,134 @@ const FavoritesPage = () => {
                 book_id: bookId
             });
             alert(res.data.message || 'Removed from favorites.');
-            fetchFavorites();       // update this page’s list
-            await updateFavorites(); // update global count
+            fetchFavorites();
+            await updateFavorites();
         } catch (err) {
             console.error('Error removing favorite:', err);
-            if (err.response && err.response.data) {
-                const detail = err.response.data.error || JSON.stringify(err.response.data);
-                alert(`Could not remove favorite: ${detail}`);
-            } else {
-                alert('Could not remove favorite.');
-            }
+            alert('Could not remove favorite.');
         }
+    };
+
+    const handleAddToCart = async (bookId) => {
+        try {
+            await axios.post('http://localhost:8000/carts/add-to-cart/', {
+                user_id: user.id,
+                book_id: bookId,
+                quantity: 1,
+            });
+            await updateCart();
+            alert('Book added to cart.');
+        } catch (err) {
+            console.error('Could not add to cart:', err);
+            alert('Could not add to cart.');
+        }
+    };
+
+    const renderStars = (averageRating) => {
+        const fullStars = Math.floor(averageRating);
+        const halfStar = averageRating - fullStars >= 0.5;
+        const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+
+        return (
+            <>
+                {Array.from({ length: fullStars }, (_, i) => (
+                    <img key={`full-${i}`} src="/icons/star.png" className="icon" alt="★" />
+                ))}
+                {halfStar && <img src="/icons/star-half.png" className="icon" alt="☆" />}
+                {Array.from({ length: emptyStars }, (_, i) => (
+                    <img key={`empty-${i}`} src="/icons/star-empty.png" className="icon" alt="☆" />
+                ))}
+            </>
+        );
     };
 
     if (!user) return null;
 
     return (
-        <div className="favorites-container">
-            <h2>{user.username}’s Favorites</h2>
-            <UserLogoutButton />
-            <CartButton />
-            <FavoriteButton />
+        <>
+            <Navbar/>
+            <div className="favorite-container">                
+                {favorites.length === 0 ? (
+                    <div className="empty-cart">
+                        <p>You have not favorited any books yet.</p>
+                        <button className="explore-books-btn" onClick={() => navigate('/shop')}><div>Explore books</div><div><img src="/icons/explore-white.png" className="icon-explore" /></div></button>                    
+                    </div> 
+                ) : (   
+                    <div>           
+                        <h1 style={{textAlign: "center"}}>Your Favorites</h1>      
+                        <div className="book-grid">                            
+                            {favorites.map((book) => (
+                                <div className="book-card" key={book.id} onClick={() => navigate(`/book/${book.id}`)}>
 
-            {favorites.length === 0 ? (
-                <p>You have not favorited any books yet.</p>
-            ) : (
-                <div className="favorites-grid">
-                    {favorites.map((book) => (
-                        <div className="favorite-card" key={book.id}>
-                            {book.cover_image && (
-                                <img
-                                    src={book.cover_image}
-                                    alt={book.title}
-                                    className="favorite-cover"
-                                />
-                            )}
-                            <h4>{book.title}</h4>
-                            <p><strong>Author:</strong> {book.author}</p>
-                            <p><strong>Price:</strong> Rs. {book.price}</p>
-                            <button
-                                onClick={() => handleRemoveFavorite(book.id)}
-                                className="btn remove-btn"
-                            >
-                                Remove from Favorites
-                            </button>
+                                    <div>
+                                        {book.cover_image && (
+                                            <img
+                                                src={book.cover_image}
+                                                alt={book.title}
+                                                className="book-cover"
+                                            />
+                                        )}
+                                    </div>
+
+                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                                        <div style={{ display: 'flex', gap: '4px' }}>
+                                            {renderStars(book.average_rating || 0)}
+                                        </div>
+                                        <span style={{ fontSize: '14px', color: '#6d6d6d' }}>
+                                            ({book.rating_count || 0})
+                                        </span>
+                                    </div>
+
+                                    <div className="book-details2">
+                                        <p className="book-title2">{book.title}</p>
+                                        <p className="book-author2">{book.author}</p>
+                                        <p className="book-price2">Rs {book.price}</p>
+                                    </div>
+
+                                    <div className="book-footer">
+                                        <div>
+                                            <button
+                                                className="btn-favorite"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleRemoveFavorite(book.id);
+                                                }}
+                                            >
+                                                <img
+                                                    src="/icons/add-to-fav-filled.png"
+                                                    className="icon"
+                                                    alt="Remove"
+                                                />
+                                            </button>
+                                        </div>
+                                        <div>
+                                            <button
+                                                className="btn-add-cart"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleAddToCart(book.id);
+                                                }}
+                                                disabled={book.stock === 0}
+                                            >
+                                                Add to Cart
+                                                <div>
+                                                    <img
+                                                        src="/icons/add-to-cart-white.png"
+                                                        className="icon"
+                                                        alt="＋"
+                                                    />
+                                                </div>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
-                    ))}
-                </div>
-            )}
-        </div>
+                    </div>
+                )}
+            </div>
+            <Footer/>
+        </>
     );
 };
 

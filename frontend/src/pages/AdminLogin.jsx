@@ -36,7 +36,7 @@ const AdminLogin = () => {
             <h2 style={{color: '#0E4783', margin: '0px' }}>best reads</h2>
           </div>
 
-          <p className="title">Hello Admin!</p>
+          <p className="title2">Hello Admin!</p>
           <p className="error-text" aria-live="polite">{error || '\u00A0'}</p>
 
           <div className="text-field">

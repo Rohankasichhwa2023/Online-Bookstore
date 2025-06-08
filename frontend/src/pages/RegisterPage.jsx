@@ -33,7 +33,7 @@ export default function RegisterPage() {
                         <h2 style={{color: '#0E4783', margin: '0px' }}>best reads</h2>
                     </div>
 
-                    <p className="title">Create Account</p>
+                    <p className="title2">Create Account</p>
                     <p className="error-text" aria-live="polite">{message || '\u00A0'}</p>
 
                     <div className="text-field">

@@ -1,7 +1,8 @@
-// src/pages/EditPersonalInfo.jsx
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
+import '../css/LoginPage.css';
 
 export default function EditPersonalInfo() {
     // assume localStorage.user = { id, username, email, is_admin, ... }
@@ -55,39 +56,54 @@ export default function EditPersonalInfo() {
     };
 
     return (
-        <div>
-            <h2>Edit Personal Info</h2>
-            {message && <p>{message}</p>}
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>Username</label><br />
-                    <input
-                        name="username"
-                        value={formData.username}
-                        onChange={handleChange}
-                        required
-                    />
+        <>
+            <Navbar/>
+            <div style={{paddingTop: "140px", paddingBottom: "90px", display: "flex", justifyContent: "center"}}>
+                <div className="form-box">
+                    <form onSubmit={handleSubmit}>
+
+                        <p className="title2">Edit Personal Info</p>
+                        <p className="error-text" aria-live="polite">{message || '\u00A0'}</p>
+
+                        <div className="text-field">
+                            <div className="form-group">
+                                <label>Username</label>
+                                <input
+                                    name="username"
+                                    value={formData.username}
+                                    onChange={handleChange}
+                                    placeholder="Enter username"
+                                    required
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>Email</label>
+                                <input
+                                    name="email"
+                                    type="email"
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    placeholder="Enter email"
+                                    required
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>Phone number</label>
+                                <input
+                                    name="phone"
+                                    value={formData.phone}
+                                    onChange={handleChange}
+                                    placeholder="Enter phone number"
+                                />
+                            </div>
+                        </div>
+                        <div style={{ marginTop: '1em' }}>
+                            <button type="submit" className="submit-button">Update Personal Info</button>
+                        </div>
+                    </form>
                 </div>
-                <div>
-                    <label>Email</label><br />
-                    <input
-                        name="email"
-                        type="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        required
-                    />
-                </div>
-                <div>
-                    <label>Phone (optional)</label><br />
-                    <input
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleChange}
-                    />
-                </div>
-                <button type="submit">Update</button>
-            </form>
-        </div>
+            </div>
+            <Footer/>
+        </>
     );
 }

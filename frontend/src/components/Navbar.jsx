@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import '../css/Navbar.css';
 import CartButton from './CartButton';
 import Favorite from './Favorite';
+import UserLogoutButton from '../components/UserLogoutButton';
 
 function Navbar() {
     const location = useLocation();
@@ -32,7 +33,18 @@ function Navbar() {
                 <CartButton />
                 <Favorite />
                 <img src="/icons/notification-white.png" alt="Notification" className="icon" />
-                <img src="/icons/user-white.png" alt="User" className="icon" />
+                <div className="btn-group">
+                    <button className="user-btn" type="button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
+                        <img src="/icons/user-white.png" alt="User" className="icon" />  
+                    </button>
+                    <ul className="dropdown-menu dropdown-menu-lg-end">
+                        <li><Link to="/orders" className="dropdown-item">Order History</Link></li>
+                        <li><Link to="/edit-personal-info" className="dropdown-item">Edit Personal Info</Link></li>
+                        <li><Link to="/address" className="dropdown-item">Manage Address</Link></li>
+                        <li><Link to="/change-password" className="dropdown-item">Change Password</Link></li>                        
+                        <li><UserLogoutButton /></li>
+                    </ul>
+                </div>
             </div>
         </div>
     );

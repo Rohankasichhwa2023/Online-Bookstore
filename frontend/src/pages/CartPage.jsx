@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
-import Navbar from "../components/Navbar.jsx";
-import Footer from "../components/Footer.jsx";
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 import '../css/CartPage.css';
 
 const CartPage = () => {
@@ -118,10 +118,10 @@ const CartPage = () => {
                         <div className="left-side">
                             <h1 style={{margin: "0px", padding: "0px 0px 24px 0px", fontSize: "24px", borderBottom: "2px solid #ccc"}}>My Bag</h1>
                             {items.map((it) => (
-                                <div key={it.id} className="cart-item">
-                                    <img src={it.book.cover_image} alt={it.book.title} className="cover"/>
+                                <div key={it.id} className="cart-item">            
+                                    <img src={it.book.cover_image} alt={it.book.title} className="cover" onClick={() => navigate(`/book/${it.book.id}`)}/>
                                     <div className="cart-details">
-                                        <div>
+                                        <div onClick={() => navigate(`/book/${it.book.id}`)}>
                                             <p className="price">Rs {it.subtotal.toFixed(2)}</p>
                                             <p className="title">{it.book.title}</p>
                                             <p className="author">{it.book.author}</p>
@@ -129,7 +129,7 @@ const CartPage = () => {
                                             <div className="book-info"><h3>Language</h3><p>{it.book.language}</p></div>
                                             <div className="book-info"><h3>Pages</h3><p>{it.book.pages}</p></div>
                                             <div className="book-info"><h3>Age Group</h3><p>{it.book.age_group}</p></div>
-                                                                                           
+                                                                                        
                                             <p style={{ color: it.book.in_stock ? '#4CAF50' : '#E74242', marginTop: "16px"}}>
                                                 {it.book.in_stock ? 'In Stock' : 'Out of Stock'} <span>({it.book.book_stock})</span>
                                             </p>

@@ -1,5 +1,9 @@
-.book-grid {
-  padding: 0px 68px 68px 68px;
+.favorite-container{
+    padding: 92px 0px 0px 0px;
+}
+
+.book-grid{
+  padding: 0px 208px 42px 208px;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap:24px;
@@ -16,6 +20,8 @@
   border-radius: 8px;
   background-color: #fff;
   cursor: pointer;
+  justify-self: center;
+  margin-bottom: 24px;
 }
 
 .book-cover {

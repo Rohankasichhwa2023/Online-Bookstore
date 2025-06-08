@@ -13,7 +13,6 @@ const AllBooks = () => {
     const { updateFavorites } = useFavorites();
     const [favoriteBookIds, setFavoriteBookIds] = useState([]);
 
-
     useEffect(() => {
         const userData = JSON.parse(localStorage.getItem('user'));
         if (!userData) {

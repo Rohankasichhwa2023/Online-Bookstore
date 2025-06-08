@@ -30,6 +30,7 @@ export default function BestSellers() {
 
     return (
         <>
+            <h1 style={{marginBottom: "14px"}}>Best Sellers</h1>
             {/* Display current book name */}
             <p className="best-seller-name">{bookNames[mainIndex]}</p>
 

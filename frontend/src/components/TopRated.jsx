@@ -30,6 +30,7 @@ export default function TopRated() {
 
   return (
     <>
+      <h1 style={{marginBottom: "20px"}}>Top Rated</h1>
       {/* Display current book name */}
       <p className="book-name">{bookNames[mainIndex]}</p>
 

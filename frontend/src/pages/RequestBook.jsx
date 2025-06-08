@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import Navbar from "../components/Navbar.jsx";
-import Footer from "../components/Footer.jsx";
-import "../css/RequestBook.css";
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
+import "../css/LoginPage.css";
 
 export default function RequestBook() {
     const [user] = useState(() => JSON.parse(localStorage.getItem('user')));
@@ -40,11 +40,13 @@ export default function RequestBook() {
     return (
         <>
             <Navbar/>
-            <div className="request-book-container">
-                <h1>Let us know what book you want in store!</h1>
-                <p>{message || '\u00A0'}</p>
+            <div style={{paddingTop: "140px", paddingBottom: "90px", display: "flex", justifyContent: "center"}}>                
                 <div className="form-box">
                     <form onSubmit={handleSubmit}>
+
+                        <p className="title2">Request Book</p>
+                        <p className="error-text" aria-live="polite">{message || '\u00A0'}</p>
+                        
                         <div className="text-field">
                             <div className="form-group">
                                 <label>Book Name</label>
