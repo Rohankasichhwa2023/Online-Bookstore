@@ -1,8 +1,8 @@
-.cart-container{
-    padding: 92px 0px 0px 0px;
+.cart-container {
+    padding: 92px 40px 0px 40px;
 }
 
-.empty-cart{
+.empty-cart {
     margin-bottom: 402px;
     display: flex;
     flex-direction: column;
@@ -10,7 +10,7 @@
     align-items: center;
 }
 
-.empty-cart p{
+.empty-cart p {
     margin: 0px;
     font-size: 16px;
 }
@@ -66,14 +66,14 @@
     background-color: #6633cc;
 }
 
-.filled-cart{
+.filled-cart {
     display: flex;
     justify-content: center;
     gap: 40px;
     margin-bottom: 40px;
 }
 
-.left-side{
+.left-side {
     display: flex;
     flex-direction: column;
     gap: 24px;
@@ -83,14 +83,14 @@
     min-width: 600px;
 }
 
-.cart-item{
+.cart-item {
     border-bottom: 2px solid #ccc;
-    padding: 0px 24px 24px 0px;
+    padding: 0px 0px 24px 0px;
     display: flex;
     gap: 24px;
 }
 
-.cart-item:last-child{
+.cart-item:last-child {
     border-bottom: none;
     padding-bottom: 0px;
 }
@@ -108,32 +108,34 @@
     width: 100%;
 }
 
-.price, .title, .author{
+.price,
+.title,
+.author {
     text-align: left;
     padding: 0px;
 }
 
-.price{
+.price {
     margin: 0px 0px 12px 0px;
     font-size: 20px;
-    font-weight: 700;     
+    font-weight: 700;
 }
 
-.title{
+.title {
     margin: 0px 0px 4px 0px;
-    font-size: 20px; 
+    font-size: 20px;
 }
 
-.author{
+.author {
     margin: 0px 0px 12px 0px;
     color: #6d6d6d;
 }
 
-.book-info p{
-    margin:0px;
+.book-info p {
+    margin: 0px;
 }
 
-.book-info{
+.book-info {
     margin-bottom: 6px;
 }
 
@@ -145,33 +147,34 @@
 }
 
 .close-btn {
-  border: none;
-  border-radius: 50%;
-  padding: 10px;
-  width: 50px;
-  height: 50px;
-  cursor: pointer;
+    border: none;
+    border-radius: 50%;
+    padding: 10px;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
 }
 
-.close-btn:hover, .plus-minus-btn:hover {
-  background-color: #d0d0e2;
+.close-btn:hover,
+.plus-minus-btn:hover {
+    background-color: #d0d0e2;
 }
 
 .plus-minus-btn {
-  border: none;
-  border-radius: 50%;
-  padding: 10px;
-  width: 50px;
-  height: 50px;
-  cursor: pointer;
+    border: none;
+    border-radius: 50%;
+    padding: 10px;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
 }
 
-.icon2{
+.icon2 {
     height: 14px;
     width: 14px;
 }
 
-.right-side{
+.right-side {
     display: flex;
     flex-direction: column;
     gap: 0px;
@@ -182,7 +185,7 @@
     height: fit-content;
 }
 
-.total{
+.total {
     display: flex;
     justify-content: space-between;
     margin: 0px;
