@@ -59,7 +59,7 @@ const AddBookPage = () => {
         { headers: { 'Content-Type': 'multipart/form-data' } }
       );
 
-      alert('Book + genres added successfully!');
+      alert('Book added successfully!');
       navigate('/admin-dashboard');
     } catch (error) {
       console.error('Error adding book:', error.response?.data || error);

@@ -69,11 +69,16 @@
   transform: translateY(-50%);
   border: none;
   border-radius: 50%;
-  padding: 10px;
-  width: 60px;
-  height: 60px;
+  padding: 6px;   
+  width: 40px;       
+  height: 40px; 
   cursor: pointer;
   z-index: 10;
+}
+
+.left-right-btn2 img{
+  height: 24px;
+  width: 24px;
 }
 
 .left-right-btn2:first-of-type {

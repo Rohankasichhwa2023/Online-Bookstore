@@ -1,10 +1,15 @@
 .back-btn {
   border: none;
   border-radius: 50%;
-  padding: 10px;
-  width: 60px;
-  height: 60px;
+  padding: 6px;
+  width: 40px;
+  height: 40px;
   cursor: pointer;
+}
+
+.back-btn img{
+    height: 18px;
+    width: 18px;
 }
 
 .back-btn:hover {
@@ -45,7 +50,8 @@
     color: white;
     background-color: #0E4783;
     border: 1px solid #0E4783;
-    padding: 5px 10px;
+    padding: 3px 10px;
+    font-weight: 500;
 }
 
 .post-btn:hover{

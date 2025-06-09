@@ -135,7 +135,7 @@ const BookDetailsPage = () => {
             <Navbar />
             <div className="book-detail">
                 <div>
-                    <button className="back-btn" onClick={() => navigate(-1)}><img src="/icons/left.png" className="icon" alt="Back" /></button>
+                    <button className="back-btn" onClick={() => navigate(-1)}><img src="/icons/left.png" alt="Back" /></button>
                 </div>
                 <div className="book-detail-left">
                     <img src={book.cover_image} alt={book.title} className="book-image"/>
@@ -242,7 +242,7 @@ const BookDetailsPage = () => {
                                     <div className="accordion-body2">
                                     
                                         <div className="up-one">
-                                            <p><strong>Rs {book.price}</strong></p>
+                                            <p style={{padding: "0px", margin: "0px 0px 8px 0px", fontSize: "20px"}}><strong>Rs {book.price}</strong></p>
                                         </div>
 
                                         <div className="down-one">

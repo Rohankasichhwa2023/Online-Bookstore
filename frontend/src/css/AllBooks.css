@@ -13,7 +13,7 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
-  width: 260px;
+  width: 274px;
   padding: 16px;
   border: 1px solid #e0e0e0;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
@@ -37,7 +37,7 @@
 
 .book-title2 {
   text-align: left;
-  margin:0px;
+  margin:4px 0px 0px 0px;
   padding:0px;
   font-size: 16px;
   font-weight: 500;

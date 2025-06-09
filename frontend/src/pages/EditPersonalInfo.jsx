@@ -63,7 +63,7 @@ export default function EditPersonalInfo() {
                     <form onSubmit={handleSubmit}>
 
                         <p className="title2">Edit Personal Info</p>
-                        <p className="error-text" aria-live="polite">{message || '\u00A0'}</p>
+                        <p style={{fontSize: "12px"}} aria-live="polite">{message || '\u00A0'}</p>
 
                         <div className="text-field">
                             <div className="form-group">

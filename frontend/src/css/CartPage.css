@@ -44,11 +44,14 @@
 
 .checkout-buttons {
     display: flex;
-    gap: 24px;
+    flex-direction: column;
+    gap: 14px;
+    margin:0px;
+    padding:0px;
 }
 
 .checkout-btn {
-    padding: 10px 20px;
+    padding: 8px 16px;
     color: #fff;
     border: none;
     border-radius: 4px;
@@ -124,7 +127,7 @@
 }
 
 .title {
-    margin: 0px 0px 4px 0px;
+    margin: 0px 0px 2px 0px;
     font-size: 20px;
 }
 
@@ -151,9 +154,9 @@
 .close-btn {
     border: none;
     border-radius: 50%;
-    padding: 10px;
-    width: 50px;
-    height: 50px;
+    padding: 6px;
+    width: 40px;
+    height: 40px;
     cursor: pointer;
 }
 
@@ -163,17 +166,17 @@
 }
 
 .plus-minus-btn {
-    border: none;
-    border-radius: 50%;
-    padding: 10px;
-    width: 50px;
-    height: 50px;
+    border: 1px solid #ccc;
+    background-color: transparent;
+    padding: 0px;
+    width: 32px;
+    height: 32px;
     cursor: pointer;
 }
 
 .icon2 {
-    height: 14px;
-    width: 14px;
+    height: 12px;
+    width: 12px;
 }
 
 .right-side {
@@ -191,4 +194,12 @@
     display: flex;
     justify-content: space-between;
     margin: 0px;
+    padding: 24px 0px;
+}
+
+.price2{
+    margin: 0px;
+    padding: 0px;
+    font-size: 20px;
+    font-weight: 700;
 }

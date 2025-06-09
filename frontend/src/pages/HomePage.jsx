@@ -50,7 +50,7 @@ const HomePage = () => {
                             <p>Not sure what to read next? Explore books from our shop.</p>
                         </div>
                         <div>
-                            <button className="explore-books-btn2" onClick={() => navigate('/shop')}><div>Explore books</div><div><img src="/icons/explore.png" className="icon-explore" /></div></button>
+                            <button className="explore-books-btn2" onClick={() => navigate('/shop')}><div style={{fontWeight: "700"}}>Explore books</div><div><img src="/icons/explore.png" className="icon-explore" /></div></button>
                         </div>
                     </div>
                 </div>

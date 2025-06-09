@@ -37,11 +37,11 @@ export default function AddressForm() {
         setMessage('');
         axios.post('http://localhost:8000/users/addresses/', { ...form, user: userId })
             .then(() => {
-                setMessage('Address added');
+                setMessage('Address added successfully.');
                 setForm({ full_name: '', phone: '', address_line: '', city: '', postal_code: '', is_default: false });
                 fetchAddresses();
             })
-            .catch(err => setMessage(err.response?.data?.error || 'Add failed'));
+            .catch(err => setMessage(err.response?.data?.error || 'Failed to add address.'));
     };
 
     const handleDelete = id => {

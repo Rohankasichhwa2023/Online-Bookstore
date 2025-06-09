@@ -141,6 +141,13 @@ const AllBooks = () => {
 
     if (!User) return null;
 
+    function truncateTitle(title) {
+        if (title.length > 33) {
+            return title.slice(0, 33) + '...';
+        }
+        return title;
+    }
+
     return (
         <div className="book-grid">
             {books.map((book) => (
@@ -179,7 +186,7 @@ const AllBooks = () => {
 
                     {/* Book Details */}
                     <div className="book-details2">
-                        <p className="book-title2">{book.title}</p>
+                        <p className="book-title2">{truncateTitle(book.title)}</p>
                         <p className="book-author2">{book.author}</p>
                         <p className="book-price2">Rs {book.price}</p>
                     </div>

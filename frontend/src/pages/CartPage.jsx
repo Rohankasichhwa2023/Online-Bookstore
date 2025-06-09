@@ -147,7 +147,20 @@ const CartPage = () => {
                         </div>
 
                         <div className="right-side">
-                            <div className="total"><h1 style={{ margin: "0px", padding: "0px 0px 24px 0px", fontSize: "24px" }}>Total</h1><p className="price">Rs {total}</p></div>
+                            <h1 style={{ margin: "0px", padding: "0px 0px 24px 0px", fontSize: "24px", borderBottom: "2px solid #ccc" }}>Order Summary</h1>
+                            
+                            <div style={{margin: "24px 0px", width: "360px"}}>
+                                {items.map((it) => (
+                                    <div key={it.id} style={{margin:"0px", padding:"0px"}}>
+                                        <div style={{display: "flex", justifyContent: "space-between"}}>   
+                                            <p style={{padding: "0px", margin: "2px", fontSize: "16px"}}>{it.book.title}</p>
+                                            <p style={{padding: "0px", margin: "2px",  fontWeight: "500"}}>Rs {it.subtotal.toFixed(2)}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            <div className="total" style={{borderTop: "2px solid #ccc" }}><h4 style={{color: "#0E4783", margin: "0px"}}>Total</h4><p className="price2">Rs {total}</p></div>
 
                             <div className="checkout-buttons">
                                 <button
