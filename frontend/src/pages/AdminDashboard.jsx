@@ -24,6 +24,8 @@ const AdminDashboard = () => {
       <br />
       <button onClick={() => navigate('/add-book')}>Add New Book</button>
       <button onClick={() => navigate('/view-books')}>View Books</button>
+      <button onClick={() => navigate('/view-orders')}>View Orders</button>
+      <button onClick={() => navigate('/view-books-request')}>View Book Requests</button>
     </div>
   );
 };

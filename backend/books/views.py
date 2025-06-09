@@ -12,6 +12,7 @@ from django.db.models import Avg, Count
 from django.contrib.auth import get_user_model
 from .models import Book, Rating, Genre, BookGenre, Favorite, BookRequest
 from .serializers import BookSerializer, FavoriteSerializer, BookRequestSerializer
+from users.models import Notification
 
 User = get_user_model()
 
@@ -307,3 +308,49 @@ def request_book(request):
         serializer.save()  # status defaults to 'pending'
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def list_all_book_requests(request):
+    requests = BookRequest.objects.select_related('user').order_by('-created_at')
+    data = []
+    for r in requests:
+        data.append({
+            'id': r.id,
+            'user': {
+                'id': r.user.id,
+                'username': r.user.username,
+                'email': r.user.email,
+            },
+            'book_name': r.book_name,
+            'book_author': r.book_author,
+            'language': r.language,
+            'status': r.status,
+            'created_at': r.created_at,
+        })
+    return Response(data, status=status.HTTP_200_OK)
+
+
+
+@api_view(['PATCH'])
+def update_book_request_status(request, pk):
+    try:
+        book_request = BookRequest.objects.select_related('user').get(pk=pk)
+    except BookRequest.DoesNotExist:
+        return Response({"detail": "Book request not found."}, status=status.HTTP_404_NOT_FOUND)
+
+    new_status = request.data.get('status')
+    valid_statuses = dict(BookRequest.STATUS_CHOICES).keys()
+
+    if new_status not in valid_statuses:
+        return Response({"detail": "Invalid status value."}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Update status manually
+    book_request.status = new_status
+    book_request.save()
+
+    # Send notification to the user
+    message = f"Your book request for '{book_request.book_name}' is {new_status.replace('_', ' ').title()}."
+    Notification.objects.create(user=book_request.user, message=message)
+
+    return Response({"detail": "Status updated and user notified."}, status=status.HTTP_200_OK)

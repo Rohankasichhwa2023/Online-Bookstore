@@ -27,6 +27,8 @@ import RequestBook from './pages/RequestBook';
 import EditPersonalInfo from './pages/EditPersonalInfo';
 import ChangePassword from './pages/ChangePassword';
 import AddressForm from './pages/AddressForm';
+import ViewOrders from './pages/ViewOrders';
+import ViewBookRequest from './pages/ViewBookRequest';
 
 
 function App() {
@@ -39,6 +41,8 @@ function App() {
             <Route path="/admin-dashboard" element={<AdminDashboard />} />
             <Route path="/add-book" element={<AddBookPage />} />
             <Route path="/view-books" element={<ViewBookPage />} />
+            <Route path="/view-orders" element={<ViewOrders />} />
+            <Route path="/view-books-request" element={<ViewBookRequest />} />
             <Route path="/edit-book/:id" element={<EditBookPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/login" element={<LoginPage />} />

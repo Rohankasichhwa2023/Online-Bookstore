@@ -1,0 +1,33 @@
+.request-container {
+    padding: 20px;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+}
+
+.request-container h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.request-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.request-card {
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.request-card p {
+    margin: 5px 0;
+}
+
+.error {
+    color: red;
+    margin-bottom: 15px;
+}

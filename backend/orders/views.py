@@ -12,15 +12,15 @@ from django.conf import settings
 from django.shortcuts    import get_object_or_404, redirect
 from django.utils        import timezone
 
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
+from rest_framework.decorators import api_view, permission_classes, action
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response    import Response
-from rest_framework            import status
+from rest_framework            import status, viewsets
 
 from carts.models    import Cart, CartItem
-from users.models    import User, Address
+from users.models    import User, Address, Notification
 from .models         import Order, OrderItem, Payment
-from .serializers import OrderSerializer, AddressSerializer
+from .serializers import OrderSerializer, AddressSerializer, AdminOrderSerializer
 
 
 
@@ -405,3 +405,85 @@ def pay_existing_order_with_khalti(request, order_id):
         return Response(response.json(), status=response.status_code)
     except ValueError:
         return Response({'error': 'Invalid JSON from Khalti'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+@api_view(['GET'])
+def admin_list_all_orders(request):
+    user_id = request.GET.get('user_id')
+    if not user_id:
+        return Response({"detail": "user_id is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+    admin_user = get_object_or_404(User, pk=user_id)
+    if not admin_user.is_admin:
+        return Response({'detail': 'Permission denied.'}, status=status.HTTP_403_FORBIDDEN)
+
+    orders = Order.objects.all().order_by('-order_date')
+    serializer = AdminOrderSerializer(orders, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def admin_get_order(request, order_id):
+    user_id = request.GET.get('user_id')
+    if not user_id:
+        return Response({"detail": "user_id is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+    admin_user = get_object_or_404(User, pk=user_id)
+    if not admin_user.is_admin:
+        return Response({'detail': 'Permission denied.'}, status=status.HTTP_403_FORBIDDEN)
+
+    order = get_object_or_404(Order, pk=order_id)
+    serializer = AdminOrderSerializer(order)
+    return Response(serializer.data)
+
+
+@api_view(['PATCH'])
+def admin_update_status(request, order_id):
+    
+    user_id   = request.data.get('user_id')
+    new_status = request.data.get('status')
+
+    if not user_id or not new_status:
+        return Response(
+            {'detail': 'user_id and status are required.'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    # 1) Check admin privileges
+    admin = get_object_or_404(User, pk=user_id)
+    if not admin.is_admin:
+        return Response({'detail': 'Permission denied.'},
+                        status=status.HTTP_403_FORBIDDEN)
+
+    # 2) Fetch and update the order
+    order = get_object_or_404(Order, pk=order_id)
+    if new_status not in dict(order.STATUS_CHOICES):
+        return Response(
+            {'detail': f'Invalid status "{new_status}".'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    order.status = new_status
+    order.save(update_fields=['status','updated_at'])
+
+    # 3) Build notification message
+    #    Gather all product (book) names on this order
+    items = order.orderitem_set.select_related('book').all()
+    product_list = ", ".join(item.book.title for item in items)
+    message = (
+        f"Your order #{order.id} of {product_list} "
+        f"is now {new_status}."
+    )
+
+    # 4) Create the Notification record
+    Notification.objects.create(
+        user=order.user,
+        message=message
+    )
+
+    # 5) Return the updated order
+    serializer = AdminOrderSerializer(order)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+

@@ -17,7 +17,14 @@ urlpatterns = [
     # path('addresses/', views.address_list_create, name='address_list_create'),
     # path('addresses/<int:pk>/', views.address_detail, name='address_detail'),
     
-    # # Notifications
-    # path('notifications/', views.notification_list, name='notification_list'),
-    # path('notifications/<int:pk>/mark-read/', views.mark_notification_read, name='mark_notification_read'),
+    path(
+        'notifications/',
+        views.list_user_notifications,
+        name='list_user_notifications'
+    ),
+    path(
+        'notifications/<int:pk>/read/',
+        views.mark_notification_read,
+        name='mark_notification_read'
+    ),
 ]

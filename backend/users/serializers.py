@@ -1,7 +1,7 @@
 # users/serializers.py
 
 from rest_framework import serializers
-from .models import User, Address
+from .models import User, Address, Notification
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -18,3 +18,10 @@ class AddressSerializer(serializers.ModelSerializer):
             'is_default', 'created_at', 'updated_at',
         ]
         read_only_fields = ['id', 'created_at', 'updated_at']
+
+
+class NotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notification
+        fields = ('id', 'message', 'is_read', 'created_at')
+        read_only_fields = ('id', 'created_at')

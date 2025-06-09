@@ -20,4 +20,6 @@ urlpatterns = [
     path('rating/<int:book_id>/', views.get_book_rating, name='get-book-rating'),
 
     path('request-book/', views.request_book, name='request-book'),
+    path('admin/book-requests/', views.list_all_book_requests, name='list_all_book_requests'),
+    path('admin/book-requests/<int:pk>/status/', views.update_book_request_status),
 ]

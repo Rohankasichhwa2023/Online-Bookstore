@@ -2,8 +2,9 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth.hashers import check_password
-from .models import User, Address
-from .serializers import UserSerializer, AddressSerializer
+from .models import User, Address, Notification
+from .serializers import UserSerializer, AddressSerializer, NotificationSerializer
+from django.shortcuts import get_object_or_404
 
 @api_view(['POST'])
 def admin_login_api(request):
@@ -161,3 +162,42 @@ def address_detail(request, pk):
         serializer.save()
         return Response(serializer.data)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def list_user_notifications(request):
+   
+    user_id = request.GET.get('user_id')
+    if not user_id:
+        return Response(
+            {'detail': 'user_id query parameter is required.'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    user = get_object_or_404(User, pk=user_id)
+    qs = Notification.objects.filter(user=user).order_by('-created_at')
+    serializer = NotificationSerializer(qs, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['PATCH'])
+def mark_notification_read(request, pk):
+    """
+    PATCH /notifications/<pk>/read/
+    Body JSON: { "user_id": <user_id> }
+    Marks that single notification as read.
+    """
+    user_id = request.data.get('user_id')
+    if not user_id:
+        return Response(
+            {'detail': 'user_id is required in request body.'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    user = get_object_or_404(User, pk=user_id)
+    notification = get_object_or_404(Notification, pk=pk, user=user)
+
+    notification.is_read = True
+    notification.save(update_fields=['is_read'])
+    serializer = NotificationSerializer(notification)
+    return Response(serializer.data)
