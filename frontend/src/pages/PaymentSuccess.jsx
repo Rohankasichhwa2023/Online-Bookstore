@@ -1,7 +1,9 @@
-// src/pages/PaymentSuccess.jsx
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import "../css/PaymentSuccess.css";
 
 const PaymentSuccess = () => {
     const { id: orderId } = useParams();
@@ -12,10 +14,7 @@ const PaymentSuccess = () => {
     useEffect(() => {
         const pollStatus = async () => {
             try {
-                // 30-second pause
                 await new Promise((resolve) => setTimeout(resolve, 30000));
-
-                // Call your status-check endpoint
                 const res = await axios.get(`http://localhost:8000/orders/esewa/status-check/${orderId}/`);
                 setStatusData(res.data);
             } catch (err) {
@@ -28,33 +27,39 @@ const PaymentSuccess = () => {
         pollStatus();
     }, [orderId]);
 
-    if (loading) {
-        return (
-            <div style={{ padding: '20px' }}>
-                <h2>Payment Successful—Verifying Status…</h2>
-                <p>Please wait a moment (around 30 seconds).</p>
-            </div>
-        );
-    }
-
-    if (errorMsg) {
-        return (
-            <div style={{ padding: '20px' }}>
-                <h2>Error Verifying Payment</h2>
-                <p>{errorMsg}</p>
-            </div>
-        );
-    }
-
     return (
-        <div style={{ padding: '20px' }}>
-            <h2>Payment Status for Order #{orderId}</h2>
-            <p><strong>Status:</strong> {statusData.status}</p>
-            <p><strong>Reference ID:</strong> {statusData.ref_id}</p>
-            {statusData.status === 'COMPLETE'
-                ? <p>Your payment has been confirmed. Thank you!</p>
-                : <p>Payment is {statusData.status}. If this is unexpected, please try again later.</p>}
-        </div>
+        <>
+            <Navbar/>
+            <div className="payment-success-container">
+                <div className="payment-success-box">
+                    {loading && (
+                        <>
+                            <h2>Verifying Status…</h2>
+                            <p>Please wait a moment (around 30 seconds).</p>
+                        </>
+                    )}
+
+                    {!loading && errorMsg && (
+                        <>
+                            <h2 className="error">Error Verifying Payment</h2>
+                            <p>{errorMsg}</p>
+                        </>
+                    )}
+
+                    {!loading && statusData && (
+                        <>
+                            <h2>Payment Status for Order #{orderId}</h2>
+                            <p><strong>Status:</strong> <span className={statusData.status === 'COMPLETE' ? 'success' : 'pending'}>{statusData.status}</span></p>
+                            <p><strong>Reference ID:</strong> {statusData.ref_id}</p>
+                            {statusData.status === 'COMPLETE'
+                                ? <p className="success">Your payment has been confirmed. Thank you!</p>
+                                : <p className="pending">Your payment is {statusData.status}.</p>}
+                        </>
+                    )}
+                </div>
+            </div>
+            <Footer/>
+        </>
     );
 };
 

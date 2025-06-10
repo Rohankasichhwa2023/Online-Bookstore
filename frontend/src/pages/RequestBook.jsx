@@ -44,7 +44,7 @@ export default function RequestBook() {
                 <div className="form-box">
                     <form onSubmit={handleSubmit}>
 
-                        <p className="title2">Request Book</p>
+                        <p className="title2" style={{margin: "0px", padding: "0px"}}>Request Book</p>
                         <p style={{fontSize: "12px"}} aria-live="polite">{message || '\u00A0'}</p>
                         
                         <div className="text-field">

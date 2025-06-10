@@ -79,50 +79,25 @@
     background-color: #0E4783;
     padding: 0px;
 }
-
-.notification-dropdown {
-    position: relative;
-    display: inline-block;
-}
-
 .notification-btn {
-    background: none;
+    background-color: #0E4783;
     border: none;
-    padding: 0;
-}
-
-.dropdown-content {
-    position: absolute;
-    right: 0;
-    top: 40px;
-    background-color: #ffffff;
-    min-width: 280px;
-    max-height: 300px;
-    overflow-y: auto;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-}
-
-.notification-list {
-    display: flex;
-    flex-direction: column;
-    padding: 10px;
+    padding: 0px;
 }
 
 .notification-item {
-    padding: 8px 10px;
-    border-bottom: 1px solid #eee;
-    font-size: 14px;
-    color: #333;
+    white-space: normal;
+    word-break: break-word;
+    border-bottom: 1px solid rgb(204, 204, 204);
+    padding: 10px 12px 10px 12px;
 }
 
 .notification-item:last-child {
     border-bottom: none;
 }
 
-.notification-item.unread {
-    font-weight: bold;
-    background-color: #f0f8ff;
+.notification-scroll-container {
+    max-height: 260px;
+    overflow-y: auto;
 }
+

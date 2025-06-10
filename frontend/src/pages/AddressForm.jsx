@@ -45,18 +45,24 @@ export default function AddressForm() {
     };
 
     const handleDelete = id => {
+        const confirmed = window.confirm("Are you sure you want to delete this address?");
+        if (!confirmed) return;
+
         axios.delete(`http://localhost:8000/users/addresses/${id}/`)
             .then(() => {
-                setMessage('Address deleted');
+                setMessage('Address deleted successfully.');
                 fetchAddresses();
             })
             .catch(() => setMessage('Delete failed'));
     };
 
     const handleDefault = id => {
+        const confirmed = window.confirm("Are you sure you want to set this address as default?");
+        if (!confirmed) return;
+
         axios.put(`http://localhost:8000/users/addresses/${id}/`, { is_default: true })
             .then(() => {
-                setMessage('Default updated');
+                setMessage('Default updated successfully.');
                 fetchAddresses();
             })
             .catch(() => setMessage('Set default failed'));
@@ -69,8 +75,8 @@ export default function AddressForm() {
                 <div className="form-box">
                     <form onSubmit={handleAdd}>
 
-                        <p className="title2">Add Address</p>
-                        <p style={{fontSize: "12px", color: "black", padding: "4px", margin: "0px"}} aria-live="polite">{message || '\u00A0'}</p>
+                        <p className="title2" style={{margin: "0px", padding: "0px"}}>Add Address</p>
+                        <p style={{fontSize: "12px", color: "black", padding: "4px 4px 8px 4px", margin: "0px"}} aria-live="polite">{message || '\u00A0'}</p>
                         
                         <div className="text-field">
                             <div className="form-group">
@@ -88,9 +94,9 @@ export default function AddressForm() {
                             <div className="form-group">
                                 <input name="postal_code" placeholder="Enter postal Code" value={form.postal_code} onChange={handleChange} />
                             </div>
-                            <div style={{display: "flex", alignItems: "center", gap: "12px", margin: "0px"}}>                  
+                            <div style={{display: "flex", alignItems: "center", gap: "12px", margin: "0px", padding: "0px", height: "18px"}}>                  
                                 <input type="checkbox" name="is_default" checked={form.is_default} onChange={handleChange} />
-                                <label style={{marginBottom: "0px"}}>Set as default</label>
+                                <label style={{margin: "0px", padding: "0px"}}>Set as default</label>
                             </div>
                         </div>
                         <div style={{ marginTop: '1em' }}>
@@ -99,8 +105,7 @@ export default function AddressForm() {
                     </form>
                 </div>
 
-                <div className="address-section">
-                    <h3>Your Addresses</h3>
+                <div>
                     <table className="address-table">
                         <thead>
                             <tr>
@@ -118,11 +123,11 @@ export default function AddressForm() {
                                     <td>
                                         {addr.is_default
                                             ? 'Yes'
-                                            : <button className="submit-button" style={{fontSize:"14px"}} onClick={() => handleDefault(addr.id)}>Set Default</button>
+                                            : <button style={{fontSize:"13px", border: "none", backgroundColor: "transparent", textDecoration: "underline", color: "#0a3b6b"}} onClick={() => handleDefault(addr.id)}>Set as default</button>
                                         }
                                     </td>
                                     <td>
-                                        <button className="submit-button" style={{fontSize:"14px"}} onClick={() => handleDelete(addr.id)}>Delete</button>
+                                        <button className="close-btn2" onClick={() => handleDelete(addr.id)}><img src="/icons/close.png" className="icon2" /></button>
                                     </td>
                                 </tr>
                             ))}

@@ -11,6 +11,7 @@ const CartPage = () => {
     const { updateCart } = useCart();
     const [user] = useState(() => JSON.parse(localStorage.getItem('user')));
     const [items, setItems] = useState([]);
+    const [loading1, setLoading1] = useState(false);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -74,6 +75,9 @@ const CartPage = () => {
     };
 
     const createOrderAndNavigate = async (paymentMethod) => {
+        if (paymentMethod=='esewa'){
+            setLoading1 (true);
+        }
         setLoading(true);
         try {
             const res = await axios.post(
@@ -100,6 +104,7 @@ const CartPage = () => {
             console.error('Error creating order:', err.response || err);
             alert('Failed to create order. Please try again.');
         } finally {
+            setLoading1(false);
             setLoading(false);
         }
     };
@@ -121,7 +126,7 @@ const CartPage = () => {
                                 <div key={it.id} className="cart-item">
                                     <img src={it.book.cover_image} alt={it.book.title} className="cover" onClick={() => navigate(`/book/${it.book.id}`)} />
                                     <div className="cart-details">
-                                        <div>
+                                        <div style={{width: "400px"}}>
                                             <div onClick={() => navigate(`/book/${it.book.id}`)}>
                                                 <p className="price">Rs {it.subtotal.toFixed(2)}</p>
                                                 <p className="title">{it.book.title}</p>
@@ -152,8 +157,8 @@ const CartPage = () => {
                             <div style={{margin: "24px 0px", width: "360px"}}>
                                 {items.map((it) => (
                                     <div key={it.id} style={{margin:"0px", padding:"0px"}}>
-                                        <div style={{display: "flex", justifyContent: "space-between"}}>   
-                                            <p style={{padding: "0px", margin: "2px", fontSize: "16px"}}>{it.book.title}</p>
+                                        <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>   
+                                            <p style={{padding: "0px", margin: "2px", fontSize: "16px", width: "280px", textAlign: "left"}}>{it.book.title}</p>
                                             <p style={{padding: "0px", margin: "2px",  fontWeight: "500"}}>Rs {it.subtotal.toFixed(2)}</p>
                                         </div>
                                     </div>
@@ -165,11 +170,11 @@ const CartPage = () => {
                             <div className="checkout-buttons">
                                 <button
                                     onClick={() => createOrderAndNavigate('esewa')}
-                                    disabled={loading}
+                                    disabled={loading1}
                                     className={`checkout-btn checkout-esewa`}
-                                    style={{ cursor: loading ? 'not-allowed' : 'pointer' }}
+                                    style={{ cursor: loading1 ? 'not-allowed' : 'pointer' }}
                                 >
-                                    {loading ? 'Processing…' : 'Checkout with eSewa'}
+                                    {loading1 ? 'Processing…' : 'Checkout with eSewa'}
                                 </button>
 
                                 <button

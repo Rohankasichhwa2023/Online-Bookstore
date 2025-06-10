@@ -1,16 +1,24 @@
-// src/pages/PaymentFail.jsx
 import React from 'react';
 import { useParams } from 'react-router-dom';
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import "../css/PaymentSuccess.css";
 
 const PaymentFail = () => {
-    const { id } = useParams(); // orderId
+    const { id: orderId } = useParams();
 
     return (
-        <div style={{ padding: '20px' }}>
-            <h2>Payment Failed or Canceled</h2>
-            <p>Your payment for Order #{id} could not be completed.</p>
-            <p>Please try again or contact support if you need help.</p>
-        </div>
+        <>
+            <Navbar />
+            <div className="payment-success-container">
+                <div className="payment-success-box">
+                    <h2>Payment Failed or Canceled</h2>
+                    <p>Your payment for Order #{orderId} could not be completed.</p>
+                    <p>Please try again.</p>
+                </div>
+            </div>
+            <Footer />
+        </>
     );
 };
 

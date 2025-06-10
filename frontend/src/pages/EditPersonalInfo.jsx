@@ -62,7 +62,7 @@ export default function EditPersonalInfo() {
                 <div className="form-box">
                     <form onSubmit={handleSubmit}>
 
-                        <p className="title2">Edit Personal Info</p>
+                        <p className="title2" style={{margin: "0px", padding: "0px"}}>Edit Personal Info</p>
                         <p style={{fontSize: "12px"}} aria-live="polite">{message || '\u00A0'}</p>
 
                         <div className="text-field">

@@ -58,7 +58,7 @@ export default function ChangePassword() {
                 <div className="form-box">
                     <form onSubmit={handleSubmit}>
 
-                        <p className="title2">Change Password</p>
+                        <p className="title2" style={{margin: "0px", padding: "0px"}}>Change Password</p>
                         <p style={{fontSize: "12px"}} aria-live="polite">{message || '\u00A0'}</p>
 
                         <div className="text-field">

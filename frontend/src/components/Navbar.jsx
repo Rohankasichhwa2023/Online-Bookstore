@@ -3,27 +3,19 @@ import '../css/Navbar.css';
 import CartButton from './CartButton';
 import Favorite from './Favorite';
 import UserLogoutButton from '../components/UserLogoutButton';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-
 
 function Navbar() {
     const location = useLocation();
-
     const isActive = (path) => location.pathname === path;
-    const [notifications, setNotifications] = useState([]);
-    const [showDropdown, setShowDropdown] = useState(false);
-    const dropdownRef = useRef();
-    const [user] = useState(() => JSON.parse(localStorage.getItem('user')));
 
-    const toggleDropdown = () => {
-        setShowDropdown(!showDropdown);
-    };
+    const [notifications, setNotifications] = useState([]);
+    const [user] = useState(() => JSON.parse(localStorage.getItem('user')));
 
     useEffect(() => {
         const fetchNotifications = async () => {
             try {
-
                 const response = await axios.get(`http://localhost:8000/users/notifications/?user_id=${user.id}`);
                 setNotifications(response.data);
             } catch (error) {
@@ -31,24 +23,8 @@ function Navbar() {
             }
         };
 
-        if (showDropdown) {
-            fetchNotifications();
-        }
-    }, [showDropdown]);
-
-    // Close dropdown when clicking outside
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-                setShowDropdown(false);
-            }
-        };
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, []);
-
+        fetchNotifications(); // Fetch once on mount
+    }, [user.id]);
 
     return (
         <div className="navbar">
@@ -58,6 +34,7 @@ function Navbar() {
                 </div>
                 <h2 className="brand-title">best reads</h2>
             </div>
+
             <div className="navbar-center">
                 <div className={`nav-item ${isActive("/home") ? "active" : ""}`}>
                     <Link to="/home">Home</Link>
@@ -69,33 +46,49 @@ function Navbar() {
                     <Link to="/request-book">Request book</Link>
                 </div>
             </div>
+
             <div className="navbar-right">
                 <CartButton />
                 <Favorite />
 
-                <div className="dropdown notification-dropdown" ref={dropdownRef}>
-                    <button className="notification-btn" onClick={toggleDropdown}>
+                <div className="btn-group">
+                    <button
+                        className="notification-btn"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        data-bs-display="static"
+                        aria-expanded="false"
+                    >
                         <img src="/icons/notification-white.png" alt="Notification" className="icon" />
                     </button>
-                    {showDropdown && (
-                        <div className="dropdown-content">
-                            <div className="notification-list">
-                                {notifications.length > 0 ? (
-                                    notifications.map((note) => (
-                                        <div key={note.id} className={`notification-item ${note.is_read ? '' : 'unread'}`}>
-                                            {note.message}
-                                        </div>
-                                    ))
-                                ) : (
-                                    <div className="notification-item">No notifications</div>
-                                )}
-                            </div>
+                    <ol
+                        className="dropdown-menu dropdown-menu-end notification-dropdown-menu"
+                        style={{ width: "400px" }}
+                    >
+                        <h5 style={{ textAlign: "center", padding: "8px", color: "#0a3b6b", margin: "0px"}}>Notification</h5>
+                        <div className="notification-scroll-container">
+                            {notifications.length > 0 ? (
+                                notifications.map((note) => (
+                                    <li key={note.id} className="dropdown-item notification-item" style={{display: "flex", gap: "6px"}}>
+                                        <img src="/icons/checkbox.png" className="icon"/><div>{note.message}</div>
+                                    </li>
+                                ))
+                            ) : (
+                                <li><span className="dropdown-item">No notifications</span></li>
+                            )}
                         </div>
-                    )}
+                    </ol>
+
                 </div>
 
                 <div className="btn-group">
-                    <button className="user-btn" type="button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
+                    <button
+                        className="user-btn"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        data-bs-display="static"
+                        aria-expanded="false"
+                    >
                         <img src="/icons/user-white.png" alt="User" className="icon" />
                     </button>
                     <ul className="dropdown-menu dropdown-menu-lg-end">

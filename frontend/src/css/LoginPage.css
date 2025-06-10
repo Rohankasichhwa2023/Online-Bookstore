@@ -88,41 +88,26 @@ p {
   text-align: center;
 }
 
-.address-section {
-    margin: 0px;
-    min-width: 700px;
-    padding: 1rem;
-    background-color: white;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.05);
-}
-
-.address-section h3 {
-    margin-bottom: 1rem;
-    font-size: 1.6rem;
-    font-weight: 600;
-    color: #333;
-}
-
 .address-table {
     width: 100%;
+    border-radius: 10px;
+    background: white;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
     border-collapse: collapse;
     font-size: 0.95rem;
-    background-color: #fafafa;
     overflow: hidden;
 }
 
 .address-table th {
-    background-color: #f0f0f0;
-    color: #333;
+    background-color: #0E4783;
+    color: white;
     font-weight: 500;
     padding: 12px 10px;
     text-align: left;
-    border-bottom: 2px solid #ddd;
 }
 
 .address-table td {
-    padding: 12px 10px;
+    padding: 6px 10px;
     border-bottom: 1px solid #e2e2e2;
     color: #555;
 }
@@ -131,3 +116,16 @@ p {
     background-color: #f5faff;
 }
 
+.close-btn2{
+    border: none;
+    background-color: transparent;
+    border-radius: 50%;
+    padding: 2px;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+}
+
+.close-btn2:hover{
+    background-color: rgba(14, 71, 131, 0.144)
+}

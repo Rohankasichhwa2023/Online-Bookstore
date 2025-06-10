@@ -1,8 +1,9 @@
-// src/pages/CheckoutPage.jsx
-
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import "../css/CheckoutPage.css";
 
 const CheckoutPage = () => {
     const location = useLocation();
@@ -97,46 +98,52 @@ const CheckoutPage = () => {
     };
 
     return (
-        <div style={{ padding: '20px' }}>
-            <h2>Checkout — Order #{orderId}</h2>
-            <p>
-                <strong>Total Amount:</strong> Rs. {amountInRupees.toFixed(2)}
-            </p>
+        <>
+            <Navbar/>
+            <div className="checkout-container">
+                <div className="checkout-details">
+                    <h3 style={{marginBottom: "24px", color: "#0E4783"}}>Order #{orderId}</h3>
+                    <div style={{display: "flex", justifyContent: "space-between", marginBottom: "24px"}}>
+                        <h4 style={{color: "#0E4783", margin: "0px"}}>Total</h4>
+                        <p className="price2">Rs {amountInRupees.toFixed(2)}</p>
+                    </div>
+                    <div style={{display: "flex", gap: "24px", justifyContent: "center"}}>
+                        {/* eSewa Button */}
+                        <button
+                            onClick={handleEsewa}
+                            disabled={isEsewaLoading || isKhaltiLoading}
+                            style={{
+                                padding: '8px 24px',
+                                backgroundColor: '#28a745',
+                                color: '#fff',
+                                border: 'none',
+                                borderRadius: '4px',
+                                cursor: isEsewaLoading || isKhaltiLoading ? 'not-allowed' : 'pointer',
+                            }}
+                        >
+                            {isEsewaLoading ? 'Redirecting to eSewa…' : 'Pay with eSewa'}
+                        </button>
 
-            <div style={{ display: 'flex', gap: '16px', marginTop: '20px' }}>
-                {/* eSewa Button */}
-                <button
-                    onClick={handleEsewa}
-                    disabled={isEsewaLoading || isKhaltiLoading}
-                    style={{
-                        padding: '10px 20px',
-                        backgroundColor: '#28a745',
-                        color: '#fff',
-                        border: 'none',
-                        borderRadius: '4px',
-                        cursor: isEsewaLoading || isKhaltiLoading ? 'not-allowed' : 'pointer',
-                    }}
-                >
-                    {isEsewaLoading ? 'Redirecting to eSewa…' : 'Pay with eSewa'}
-                </button>
-
-                {/* Khalti Button */}
-                <button
-                    onClick={handleKhalti}
-                    disabled={isEsewaLoading || isKhaltiLoading}
-                    style={{
-                        padding: '10px 20px',
-                        backgroundColor: '#6633cc',
-                        color: '#fff',
-                        border: 'none',
-                        borderRadius: '4px',
-                        cursor: isEsewaLoading || isKhaltiLoading ? 'not-allowed' : 'pointer',
-                    }}
-                >
-                    {isKhaltiLoading ? 'Redirecting to Khalti…' : 'Pay with Khalti'}
-                </button>
+                        {/* Khalti Button */}
+                        <button
+                            onClick={handleKhalti}
+                            disabled={isEsewaLoading || isKhaltiLoading}
+                            style={{
+                                padding: '8px 24px',
+                                backgroundColor: '#6633cc',
+                                color: '#fff',
+                                border: 'none',
+                                borderRadius: '4px',
+                                cursor: isEsewaLoading || isKhaltiLoading ? 'not-allowed' : 'pointer',
+                            }}
+                        >
+                            {isKhaltiLoading ? 'Redirecting to Khalti…' : 'Pay with Khalti'}
+                        </button>
+                    </div>
+                </div>
             </div>
-        </div>
+            <Footer/>
+        </>  
     );
 };
 

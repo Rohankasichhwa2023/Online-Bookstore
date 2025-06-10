@@ -1,25 +1,21 @@
-// src/pages/PollPaymentStatus.jsx
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import "../css/PaymentSuccess.css";
 
 const PollPaymentStatus = () => {
-    const { id: orderId } = useParams(); // orderId from URL
+    const { id: orderId } = useParams();
     const [statusData, setStatusData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [errorMsg, setErrorMsg] = useState(null);
 
     useEffect(() => {
-        // Define an async function so we can use await
-        const checkStatusAfterDelay = async () => {
+        const checkStatus = async () => {
             try {
-                // 1) Wait 30 seconds before polling
-                await new Promise((resolve) => setTimeout(resolve, 30000)); // 30,000 ms = 30 seconds
-
-                // 2) Now call your Django endpoint that wraps eSewa's status-check
-                const res = await axios.get(
-                    `http://localhost:8000/orders/esewa/status-check/${orderId}/`
-                );
+                await new Promise((resolve) => setTimeout(resolve, 30000));
+                const res = await axios.get(`http://localhost:8000/orders/esewa/status-check/${orderId}/`);
                 setStatusData(res.data);
             } catch (err) {
                 console.error('Error polling payment status:', err.response?.data || err);
@@ -34,44 +30,49 @@ const PollPaymentStatus = () => {
             }
         };
 
-        checkStatusAfterDelay();
+        checkStatus();
     }, [orderId]);
 
-    if (loading) {
-        return (
-            <div style={{ padding: '20px' }}>
-                <h2>Checking payment status…</h2>
-                <p>Please wait a moment (about 30 seconds).</p>
-            </div>
-        );
-    }
-
-    if (errorMsg) {
-        return (
-            <div style={{ padding: '20px' }}>
-                <h2>Error Checking Payment</h2>
-                <p>{errorMsg}</p>
-            </div>
-        );
-    }
-
-    // statusData now contains eSewa's response JSON:
-    // { product_code, transaction_uuid, total_amount, status, ref_id }
     return (
-        <div style={{ padding: '20px' }}>
-            <h2>Payment Status for Order #{orderId}</h2>
-            <p>
-                <strong>Status:</strong> {statusData.status}
-            </p>
-            <p>
-                <strong>Reference ID:</strong> {statusData.ref_id || '—'}
-            </p>
-            {statusData.status === 'COMPLETE' ? (
-                <p>Payment completed successfully!</p>
-            ) : (
-                <p>Payment is {statusData.status}. Please check again later.</p>
-            )}
-        </div>
+        <>
+            <Navbar />
+            <div className="payment-success-container">
+                <div className="payment-success-box">
+                    {loading && (
+                        <>
+                            <h2>Checking Payment Status…</h2>
+                            <p>Please wait a moment (around 30 seconds).</p>
+                        </>
+                    )}
+
+                    {!loading && errorMsg && (
+                        <>
+                            <h2 className="error">Error Verifying Payment</h2>
+                            <p>{errorMsg}</p>
+                        </>
+                    )}
+
+                    {!loading && statusData && (
+                        <>
+                            <h2>Payment Status for Order #{orderId}</h2>
+                            <p>
+                                <strong>Status:</strong>{" "}
+                                <span className={statusData.status === 'COMPLETE' ? 'success' : 'pending'}>
+                                    {statusData.status}
+                                </span>
+                            </p>
+                            <p><strong>Reference ID:</strong> {statusData.ref_id || '—'}</p>
+                            {statusData.status === 'COMPLETE' ? (
+                                <p className="success">Payment completed successfully!</p>
+                            ) : (
+                                <p className="pending">Your payment is {statusData.status}. Please check again later.</p>
+                            )}
+                        </>
+                    )}
+                </div>
+            </div>
+            <Footer />
+        </>
     );
 };
 

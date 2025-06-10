@@ -1,3 +1,90 @@
-.order-history-container{
-    padding: 92px 0px 0px 0px;
+.orders-container {
+  padding: 92px 40px 40px 40px;
+}
+
+.orders-container h1 {
+  text-align: center;
+}
+
+.orders-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
+  gap:24px;
+}
+
+.order-card {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  padding: 24px;
+  display: flex;
+  gap: 24px;
+}
+
+.order-items{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.item-card {
+  display: flex;
+  gap: 24px;
+  width: 280px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #ccc;
+}
+
+.item-card:last-child{
+  padding-bottom: 0px;
+  border-bottom: none;
+}
+
+.item-img {
+  width: 140px;
+  height: 200px;
+  object-fit: cover;
+}
+
+.item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.item-title {
+  padding: 0px;
+  margin: 0px;
+  text-align: left;
+}
+
+.order-header {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px;
+    margin-top: 48px;
+    border-radius: 16px;
+    background-color: #ececf457;
+    width: 100%;
+    height: min-content;
+}
+
+.pay-now-btn {
+  padding: 8px 12px;
+  width: 100%;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  background-color: #0E4783;
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transition: all 0.2s ease;
+}
+
+.pay-now-btn:hover {
+  transform: scale(1.03);
+  opacity: 0.95;
 }
