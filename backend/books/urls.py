@@ -14,6 +14,8 @@ urlpatterns = [
     path('add-favorite/', views.add_favorite, name='add-favorite'),
     path('list-favorites/', views.list_favorites, name='list-favorites'),
     path('remove-favorite/', views.remove_favorite, name='remove-favorite'),
+    path('toggle-favorite/', views.toggle_favorite, name='toggle-favorite'),
+
 
     # **Ratings endpoints:**
     path('rate/<int:book_id>/', views.rate_book, name='rate-book'),

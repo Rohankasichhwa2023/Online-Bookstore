@@ -148,6 +148,28 @@ def create_order(request):
         status=status.HTTP_201_CREATED
     )
 
+@api_view(['PUT'])
+@permission_classes([AllowAny])
+def update_order_address(request, order_id):
+    user_id = request.data.get('user_id')
+    if not user_id:
+        return Response({"error": "user_id is required"}, status=400)
+
+    try:
+        user = User.objects.get(pk=int(user_id))
+        order = Order.objects.get(pk=order_id, user=user, status='pending')
+    except (User.DoesNotExist, Order.DoesNotExist):
+        return Response({"error": "Pending order not found."},
+                        status=status.HTTP_404_NOT_FOUND)
+
+    default_addr = Address.objects.filter(user=user, is_default=True).first()
+    if not default_addr:
+        return Response({"error": "No default address found."}, status=400)
+
+    order.shipping_address = default_addr
+    order.save()
+    return Response(OrderSerializer(order).data, status=200)
+
 # -------------------------------
 # 2) eSewa: Provide Payment Data
 # -------------------------------

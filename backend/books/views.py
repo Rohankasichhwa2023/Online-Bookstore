@@ -6,12 +6,12 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import permission_classes
-
+from rest_framework.decorators import api_view
 from django.db.models import Avg, Count
 
 from django.contrib.auth import get_user_model
 from .models import Book, Rating, Genre, BookGenre, Favorite, BookRequest
-from .serializers import BookSerializer, FavoriteSerializer, BookRequestSerializer
+from .serializers import BookSerializer, FavoriteSerializer, BookRequestSerializer, FavoriteOutputSerializer
 from users.models import Notification
 
 User = get_user_model()
@@ -218,6 +218,44 @@ def remove_favorite(request):
         return Response({"error": "Favorite record not found."}, status=status.HTTP_404_NOT_FOUND)
     favorite_qs.delete()
     return Response({"message": "Book removed from favorites."}, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+def toggle_favorite(request):
+    data = request.data
+    user_id = data.get('user_id')
+    book_id = data.get('book_id')
+    if user_id is None or book_id is None:
+        return Response(
+            {"error": "Both 'user_id' and 'book_id' are required."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    # verify book exists
+    try:
+        book = Book.objects.get(pk=book_id)
+    except Book.DoesNotExist:
+        return Response(
+            {"error": f"Book with id={book_id} not found."},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+    fav_qs = Favorite.objects.filter(user_id=user_id, book_id=book_id)
+
+    if fav_qs.exists():
+        # already favorited → remove
+        fav_qs.delete()
+        return Response(
+            {"message": "Removed from favorites.", "favorited": False},
+            status=status.HTTP_200_OK
+        )
+    else:
+        # create new favorite
+        fav = Favorite.objects.create(user_id=user_id, book_id=book_id)
+        return Response(
+            {"message": "Added to favorites.", "favorited": True},
+            status=status.HTTP_201_CREATED
+        )
 
 
 @api_view(['POST'])

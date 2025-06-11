@@ -7,6 +7,7 @@ urlpatterns = [
     # public/user endpoints
     path('list/',            views.list_user_orders,        name='list_user_orders'),
     path('create/',          views.create_order,            name='create_order'),
+    path('change-address/<int:order_id>/', views.update_order_address, name='change-order-address'),
     path('esewa/complete/',  views.esewa_complete,          name='esewa_complete'),
     path('esewa/fail/',      views.esewa_fail,              name='esewa_fail'),
     path('esewa/status-check/<int:order_id>/', views.esewa_status_check, name='esewa_status_check'),

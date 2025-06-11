@@ -42,6 +42,9 @@ class FavoriteSerializer(serializers.ModelSerializer):
         fields = ['id', 'user', 'book', 'created_at']
         read_only_fields = ['id', 'created_at']
 
+class FavoriteOutputSerializer(serializers.ModelSerializer):
+    book_id = serializers.IntegerField(source='book.id')
+
 
 class RatingSerializer(serializers.ModelSerializer):
     class Meta:

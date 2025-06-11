@@ -5,7 +5,7 @@ import { useCart } from '../context/CartContext';
 import { useFavorites } from '../context/FavoritesContext';
 import '../css/AllBooks.css';
 
-const AllBooks = () => {
+const AllBooks = ({ filter }) => {
     const navigate = useNavigate();
     const User = JSON.parse(localStorage.getItem('user'));
     const [books, setBooks] = useState([]);
@@ -79,33 +79,47 @@ const AllBooks = () => {
         }
     };
 
-    const handleAddToFavorite = async (bookId) => {
+    const handleToggleFavorite = async (bookId) => {
+        const isFav = favoriteBookIds.includes(bookId);
+
+        // optimistic flip
+        setFavoriteBookIds(prev =>
+            isFav ? prev.filter(id => id !== bookId) : [...prev, bookId]
+        );
+
         try {
-            // Optimistically update UI
-            setFavoriteBookIds((prev) =>
-                prev.includes(bookId)
-                    ? prev.filter((id) => id !== bookId)
-                    : [...prev, bookId]
+            const res = await axios.post(
+                'http://localhost:8000/books/toggle-favorite/',
+                { user_id: User.id, book_id: bookId }
             );
 
-            // Send request to backend
-            const res = await axios.post('http://localhost:8000/books/add-favorite/', {
-                user_id: User.id,
-                book_id: bookId,
-            });
-
-            // Optional: delay to allow backend to finish processing before refetching
-            setTimeout(() => {
-                fetchFavorites(); // sync actual state after backend updates
-            }, 300); // 300ms delay
-
+            // update the navbar count
             await updateFavorites();
-            alert(res.data.message || 'Book favorited.');
+            alert(res.data.message);
         } catch (err) {
-            console.error('Error adding to favorites:', err);
-            alert('Could not add to favorites.');
+            console.error('Toggle favorite failed:', err);
+            // rollback if needed
+            setFavoriteBookIds(prev =>
+                isFav ? [...prev, bookId] : prev.filter(id => id !== bookId)
+            );
+            alert('Could not update favorites.');
         }
     };
+
+    const filteredBooks = books.filter(book => {
+        const term = filter.trim().toLowerCase();
+        if (!term) return true;
+        return (
+            book.title.toLowerCase().includes(term) ||
+            book.author.toLowerCase().includes(term) ||
+            book.language.toLowerCase().includes(term) ||
+            (Array.isArray(book.genres) &&
+                book.genres.some(g =>
+                    g.name.toLowerCase().includes(term)
+                )
+            )
+        );
+    });
 
 
     const renderStars = (averageRating) => {
@@ -131,8 +145,8 @@ const AllBooks = () => {
             const res = await axios.get('http://localhost:8000/books/list-favorites/', {
                 params: { user_id: User.id }
             });
-            const favoriteIds = res.data.map(fav => fav.book_id);
-            setFavoriteBookIds(favoriteIds);  // THIS must reflect accurate state
+            const favoriteIds = res.data.map(book => book.id);
+            setFavoriteBookIds(favoriteIds);
         } catch (err) {
             console.error('Error fetching favorites:', err);
         }
@@ -150,7 +164,7 @@ const AllBooks = () => {
 
     return (
         <div className="book-grid">
-            {books.map((book) => (
+            {filteredBooks.map((book) => (
                 <div
                     className="book-card"
                     key={book.id}
@@ -196,10 +210,7 @@ const AllBooks = () => {
                         <div>
                             <button
                                 className="btn-favorite"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleAddToFavorite(book.id);
-                                }}
+                                onClick={e => { e.stopPropagation(); handleToggleFavorite(book.id); }}
                             >
                                 <img
                                     src={
@@ -212,6 +223,7 @@ const AllBooks = () => {
                                 />
                             </button>
 
+
                         </div>
                         <div>
                             <button
@@ -220,7 +232,7 @@ const AllBooks = () => {
                                     e.stopPropagation();
                                     handleAddToCart(book.id);
                                 }}
-                                disabled={book.stock==0}
+                                disabled={book.stock == 0}
                             >
                                 Add to Cart
                                 <div>
@@ -235,6 +247,11 @@ const AllBooks = () => {
                     </div>
                 </div>
             ))}
+            {filteredBooks.length === 0 && (
+                <p style={{ gridColumn: '1 / -1', textAlign: 'center' }}>
+                    No books match your search.
+                </p>
+            )}
         </div>
     );
 };

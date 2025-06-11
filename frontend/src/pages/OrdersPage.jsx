@@ -89,7 +89,7 @@ const OrdersPage = () => {
           {orders.map(order => (
             <div key={order.id} className="order-card">
               <div className="order-items">
-                <h3 style={{padding: "0px 0px 12px 0px", margin: "0px", color: "#0E4783", borderBottom: "2px solid #ccc"}}>Order Summary</h3>
+                <h3 style={{ padding: "0px 0px 12px 0px", margin: "0px", color: "#0E4783", borderBottom: "2px solid #ccc" }}>Order Summary</h3>
                 {order.items.map((item, idx) => (
                   <div key={idx} className="item-card">
                     <img
@@ -98,7 +98,7 @@ const OrdersPage = () => {
                       className="item-img"
                     />
                     <div className="item-info">
-                      <p className="item-title" style={{fontSize: "16px"}}>{item.book.title}</p>
+                      <p className="item-title" style={{ fontSize: "16px" }}>{item.book.title}</p>
                       <strong><p className="item-title">Rs {item.quantity * item.price}</p></strong>
                     </div>
                   </div>
@@ -106,6 +106,7 @@ const OrdersPage = () => {
               </div>
               <div className="order-header">
                 <div><strong>Order ID:</strong> {order.id}</div>
+                <div><strong>Order Status:</strong> {order.status}</div>
                 <div><strong>Date:</strong> {new Date(order.order_date).toLocaleString()}</div>
                 <div><strong>Address:</strong> {order.address
                   ? `${order.address.address_line}, ${order.address.city}`
@@ -115,19 +116,19 @@ const OrdersPage = () => {
                 <div><strong>Payment Status:</strong> {capitalize(order.payment_status)}</div>
                 <div><strong>Total:</strong> Rs {order.total_amount}</div>
                 {order.payment_status === 'pending' && (
-                <div className="pay-now-btn-wrapper">
-                  {order.payment_method === 'esewa' ? (
-                    <button
-                      className="pay-now-btn esewa"
-                      onClick={() => handleEsewaPayNow(order.id)}
-                    >Pay with eSewa</button>
-                  ) : (
-                    <button
-                      className="pay-now-btn khalti"
-                      onClick={() => handleKhaltiPayNow(order.id)}
-                    >Pay with Khalti</button>
-                  )}
-                </div>
+                  <div className="pay-now-btn-wrapper">
+                    {order.payment_method === 'esewa' ? (
+                      <button
+                        className="pay-now-btn esewa"
+                        onClick={() => handleEsewaPayNow(order.id)}
+                      >Pay with eSewa</button>
+                    ) : (
+                      <button
+                        className="pay-now-btn khalti"
+                        onClick={() => handleKhaltiPayNow(order.id)}
+                      >Pay with Khalti</button>
+                    )}
+                  </div>
                 )}
               </div>
             </div>
