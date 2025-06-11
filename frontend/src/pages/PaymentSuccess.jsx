@@ -41,6 +41,7 @@ const PaymentSuccess = () => {
 
                     {!loading && errorMsg && (
                         <>
+                            <img src="/icons/failure.png" style={{height: "50px", width: "50px", marginBottom: "8px"}}/>
                             <h2 className="error">Error Verifying Payment</h2>
                             <p>{errorMsg}</p>
                         </>
@@ -52,7 +53,7 @@ const PaymentSuccess = () => {
                             <p><strong>Status:</strong> <span className={statusData.status === 'COMPLETE' ? 'success' : 'pending'}>{statusData.status}</span></p>
                             <p><strong>Reference ID:</strong> {statusData.ref_id}</p>
                             {statusData.status === 'COMPLETE'
-                                ? <p className="success">Your payment has been confirmed. Thank you!</p>
+                                ? <p className="success"><img src="/icons/success.png" style={{height: "50px", width: "50px"}}/><br/>Your payment has been confirmed. Thank you!</p>
                                 : <p className="pending">Your payment is {statusData.status}.</p>}
                         </>
                     )}

@@ -1,5 +1,3 @@
-// src/components/admin/ViewOrders.jsx
-
 import React, { useEffect, useState, useMemo } from 'react';
 import axios from 'axios';
 

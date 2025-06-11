@@ -105,16 +105,16 @@ const OrdersPage = () => {
                 ))}
               </div>
               <div className="order-header">
-                <div><strong>Order ID:</strong> {order.id}</div>
-                <div><strong>Order Status:</strong> {order.status}</div>
-                <div><strong>Date:</strong> {new Date(order.order_date).toLocaleString()}</div>
-                <div><strong>Address:</strong> {order.address
+                <div>Order ID: {order.id}</div>
+                <div>Order Status: {order.status}</div>
+                <div>Date: {new Date(order.order_date).toLocaleString()}</div>
+                <div>Address: {order.address
                   ? `${order.address.address_line}, ${order.address.city}`
                   : '—'}
                 </div>
-                <div><strong>Payment:</strong> {capitalize(order.payment_method)}</div>
-                <div><strong>Payment Status:</strong> {capitalize(order.payment_status)}</div>
-                <div><strong>Total:</strong> Rs {order.total_amount}</div>
+                <div>Payment: {capitalize(order.payment_method)}</div>
+                <div>Payment Status: {capitalize(order.payment_status)}</div>
+                <div>Total: Rs {order.total_amount}</div>
                 {order.payment_status === 'pending' && (
                   <div className="pay-now-btn-wrapper">
                     {order.payment_method === 'esewa' ? (

@@ -5,14 +5,15 @@ import { useCart } from '../context/CartContext';
 import { useFavorites } from '../context/FavoritesContext';
 import '../css/AllBooks.css';
 
-const AllBooks = ({ filter }) => {
+const AllBooks = () => {
     const navigate = useNavigate();
     const User = JSON.parse(localStorage.getItem('user'));
     const [books, setBooks] = useState([]);
     const { updateCart } = useCart();
     const { updateFavorites } = useFavorites();
     const [favoriteBookIds, setFavoriteBookIds] = useState([]);
-
+    
+    const [filter, setFilter] = useState('');
     const [categories, setCategories] = useState([]);
     const [selectedCategories, setSelectedCategories] = useState([]);
     const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -197,58 +198,72 @@ const AllBooks = ({ filter }) => {
 
     return (
         <>
-            {/* Categories dropdown */}
-            <div ref={dropdownRef} style={{ position: 'relative', marginBottom: '16px' }}>
-                <button
-                    onClick={() => setDropdownOpen(o => !o)}
-                    style={{
-                        padding: '8px 12px',
-                        border: '1px solid #ccc',
-                        borderRadius: '4px',
-                        background: '#fff',
-                        cursor: 'pointer'
-                    }}
-                >
-                    {selectedCategories.length > 0
-                        ? `Categories: ${selectedCategories.join(', ')}`
-                        : 'Filter by Categories ▼'}
-                </button>
+            <div className="filter-bar">
+                {/* Categories dropdown */}
+                <div ref={dropdownRef} style={{ position: 'relative'}}>
+                    <button onClick={() => setDropdownOpen(o => !o)} className="filter-btn"><img src="/icons/filter.png" style={{height: "24px", width: "24px"}}/></button>
 
-                {dropdownOpen && (
-                    <div
-                        style={{
-                            position: 'absolute',
-                            top: '100%',
-                            left: 0,
-                            zIndex: 10,
-                            width: '250px',
-                            maxHeight: '200px',
-                            overflowY: 'auto',
-                            border: '1px solid #ccc',
-                            borderRadius: '4px',
-                            background: '#fff',
-                            padding: '8px'
-                        }}
-                    >
-                        {categories.map(cat => (
-                            <label key={cat} style={{ display: 'block', marginBottom: '4px' }}>
-                                <input
-                                    type="checkbox"
-                                    checked={selectedCategories.includes(cat)}
-                                    onChange={() => {
-                                        setSelectedCategories(prev =>
-                                            prev.includes(cat)
-                                                ? prev.filter(c => c !== cat)
-                                                : [...prev, cat]
-                                        );
-                                    }}
-                                />{' '}
-                                {cat}
-                            </label>
-                        ))}
+                    {dropdownOpen && (
+                        <div
+                            style={{
+                                position: 'absolute',
+                                top: '100%',
+                                left: 0,
+                                zIndex: 10,
+                                width: '180px',
+                                maxHeight: '200px',
+                                overflowY: 'auto',
+                                border: '1px solid #ccc',
+                                borderRadius: '4px',
+                                background: '#fff',
+                                padding: '12px',
+                                marginTop: "6px"
+                            }}
+                        >
+                            {categories.map(cat => (
+                                <label key={cat} className="category">
+                                    <input
+                                        type="checkbox"
+                                        checked={selectedCategories.includes(cat)}
+                                        onChange={() => {
+                                            setSelectedCategories(prev =>
+                                                prev.includes(cat)
+                                                    ? prev.filter(c => c !== cat)
+                                                    : [...prev, cat]
+                                            );
+                                        }}
+                                    />{' '}
+                                    {cat}
+                                </label>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
+                {/* Search Bar */}
+                <div className="search-bar">
+                    <img src="/icons/search.png" style={{height: "24px", width: "24px"}}/>
+                    <input
+                        type="text"
+                        placeholder="Search by title, author, language or category…"
+                        value={filter}
+                        onChange={e => setFilter(e.target.value)}
+                    />
+                </div>
+            </div>
+
+            <div className="chip-bar">
+                {selectedCategories.length > 0 ? (
+                    selectedCategories.map((category) => (
+                    <div key={category} className="chip">
+                        <img src="/icons/tick.png" style={{height: "16px", width: "16px"}}/><p>{category}</p>
                     </div>
+                    ))
+                ) : (
+                    <p style={{margin: "0px", padding: "0px", height: "31px"}}>{'\u00A0'}</p>
                 )}
             </div>
+            
             <div className="book-grid">
                 {filteredBooks.map((book) => (
                     <div
@@ -334,7 +349,7 @@ const AllBooks = ({ filter }) => {
                     </div>
                 ))}
                 {filteredBooks.length === 0 && (
-                    <p style={{ gridColumn: '1 / -1', textAlign: 'center' }}>
+                    <p style={{ gridColumn: '1 / -1', textAlign: 'center', height: "300px"}}>
                         No books match your search.
                     </p>
                 )}

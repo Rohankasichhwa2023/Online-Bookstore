@@ -47,6 +47,7 @@ const PollPaymentStatus = () => {
 
                     {!loading && errorMsg && (
                         <>
+                            <img src="/icons/failure.png" style={{height: "50px", width: "50px", marginBottom: "8px"}}/>
                             <h2 className="error">Error Verifying Payment</h2>
                             <p>{errorMsg}</p>
                         </>
@@ -63,7 +64,7 @@ const PollPaymentStatus = () => {
                             </p>
                             <p><strong>Reference ID:</strong> {statusData.ref_id || '—'}</p>
                             {statusData.status === 'COMPLETE' ? (
-                                <p className="success">Payment completed successfully!</p>
+                                <p className="success"><img src="/icons/success.png" style={{height: "50px", width: "50px"}}/><br/>Payment completed successfully!</p>
                             ) : (
                                 <p className="pending">Your payment is {statusData.status}. Please check again later.</p>
                             )}

@@ -12,7 +12,8 @@ const OrderFailPage = () => {
             <Navbar />
             <div className="payment-success-container">
                 <div className="payment-success-box">
-                    <h2>Order Failed or Canceled</h2>
+                    <img src="/icons/failure.png" style={{height: "50px", width: "50px", marginBottom: "8px"}}/>
+                    <h2 className="error">Order Failed or Canceled</h2>
                     <p>Your payment for Order #{orderId} could not be completed.</p>
                     <p>Please try again.</p>
                 </div>

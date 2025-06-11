@@ -12,7 +12,8 @@ const OrderSuccessPage = () => {
             <Navbar />
             <div className="payment-success-container">
                 <div className="payment-success-box">
-                    <h2>Payment Successful!</h2>
+                    <img src="/icons/success.png" style={{height: "50px", width: "50px", marginBottom: "12px"}}/>
+                    <h2 style={{color: "green"}}>Payment Successful!</h2>
                     <p>Your order <strong>#{orderId}</strong> has been paid successfully.</p>
                     <p>Thank you for your purchase!</p>
                 </div>
