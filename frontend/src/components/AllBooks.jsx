@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useCart } from '../context/CartContext';
@@ -12,6 +12,21 @@ const AllBooks = ({ filter }) => {
     const { updateCart } = useCart();
     const { updateFavorites } = useFavorites();
     const [favoriteBookIds, setFavoriteBookIds] = useState([]);
+
+    const [categories, setCategories] = useState([]);
+    const [selectedCategories, setSelectedCategories] = useState([]);
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+    const dropdownRef = useRef();
+
+    useEffect(() => {
+        const handler = e => {
+            if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+                setDropdownOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handler);
+        return () => document.removeEventListener('mousedown', handler);
+    }, []);
 
     useEffect(() => {
         const userData = JSON.parse(localStorage.getItem('user'));
@@ -30,6 +45,15 @@ const AllBooks = ({ filter }) => {
             // 1) Fetch all books
             const res = await axios.get('http://localhost:8000/books/all-books/');
             const booksData = res.data;
+            setBooks(booksData);
+
+            const allCats = new Set();
+            booksData.forEach(b => {
+                if (Array.isArray(b.genres)) {
+                    b.genres.forEach(g => allCats.add(g.name));
+                }
+            });
+            setCategories([...allCats]);
 
             // 2) For each book, fetch its rating info
             const booksWithRatings = await Promise.all(
@@ -106,10 +130,12 @@ const AllBooks = ({ filter }) => {
         }
     };
 
+
     const filteredBooks = books.filter(book => {
         const term = filter.trim().toLowerCase();
-        if (!term) return true;
-        return (
+        // text match?
+        const textMatch =
+            !term ||
             book.title.toLowerCase().includes(term) ||
             book.author.toLowerCase().includes(term) ||
             book.language.toLowerCase().includes(term) ||
@@ -118,7 +144,14 @@ const AllBooks = ({ filter }) => {
                     g.name.toLowerCase().includes(term)
                 )
             )
-        );
+
+        // category match?
+        const categoryMatch =
+            selectedCategories.length === 0 ||
+            (Array.isArray(book.genres) &&
+                book.genres.some(g => selectedCategories.includes(g.name)));
+
+        return textMatch && categoryMatch;
     });
 
 
@@ -163,96 +196,150 @@ const AllBooks = ({ filter }) => {
     }
 
     return (
-        <div className="book-grid">
-            {filteredBooks.map((book) => (
-                <div
-                    className="book-card"
-                    key={book.id}
-                    onClick={() => navigate(`/book/${book.id}`)}
+        <>
+            {/* Categories dropdown */}
+            <div ref={dropdownRef} style={{ position: 'relative', marginBottom: '16px' }}>
+                <button
+                    onClick={() => setDropdownOpen(o => !o)}
+                    style={{
+                        padding: '8px 12px',
+                        border: '1px solid #ccc',
+                        borderRadius: '4px',
+                        background: '#fff',
+                        cursor: 'pointer'
+                    }}
                 >
-                    {/* Book Cover */}
-                    <div>
-                        {book.cover_image && (
-                            <img
-                                src={book.cover_image}
-                                alt={book.title}
-                                className="book-cover"
-                            />
-                        )}
-                    </div>
+                    {selectedCategories.length > 0
+                        ? `Categories: ${selectedCategories.join(', ')}`
+                        : 'Filter by Categories ▼'}
+                </button>
 
-                    {/* Rating Section */}
+                {dropdownOpen && (
                     <div
                         style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: '6px',
+                            position: 'absolute',
+                            top: '100%',
+                            left: 0,
+                            zIndex: 10,
+                            width: '250px',
+                            maxHeight: '200px',
+                            overflowY: 'auto',
+                            border: '1px solid #ccc',
+                            borderRadius: '4px',
+                            background: '#fff',
+                            padding: '8px'
                         }}
                     >
-                        <div style={{ display: 'flex', gap: '4px' }}>
-                            {renderStars(book.average_rating || 0)}
-                        </div>
-                        <span style={{ fontSize: '14px', color: '#6d6d6d' }}>
-                            ({book.rating_count || 0})
-                        </span>
+                        {categories.map(cat => (
+                            <label key={cat} style={{ display: 'block', marginBottom: '4px' }}>
+                                <input
+                                    type="checkbox"
+                                    checked={selectedCategories.includes(cat)}
+                                    onChange={() => {
+                                        setSelectedCategories(prev =>
+                                            prev.includes(cat)
+                                                ? prev.filter(c => c !== cat)
+                                                : [...prev, cat]
+                                        );
+                                    }}
+                                />{' '}
+                                {cat}
+                            </label>
+                        ))}
                     </div>
-
-                    {/* Book Details */}
-                    <div className="book-details2">
-                        <p className="book-title2">{truncateTitle(book.title)}</p>
-                        <p className="book-author2">{book.author}</p>
-                        <p className="book-price2">Rs {book.price}</p>
-                    </div>
-
-                    {/* Buttons */}
-                    <div className="book-footer">
+                )}
+            </div>
+            <div className="book-grid">
+                {filteredBooks.map((book) => (
+                    <div
+                        className="book-card"
+                        key={book.id}
+                        onClick={() => navigate(`/book/${book.id}`)}
+                    >
+                        {/* Book Cover */}
                         <div>
-                            <button
-                                className="btn-favorite"
-                                onClick={e => { e.stopPropagation(); handleToggleFavorite(book.id); }}
-                            >
+                            {book.cover_image && (
                                 <img
-                                    src={
-                                        favoriteBookIds.includes(book.id)
-                                            ? '/icons/add-to-fav-filled.png'
-                                            : '/icons/add-to-fav.png'
-                                    }
-                                    className="icon"
-                                    alt="♡"
+                                    src={book.cover_image}
+                                    alt={book.title}
+                                    className="book-cover"
                                 />
-                            </button>
-
-
+                            )}
                         </div>
-                        <div>
-                            <button
-                                className="btn-add-cart"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleAddToCart(book.id);
-                                }}
-                                disabled={book.stock == 0}
-                            >
-                                Add to Cart
-                                <div>
+
+                        {/* Rating Section */}
+                        <div
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '6px',
+                            }}
+                        >
+                            <div style={{ display: 'flex', gap: '4px' }}>
+                                {renderStars(book.average_rating || 0)}
+                            </div>
+                            <span style={{ fontSize: '14px', color: '#6d6d6d' }}>
+                                ({book.rating_count || 0})
+                            </span>
+                        </div>
+
+                        {/* Book Details */}
+                        <div className="book-details2">
+                            <p className="book-title2">{truncateTitle(book.title)}</p>
+                            <p className="book-author2">{book.author}</p>
+                            <p className="book-price2">Rs {book.price}</p>
+                        </div>
+
+                        {/* Buttons */}
+                        <div className="book-footer">
+                            <div>
+                                <button
+                                    className="btn-favorite"
+                                    onClick={e => { e.stopPropagation(); handleToggleFavorite(book.id); }}
+                                >
                                     <img
-                                        src="/icons/add-to-cart-white.png"
+                                        src={
+                                            favoriteBookIds.includes(book.id)
+                                                ? '/icons/add-to-fav-filled.png'
+                                                : '/icons/add-to-fav.png'
+                                        }
                                         className="icon"
-                                        alt="＋"
+                                        alt="♡"
                                     />
-                                </div>
-                            </button>
+                                </button>
+
+
+                            </div>
+                            <div>
+                                <button
+                                    className="btn-add-cart"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleAddToCart(book.id);
+                                    }}
+                                    disabled={book.stock == 0}
+                                >
+                                    Add to Cart
+                                    <div>
+                                        <img
+                                            src="/icons/add-to-cart-white.png"
+                                            className="icon"
+                                            alt="＋"
+                                        />
+                                    </div>
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            ))}
-            {filteredBooks.length === 0 && (
-                <p style={{ gridColumn: '1 / -1', textAlign: 'center' }}>
-                    No books match your search.
-                </p>
-            )}
-        </div>
+                ))}
+                {filteredBooks.length === 0 && (
+                    <p style={{ gridColumn: '1 / -1', textAlign: 'center' }}>
+                        No books match your search.
+                    </p>
+                )}
+            </div>
+        </>
     );
 };
 
