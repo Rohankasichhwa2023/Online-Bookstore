@@ -105,6 +105,7 @@ const CheckoutPage = () => {
             purchase_order_id: `order-${orderId}`,
             purchase_order_name: `Order #${orderId}`,
             amount: Math.round(amountInRupees * 100),
+            order_id: orderId,
         };
         try {
             const res = await axios.post(

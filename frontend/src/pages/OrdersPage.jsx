@@ -117,17 +117,17 @@ const OrdersPage = () => {
                 <div>Total: Rs {order.total_amount}</div>
                 {order.payment_status === 'pending' && (
                   <div className="pay-now-btn-wrapper">
-                    {order.payment_method === 'esewa' ? (
-                      <button
-                        className="pay-now-btn esewa"
-                        onClick={() => handleEsewaPayNow(order.id)}
-                      >Pay with eSewa</button>
-                    ) : (
-                      <button
-                        className="pay-now-btn khalti"
-                        onClick={() => handleKhaltiPayNow(order.id)}
-                      >Pay with Khalti</button>
-                    )}
+
+                    <button
+                      className="pay-now-btn esewa"
+                      onClick={() => handleEsewaPayNow(order.id)}
+                    >Pay with eSewa</button>
+
+                    <button
+                      className="pay-now-btn khalti"
+                      onClick={() => handleKhaltiPayNow(order.id)}
+                    >Pay with Khalti</button>
+
                   </div>
                 )}
               </div>

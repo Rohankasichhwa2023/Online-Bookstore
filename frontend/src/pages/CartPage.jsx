@@ -75,9 +75,6 @@ const CartPage = () => {
     };
 
     const createOrderAndNavigate = async (paymentMethod) => {
-        if (paymentMethod=='esewa'){
-            setLoading1 (true);
-        }
         setLoading(true);
         try {
             const res = await axios.post(
@@ -126,7 +123,7 @@ const CartPage = () => {
                                 <div key={it.id} className="cart-item">
                                     <img src={it.book.cover_image} alt={it.book.title} className="cover" onClick={() => navigate(`/book/${it.book.id}`)} />
                                     <div className="cart-details">
-                                        <div style={{width: "400px"}}>
+                                        <div style={{ width: "400px" }}>
                                             <div onClick={() => navigate(`/book/${it.book.id}`)}>
                                                 <p className="price">Rs {it.subtotal.toFixed(2)}</p>
                                                 <p className="title">{it.book.title}</p>
@@ -153,37 +150,28 @@ const CartPage = () => {
 
                         <div className="right-side">
                             <h1 style={{ margin: "0px", padding: "0px 0px 24px 0px", fontSize: "24px", borderBottom: "2px solid #ccc" }}>Order Summary</h1>
-                            
-                            <div style={{margin: "24px 0px", width: "360px"}}>
+
+                            <div style={{ margin: "24px 0px", width: "360px" }}>
                                 {items.map((it) => (
-                                    <div key={it.id} style={{margin:"0px", padding:"0px"}}>
-                                        <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>   
-                                            <p style={{padding: "0px", margin: "2px", fontSize: "16px", width: "280px", textAlign: "left"}}>{it.book.title}</p>
-                                            <p style={{padding: "0px", margin: "2px",  fontWeight: "500"}}>Rs {it.subtotal.toFixed(2)}</p>
+                                    <div key={it.id} style={{ margin: "0px", padding: "0px" }}>
+                                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                                            <p style={{ padding: "0px", margin: "2px", fontSize: "16px", width: "280px", textAlign: "left" }}>{it.book.title}</p>
+                                            <p style={{ padding: "0px", margin: "2px", fontWeight: "500" }}>Rs {it.subtotal.toFixed(2)}</p>
                                         </div>
                                     </div>
                                 ))}
                             </div>
 
-                            <div className="total" style={{borderTop: "2px solid #ccc" }}><h4 style={{color: "#0E4783", margin: "0px"}}>Total</h4><p className="price2">Rs {total}</p></div>
+                            <div className="total" style={{ borderTop: "2px solid #ccc" }}><h4 style={{ color: "#0E4783", margin: "0px" }}>Total</h4><p className="price2">Rs {total}</p></div>
 
                             <div className="checkout-buttons">
                                 <button
-                                    onClick={() => createOrderAndNavigate('esewa')}
+                                    onClick={() => createOrderAndNavigate('pending')}
                                     disabled={loading1}
                                     className={`checkout-btn checkout-esewa`}
                                     style={{ cursor: loading1 ? 'not-allowed' : 'pointer' }}
                                 >
-                                    {loading1 ? 'Processing…' : 'Checkout with eSewa'}
-                                </button>
-
-                                <button
-                                    onClick={() => createOrderAndNavigate('khalti')}
-                                    disabled={loading}
-                                    className={`checkout-btn checkout-khalti`}
-                                    style={{ cursor: loading ? 'not-allowed' : 'pointer' }}
-                                >
-                                    {loading ? 'Processing…' : 'Checkout with Khalti'}
+                                    {loading1 ? 'Processing…' : 'Order'}
                                 </button>
                             </div>
                         </div>

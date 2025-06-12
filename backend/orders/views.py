@@ -65,16 +65,20 @@ def _verify_esewa_signature(signed_str: str, received_sig: str, secret_key: byte
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def create_order(request):
-
+    """
+    POST /orders/create/
+    Creates an order with payment_method which may be 'pending', 'esewa', or 'khalti'.
+    """
     user_id = request.data.get('user_id')
-    pay_method = request.data.get('payment_method', 'esewa').lower()
+    pay_method = request.data.get('payment_method', 'pending').lower()
 
+    # allow pending, esewa, khalti
     if not user_id:
         return Response({'detail': 'user_id is required.'}, status=status.HTTP_400_BAD_REQUEST)
-    if pay_method not in ('esewa', 'khalti'):
+    if pay_method not in ('pending', 'esewa', 'khalti'):
         return Response({'detail': 'Invalid payment_method.'}, status=status.HTTP_400_BAD_REQUEST)
 
-    # 1) Fetch this user's ACTIVE Cart
+    # Fetch user and active cart
     try:
         user = User.objects.get(pk=int(user_id))
     except (User.DoesNotExist, ValueError):
@@ -83,22 +87,21 @@ def create_order(request):
     try:
         cart = Cart.objects.get(user=user, status='active')
     except Cart.DoesNotExist:
-        return Response({'detail': 'No active cart found for this user.'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'detail': 'No active cart found.'}, status=status.HTTP_400_BAD_REQUEST)
 
     cart_items = CartItem.objects.filter(cart=cart)
     if not cart_items.exists():
         return Response({'detail': 'Cart is empty.'}, status=status.HTTP_400_BAD_REQUEST)
 
-    # 2) Compute total_amount (Decimal)
+    # compute total_amount
     total_amount = Decimal('0.00')
     for ci in cart_items:
-        total_amount += (ci.price_snapshot * ci.quantity)
+        total_amount += ci.price_snapshot * ci.quantity
 
-    # 3) Create Order
-    default_address = Address.objects.filter(user=user, is_default=True).first()
-    if not default_address:
-        default_address = Address.objects.filter(user=user).first()
-    
+    # select default address
+    default_address = Address.objects.filter(user=user, is_default=True).first() or Address.objects.filter(user=user).first()
+
+    # create the order record
     order = Order.objects.create(
         user=user,
         shipping_address=default_address,
@@ -108,18 +111,16 @@ def create_order(request):
         payment_status='pending',
     )
 
-    # 4) Create OrderItem rows
+    # create order items
     for ci in cart_items:
         OrderItem.objects.create(
             order=order,
             book=ci.book,
             quantity=ci.quantity,
-            price=ci.price_snapshot,
+            price=ci.price_snapshot
         )
 
-    # 5) Create Payment stub
-    #    - For eSewa: generate a random transaction_id (UUID) now
-    #    - For Khalti: leave transaction_id blank; we'll create the Payment after lookup
+    # create payment stub only if esewa
     if pay_method == 'esewa':
         random_txn = str(uuid.uuid4())
         Payment.objects.create(
@@ -127,26 +128,23 @@ def create_order(request):
             method='esewa',
             status='pending',
             amount=total_amount,
-            transaction_id=random_txn,
+            transaction_id=random_txn
         )
-    else:
-        # Khalti: delay creation until after lookup
-        # We only need a Payment record once Khalti says "Completed"
-        pass
+    # for khalti and pending, defer payment creation until later
 
-    # 6) Mark cart as purchased + delete its items
+    # mark cart purchased
     cart_items.delete()
     cart.status = 'purchased'
     cart.save()
+
+    # respond with order details
     shipping_address_data = AddressSerializer(default_address).data if default_address else None
-    return Response(
-        {
-            'order_id':     order.id,
-            'total_amount': format(total_amount, '.2f'),
-            'shipping_address': shipping_address_data
-        },
-        status=status.HTTP_201_CREATED
-    )
+    return Response({
+        'order_id': order.id,
+        'total_amount': f'{total_amount:.2f}',
+        'shipping_address': shipping_address_data
+    }, status=status.HTTP_201_CREATED)
+
 
 @api_view(['PUT'])
 @permission_classes([AllowAny])
@@ -177,48 +175,52 @@ def update_order_address(request, order_id):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def get_esewa_payment_data(request):
-    """
-    Returns the set of hidden fields + signature that your React
-    form will submit to https://rc-epay.esewa.com.np/api/epay/main/v2/form
-    """
     order_id = request.data.get('order_id')
     if not order_id:
         return Response({'detail': 'order_id is required'}, status=status.HTTP_400_BAD_REQUEST)
 
-    try:
-        order = Order.objects.get(pk=order_id, payment_method='esewa')
-    except Order.DoesNotExist:
-        return Response({'detail': 'Order not found or not set to eSewa.'}, status=status.HTTP_404_NOT_FOUND)
+    # fetch & mark order for eSewa
+    order = get_object_or_404(Order, pk=order_id, status='pending')
+    order.payment_method = 'esewa'
+    order.save(update_fields=['payment_method'])
 
-    # 1) Generate new UUID for this payment attempt
+    # 1) new transaction UUID
     transaction_uuid = str(uuid.uuid4())
-    total_amount = f"{order.total_amount:.2f}"  # string like "1500.00"
+    total_amount = f"{order.total_amount:.2f}"
     product_code = 'EPAYTEST'
 
-    # 2) Update existing Payment stub with this new transaction_uuid
-    payment = Payment.objects.filter(order=order, method='esewa').first()
-    if payment:
+    # 2) get-or-create payment stub
+    payment, created = Payment.objects.get_or_create(
+        order=order,
+        method='esewa',
+        defaults={
+            'status': 'pending',
+            'amount': order.total_amount,
+            'transaction_id': transaction_uuid
+        }
+    )
+    if not created:
         payment.transaction_id = transaction_uuid
-        payment.save()
+        payment.save(update_fields=['transaction_id'])
 
-    # 3) Generate eSewa signature
+    # 3) signature
     signature = generate_esewa_signature(total_amount, transaction_uuid, product_code)
 
     data = {
-        "amount":                  total_amount,
-        "tax_amount":              "0.00",
-        "total_amount":            total_amount,
-        "transaction_uuid":        transaction_uuid,
-        "product_code":            product_code,
-        "product_service_charge":  "0.00",
+        "amount": total_amount,
+        "tax_amount": "0.00",
+        "total_amount": total_amount,
+        "transaction_uuid": transaction_uuid,
+        "product_code": product_code,
+        "product_service_charge": "0.00",
         "product_delivery_charge": "0.00",
-        "success_url":             f"http://localhost:3000/payment-success/{order_id}",
-        "failure_url":             f"http://localhost:3000/payment-fail/{order_id}",
-        "signed_field_names":      "total_amount,transaction_uuid,product_code",
-        "signature":               signature,
+        "success_url": f"http://localhost:3000/payment-success/{order_id}",
+        "failure_url": f"http://localhost:3000/payment-fail/{order_id}",
+        "signed_field_names": "total_amount,transaction_uuid,product_code",
+        "signature": signature,
     }
-
     return Response(data, status=status.HTTP_200_OK)
+    
 
 
 @api_view(['GET'])
@@ -332,6 +334,14 @@ def initiate_khalti_payment(request):
     if not all(k in data for k in required):
         return Response({'error': 'Missing one of required fields.'}, status=status.HTTP_400_BAD_REQUEST)
 
+    try:
+        order = Order.objects.get(pk=data['order_id'], status='pending')
+    except Order.DoesNotExist:
+        return Response({'error':'Order not found or not pending.'}, status=status.HTTP_404_NOT_FOUND)
+
+    order.payment_method = 'khalti'
+    order.save(update_fields=['payment_method'])
+
     payload = {
         "return_url":          data['return_url'],
         "website_url":         "http://localhost:3000",  # your React origin
@@ -343,6 +353,7 @@ def initiate_khalti_payment(request):
     headers = {
         "Authorization": f"Key {settings.KHALTI_SECRET_KEY}"
     }
+    
 
     khalti_url = settings.KHALTI_INITIATE_URL  # e.g. "https://a.khalti.com/api/v2/epayment/initiate/"
     response = requests.post(khalti_url, json=payload, headers=headers)
@@ -402,7 +413,7 @@ def pay_existing_order_with_khalti(request, order_id):
     When the user clicks “Pay Now” on an existing, pending Khalti order,
     redirect them to Khalti’s payment page exactly as if they had just created it.
     """
-    order = get_object_or_404(Order, id=order_id, payment_method='khalti')
+    order = get_object_or_404(Order, id=order_id, payment_method='pending')
 
     # Only allow if still pending:
     if order.payment_status != 'pending':
@@ -410,6 +421,9 @@ def pay_existing_order_with_khalti(request, order_id):
             {'detail': 'Order is not pending payment.'}, 
             status=status.HTTP_400_BAD_REQUEST
         )
+    
+    order.payment_method = 'khalti'
+    order.save(update_fields=['payment_method'])
 
     # Re‐use the same logic as initiate_khalti_payment, but using this order:
     amount_paisa = int(order.total_amount * 100)
