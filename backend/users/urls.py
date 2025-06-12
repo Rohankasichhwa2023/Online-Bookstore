@@ -10,12 +10,8 @@ urlpatterns = [
     path('change-password/<int:pk>/', views.change_password, name='change_password'),
     path('addresses/',           views.addresses_list, name='addresses_list'),
     path('addresses/<int:pk>/',  views.address_detail,  name='address_detail'),
-    # path('logout/', views.logout_user, name='logout_user'),
-    # path('profile/<int:user_id>/', views.user_profile, name='user_profile'),
-    
-    # # Address
-    # path('addresses/', views.address_list_create, name='address_list_create'),
-    # path('addresses/<int:pk>/', views.address_detail, name='address_detail'),
+    path('non-admins/', views.non_admin_users, name='non-admin-users'),
+
     
     path(
         'notifications/',

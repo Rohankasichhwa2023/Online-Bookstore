@@ -29,6 +29,7 @@ import ChangePassword from './pages/ChangePassword';
 import AddressForm from './pages/AddressForm';
 import ViewOrders from './pages/ViewOrders';
 import ViewBookRequest from './pages/ViewBookRequest';
+import ViewUsers from './pages/ViewUsers';
 
 
 function App() {
@@ -39,6 +40,7 @@ function App() {
           <Routes>
             <Route path="/admin-login" element={<AdminLogin />} />
             <Route path="/admin-dashboard" element={<AdminDashboard />} />
+            <Route path="/all-users" element={<ViewUsers />} />
             <Route path="/add-book" element={<AddBookPage />} />
             <Route path="/view-books" element={<ViewBookPage />} />
             <Route path="/view-orders" element={<ViewOrders />} />

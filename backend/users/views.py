@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth.hashers import check_password
 from .models import User, Address, Notification
-from .serializers import UserSerializer, AddressSerializer, NotificationSerializer
+from .serializers import UserSerializer, AddressSerializer, NotificationSerializer, NonAdminUserSerializer
 from django.shortcuts import get_object_or_404
 
 @api_view(['POST'])
@@ -201,3 +201,18 @@ def mark_notification_read(request, pk):
     notification.save(update_fields=['is_read'])
     serializer = NotificationSerializer(notification)
     return Response(serializer.data)
+
+
+@api_view(['GET'])
+def non_admin_users(request):
+    """
+    GET /users/non-admins/
+    Returns a list of all users where is_admin=False.
+    """
+    # If you only want admins to call this, uncomment:
+    # if not request.user.is_admin:
+    #     return Response({'detail': 'Permission denied.'}, status=status.HTTP_403_FORBIDDEN)
+
+    users = User.objects.filter(is_admin=False).order_by('username')
+    serializer = NonAdminUserSerializer(users, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)

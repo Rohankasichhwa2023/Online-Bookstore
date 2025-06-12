@@ -22,6 +22,7 @@ const AdminDashboard = () => {
       <h2>Welcome, {adminUser.username}!</h2>
       <AdminLogoutButton />
       <br />
+      <button onClick={() => navigate('/all-users')}>View Users</button>
       <button onClick={() => navigate('/add-book')}>Add New Book</button>
       <button onClick={() => navigate('/view-books')}>View Books</button>
       <button onClick={() => navigate('/view-orders')}>View Orders</button>

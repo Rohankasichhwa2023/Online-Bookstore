@@ -73,6 +73,7 @@ export default function ViewOrders() {
                         {[
                             'ID',
                             'User',
+                            'Phone',
                             'Address',
                             'Date',
                             'Total',
@@ -95,7 +96,12 @@ export default function ViewOrders() {
                             </td>
                             <td className="px-4 py-2 border">
                                 {o.address
-                                    ? `${o.address.full_name}, ${o.address.address_line}`
+                                    ? `${o.address.phone}`
+                                    : '—'}
+                            </td>
+                            <td className="px-4 py-2 border">
+                                {o.address
+                                    ? `${o.address.address_line},${o.address.city}, ${o.address.postal_code}`
                                     : '—'}
                             </td>
                             <td className="px-4 py-2 border">
@@ -128,7 +134,7 @@ export default function ViewOrders() {
                                     onClick={() =>
                                         alert(JSON.stringify(o.items, null, 2))
                                     }
-                                    className="px-3 py-1 bg-blue-600 text-white rounded"
+                                    className="px-3 py-1 bg-blue-600 text-black rounded"
                                 >
                                     View Items
                                 </button>
