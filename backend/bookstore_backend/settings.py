@@ -163,3 +163,7 @@ KHALTI_PUBLIC_KEY = "9ab28ddf77854b8e9e0f0fa46355bff2"
 # Khalti sandbox endpoints
 KHALTI_INITIATE_URL = "https://a.khalti.com/api/v2/epayment/initiate/"
 KHALTI_LOOKUP_URL   = "https://a.khalti.com/api/v2/epayment/lookup/"
+
+
+BACKEND_BASE_URL = "http://localhost:8000"
+FRONTEND_BASE_URL = "http://localhost:3000"

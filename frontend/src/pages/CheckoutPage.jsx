@@ -63,27 +63,12 @@ const CheckoutPage = () => {
             });
     }, [defaultAddress, orderId]);
 
-    // build & submit eSewa form
-    useEffect(() => {
-        if (!esewaFormData) return;
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = 'https://rc-epay.esewa.com.np/api/epay/main/v2/form';
-        Object.entries(esewaFormData).forEach(([key, value]) => {
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = key;
-            input.value = value;
-            form.appendChild(input);
-        });
-        document.body.appendChild(form);
-        form.submit();
-    }, [esewaFormData]);
 
     if (!orderId) return null;
 
     const amountInRupees = parseFloat(totalAmount);
 
+    // … inside handleEsewa() …
     const handleEsewa = async () => {
         setEsewaLoading(true);
         try {
@@ -91,12 +76,25 @@ const CheckoutPage = () => {
                 'http://localhost:8000/orders/get-esewa-payment-data/',
                 { order_id: orderId }
             );
-            setEsewaFormData(res.data);
-        } catch {
-            alert('Failed to get eSewa payment data. Please try again.');
+            // build & submit form:
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = 'https://rc-epay.esewa.com.np/api/epay/main/v2/form';
+            Object.entries(res.data).forEach(([k, v]) => {
+                const inp = document.createElement('input');
+                inp.type = 'hidden';
+                inp.name = k;
+                inp.value = v;
+                form.appendChild(inp);
+            });
+            document.body.appendChild(form);
+            form.submit();
+        } catch (err) {
+            alert('Failed to get eSewa data');
             setEsewaLoading(false);
         }
     };
+
 
     const handleKhalti = async () => {
         setKhaltiLoading(true);

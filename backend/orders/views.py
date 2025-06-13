@@ -38,27 +38,6 @@ def list_user_orders(request):
 
 
 # -------------------------------
-# eSewa Constants and Utilities
-# -------------------------------
-
-ESEWA_UAT_SECRET_KEY = b'8gBm/:&EnhH.1/q'  # Your eSewa UAT secret (bytes)
-
-def generate_esewa_signature(total_amount: str, transaction_uuid: str, product_code: str) -> str:
-    """
-    Generate HMAC SHA256 Base64 signature for eSewa payment form.
-    The signing string format must exactly match what eSewa expects.
-    """
-    signing_string = f'total_amount={total_amount},transaction_uuid={transaction_uuid},product_code={product_code}'
-    mac = hmac.new(ESEWA_UAT_SECRET_KEY, signing_string.encode('utf-8'), hashlib.sha256).digest()
-    signature = base64.b64encode(mac).decode('utf-8')
-    return signature
-
-def _verify_esewa_signature(signed_str: str, received_sig: str, secret_key: bytes) -> bool:
-    mac = hmac.new(secret_key, signed_str.encode('utf-8'), hashlib.sha256).digest()
-    expected_sig = base64.b64encode(mac).decode('utf-8')
-    return hmac.compare_digest(expected_sig, received_sig)
-
-# -------------------------------
 # 1) Create Order (eSewa or Khalti)
 # -------------------------------
 
@@ -172,144 +151,135 @@ def update_order_address(request, order_id):
 # 2) eSewa: Provide Payment Data
 # -------------------------------
 
+ESEWA_UAT_SECRET_KEY = b'8gBm/:&EnhH.1/q'
+
+def generate_esewa_signature(total_amount: str, transaction_uuid: str, product_code: str) -> str:
+    signing = f'total_amount={total_amount},transaction_uuid={transaction_uuid},product_code={product_code}'
+    mac = hmac.new(ESEWA_UAT_SECRET_KEY, signing.encode(), hashlib.sha256).digest()
+    return base64.b64encode(mac).decode()
+
+def verify_esewa_signature(signed_str: str, recv_sig: str) -> bool:
+    mac = hmac.new(ESEWA_UAT_SECRET_KEY, signed_str.encode(), hashlib.sha256).digest()
+    return hmac.compare_digest(base64.b64encode(mac).decode(), recv_sig)
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def get_esewa_payment_data(request):
     order_id = request.data.get('order_id')
     if not order_id:
-        return Response({'detail': 'order_id is required'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'detail': 'order_id is required.'}, status=status.HTTP_400_BAD_REQUEST)
 
-    # fetch & mark order for eSewa
     order = get_object_or_404(Order, pk=order_id, status='pending')
-    order.payment_method = 'esewa'
-    order.save(update_fields=['payment_method'])
+    order.payment_method = 'esewa'; order.save(update_fields=['payment_method'])
 
-    # 1) new transaction UUID
-    transaction_uuid = str(uuid.uuid4())
-    total_amount = f"{order.total_amount:.2f}"
-    product_code = 'EPAYTEST'
+    txn_uuid = str(uuid.uuid4())
+    amt      = f"{order.total_amount:.2f}"
+    code     = 'EPAYTEST'
 
-    # 2) get-or-create payment stub
     payment, created = Payment.objects.get_or_create(
-        order=order,
-        method='esewa',
-        defaults={
-            'status': 'pending',
-            'amount': order.total_amount,
-            'transaction_id': transaction_uuid
-        }
+        order=order, method='esewa',
+        defaults={'status':'pending','amount':order.total_amount,'transaction_id':txn_uuid}
     )
     if not created:
-        payment.transaction_id = transaction_uuid
+        payment.transaction_id = txn_uuid
         payment.save(update_fields=['transaction_id'])
 
-    # 3) signature
-    signature = generate_esewa_signature(total_amount, transaction_uuid, product_code)
+    sig = generate_esewa_signature(amt, txn_uuid, code)
 
+    BE = settings.BACKEND_BASE_URL.rstrip('/')  # e.g. "http://localhost:8000"
     data = {
-        "amount": total_amount,
-        "tax_amount": "0.00",
-        "total_amount": total_amount,
-        "transaction_uuid": transaction_uuid,
-        "product_code": product_code,
-        "product_service_charge": "0.00",
-        "product_delivery_charge": "0.00",
-        "success_url": f"http://localhost:3000/payment-success/{order_id}",
-        "failure_url": f"http://localhost:3000/payment-fail/{order_id}",
-        "signed_field_names": "total_amount,transaction_uuid,product_code",
-        "signature": signature,
+      "amount":                  amt,
+      "tax_amount":              "0.00",
+      "total_amount":            amt,
+      "transaction_uuid":        txn_uuid,
+      "product_code":            code,
+      "product_service_charge":  "0.00",
+      "product_delivery_charge": "0.00",
+      # now using path-param URLs:
+      "success_url": f"{BE}/orders/esewa/complete/{order.id}/",
+      "failure_url": f"{BE}/orders/esewa/fail/{order.id}/",
+      "signed_field_names":      "total_amount,transaction_uuid,product_code",
+      "signature":               sig,
     }
-    return Response(data, status=status.HTTP_200_OK)
-    
+    return Response(data)
 
 
-@api_view(['GET'])
+@api_view(['GET','POST'])
 @permission_classes([AllowAny])
-def esewa_status_check(request, order_id):
+def esewa_complete(request, order_id):
     """
-    (Optional) If your frontend needs to poll eSewa status,
-    you can return the current payment/order status here.
+    Handle eSewa success. Accept both POST (real callback) & GET (for manual testing).
     """
-    order = get_object_or_404(Order, pk=order_id, payment_method='esewa')
-    payment = get_object_or_404(Payment, order=order, method='esewa')
-
-    return Response({
-        'product_code':     'EPAYTEST',
-        'transaction_uuid': payment.transaction_id,
-        'total_amount':     str(order.total_amount),
-        'status':           order.payment_status.upper(),  # 'COMPLETED' or 'PENDING'
-        'ref_id':           payment.transaction_id or 'N/A'
-    }, status=status.HTTP_200_OK)
-
-
-@api_view(['POST'])
-@permission_classes([AllowAny])
-def esewa_complete(request):
-    """
-    Called by eSewa on successful payment. They POST a Base64 payload.
-    We decode it, verify HMAC signature, then mark payment + order as completed.
-    Finally, redirect to your React success page.
-    """
+    # extract the Base64 payload from POST body or GET ?data=
+    if request.method == 'POST':
+        raw = request.body.decode()
+    else:
+        raw = request.GET.get('data','')
     try:
-        encoded_body = request.body.decode('utf-8')
-        decoded_json = base64.b64decode(encoded_body).decode('utf-8')
-        payload = json.loads(decoded_json)
-    except Exception:
-        return Response({'detail': 'Invalid Base64 or JSON.'}, status=status.HTTP_400_BAD_REQUEST)
+        decoded = base64.b64decode(raw).decode()
+        payload = json.loads(decoded)
+    except:
+        return Response({'detail':'Invalid payload'}, status=status.HTTP_400_BAD_REQUEST)
 
-    signed_fields_str = payload.get('signed_field_names', '')
-    signed_fields = signed_fields_str.split(',')
+    fields = payload.get('signed_field_names','').split(',')
+    concat = ','.join(f"{f}={payload.get(f,'')}" for f in fields)
+    if not verify_esewa_signature(concat, payload.get('signature','')):
+        return Response({'detail':'Signature mismatch'}, status=status.HTTP_400_BAD_REQUEST)
 
-    concatenated = ','.join([f"{field}={payload.get(field, '')}" for field in signed_fields])
-    received_sig = payload.get('signature', '')
-
-    if not _verify_esewa_signature(concatenated, received_sig, ESEWA_UAT_SECRET_KEY):
-        return Response({'detail': 'Signature mismatch.'}, status=status.HTTP_400_BAD_REQUEST)
-
-    txn_uuid = payload.get('transaction_uuid')
-    payment = get_object_or_404(Payment, transaction_id=txn_uuid, method='esewa')
+    payment = get_object_or_404(Payment, transaction_id=payload.get('transaction_uuid',''), method='esewa')
     order = payment.order
 
-    # Update payment and order
     payment.transaction_id = payload.get('transaction_code', payment.transaction_id)
     payment.status = 'completed'
     payment.paid_at = timezone.now()
     payment.save()
 
     order.payment_status = 'completed'
-    order.status = 'processing'
+    order.status         = 'processing'
     order.save()
 
-    return redirect(f'/order-success/{order.id}')
+    # redirect back to React
+    return redirect(f"{settings.FRONTEND_BASE_URL}/payment-success/{order.id}")
 
 
-@api_view(['POST'])
+@api_view(['GET','POST'])
 @permission_classes([AllowAny])
-def esewa_fail(request):
-    """
-    Called by eSewa on failed/canceled payment. They POST a Base64 payload.
-    We decode it, find the related Payment/Order, and mark them as failed.
-    Then redirect to your React failure page.
-    """
+def esewa_fail(request, order_id):
+    """Handle eSewa failure/cancel; same dual-method support."""
+    if request.method == 'POST':
+        raw = request.body.decode()
+    else:
+        raw = request.GET.get('data','')
     try:
-        encoded_body = request.body.decode('utf-8')
-        decoded_json = base64.b64decode(encoded_body).decode('utf-8')
-        payload = json.loads(decoded_json)
-    except Exception:
-        return Response({'detail': 'Invalid Base64 or JSON.'}, status=status.HTTP_400_BAD_REQUEST)
+        decoded = base64.b64decode(raw).decode()
+        payload = json.loads(decoded)
+    except:
+        return Response({'detail':'Invalid payload'}, status=status.HTTP_400_BAD_REQUEST)
 
-    txn_uuid = payload.get('transaction_uuid')
-    payment = get_object_or_404(Payment, transaction_id=txn_uuid, method='esewa')
+    payment = get_object_or_404(Payment, transaction_id=payload.get('transaction_uuid',''), method='esewa')
     order = payment.order
 
-    payment.status = 'failed'
-    payment.save()
-
+    payment.status = 'failed'; payment.save()
     order.payment_status = 'failed'
-    order.status = 'cancelled'
+    order.status         = 'cancelled'
     order.save()
 
-    return redirect(f'/order-fail/{order.id}')
+    return redirect(f"{settings.FRONTEND_BASE_URL}/payment-fail/{order.id}")
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def esewa_status_check(request, order_id):
+    order = get_object_or_404(Order, pk=order_id, payment_method='esewa')
+    payment = get_object_or_404(Payment, order=order, method='esewa')
+    return Response({
+        "product_code":     "EPAYTEST",
+        "transaction_uuid": payment.transaction_id,
+        "total_amount":     float(order.total_amount),
+        "status":           order.payment_status.upper(),  # COMPLETED, PENDING, etc.
+        "ref_id":           payment.transaction_id or ""
+    })
+    
+
 
 # -------------------------------
 # 3) Khalti: Initiate & Verify
@@ -502,6 +472,13 @@ def admin_update_status(request, order_id):
 
     order.status = new_status
     order.save(update_fields=['status','updated_at'])
+
+    # Decrement stock when delivered
+    if new_status == 'delivered':
+        for item in order.orderitem_set.select_related('book').all():
+            book = item.book
+            book.stock = max(0, book.stock - item.quantity)
+            book.save(update_fields=['stock'])
 
     # 3) Build notification message
     #    Gather all product (book) names on this order

@@ -9,7 +9,7 @@
 .orders-list {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
-  gap:24px;
+  gap: 24px;
 }
 
 .order-card {
@@ -21,10 +21,10 @@
   gap: 24px;
 }
 
-.order-items{
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+.order-items {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .item-card {
@@ -35,7 +35,7 @@
   border-bottom: 2px solid #ccc;
 }
 
-.item-card:last-child{
+.item-card:last-child {
   padding-bottom: 0px;
   border-bottom: none;
 }
@@ -59,17 +59,18 @@
 }
 
 .order-header {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    padding: 12px;
-    margin-top: 40px;
-    width: 100%;
-    height: min-content;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+  margin-top: 40px;
+  width: 100%;
+  height: min-content;
 }
 
 .pay-now-btn {
   padding: 8px 12px;
+  margin: 5px;
   width: 100%;
   border-radius: 8px;
   font-size: 15px;
@@ -78,7 +79,7 @@
   background-color: #0E4783;
   color: white;
   cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   transition: all 0.2s ease;
 }
 

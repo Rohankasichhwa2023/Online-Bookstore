@@ -12,54 +12,60 @@ const PaymentSuccess = () => {
     const [errorMsg, setErrorMsg] = useState(null);
 
     useEffect(() => {
-        const pollStatus = async () => {
+        const poll = async () => {
             try {
-                await new Promise((resolve) => setTimeout(resolve, 30000));
-                const res = await axios.get(`http://localhost:8000/orders/esewa/status-check/${orderId}/`);
+                // wait a few seconds for eSewa → backend update
+                await new Promise(r => setTimeout(r, 5000));
+                const res = await axios.get(
+                    `http://localhost:8000/orders/esewa/status-check/${orderId}/`
+                );
                 setStatusData(res.data);
             } catch (err) {
-                setErrorMsg(err.response?.data?.error_message || err.message);
+                setErrorMsg(err.response?.data?.detail || err.message);
             } finally {
                 setLoading(false);
             }
         };
-
-        pollStatus();
+        poll();
     }, [orderId]);
 
     return (
         <>
-            <Navbar/>
+            <Navbar />
             <div className="payment-success-container">
                 <div className="payment-success-box">
                     {loading && (
                         <>
-                            <h2>Verifying Status…</h2>
-                            <p>Please wait a moment (around 30 seconds).</p>
+                            <h2>Verifying…</h2>
+                            <p>Please wait a moment.</p>
                         </>
                     )}
 
                     {!loading && errorMsg && (
                         <>
-                            <img src="/icons/failure.png" style={{height: "50px", width: "50px", marginBottom: "8px"}}/>
-                            <h2 className="error">Error Verifying Payment</h2>
+                            <img src="/icons/failure.png" alt="fail" />
+                            <h2 className="error">Error</h2>
                             <p>{errorMsg}</p>
                         </>
                     )}
 
                     {!loading && statusData && (
                         <>
-                            <h2>Payment Status for Order #{orderId}</h2>
-                            <p><strong>Status:</strong> <span className={statusData.status === 'COMPLETE' ? 'success' : 'pending'}>{statusData.status}</span></p>
-                            <p><strong>Reference ID:</strong> {statusData.ref_id}</p>
-                            {statusData.status === 'COMPLETE'
-                                ? <p className="success"><img src="/icons/success.png" style={{height: "50px", width: "50px"}}/><br/>Your payment has been confirmed. Thank you!</p>
-                                : <p className="pending">Your payment is {statusData.status}.</p>}
+                            <h2>Order #{orderId} — {statusData.status}</h2>
+                            <p><strong>Reference:</strong> {statusData.ref_id}</p>
+                            {statusData.status === 'COMPLETED' ? (
+                                <p className="success">
+                                    <img src="/icons/success.png" alt="ok" /><br />
+                                    Payment confirmed—thank you!
+                                </p>
+                            ) : (
+                                <p className="pending">Status: {statusData.status}</p>
+                            )}
                         </>
                     )}
                 </div>
             </div>
-            <Footer/>
+            <Footer />
         </>
     );
 };

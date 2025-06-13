@@ -19,7 +19,6 @@ import { FavoritesProvider } from './context/FavoritesContext';
 import CheckoutPage from './pages/CheckoutPage';
 import PaymentSuccess from './pages/PaymentSuccess';
 import PaymentFail from './pages/PaymentFail';
-import PollPaymentStatus from './pages/PollPaymentStatus';
 import OrderSuccessPage from './pages/OrderSuccessPage';
 import OrderFailPage from './pages/OrderFailPage';
 import OrdersPage from './pages/OrdersPage';
@@ -30,6 +29,7 @@ import AddressForm from './pages/AddressForm';
 import ViewOrders from './pages/ViewOrders';
 import ViewBookRequest from './pages/ViewBookRequest';
 import ViewUsers from './pages/ViewUsers';
+import ViewRatings from './pages/ViewRatings';
 
 
 function App() {
@@ -45,6 +45,7 @@ function App() {
             <Route path="/view-books" element={<ViewBookPage />} />
             <Route path="/view-orders" element={<ViewOrders />} />
             <Route path="/view-books-request" element={<ViewBookRequest />} />
+            <Route path="/view-ratings" element={<ViewRatings />} />
             <Route path="/edit-book/:id" element={<EditBookPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/login" element={<LoginPage />} />
@@ -55,7 +56,6 @@ function App() {
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/payment-success/:id" element={<PaymentSuccess />} />
             <Route path="/payment-fail/:id" element={<PaymentFail />} />
-            <Route path="/orders/status/:id" element={<PollPaymentStatus />} />
             <Route path="/favorites" element={<FavoritesPage />} />
             <Route path="/orders" element={<OrdersPage />} />
             <Route path="/order-success/:orderId" element={<OrderSuccessPage />} />
