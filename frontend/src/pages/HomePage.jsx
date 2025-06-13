@@ -1,43 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
-import axios from 'axios';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { useCart } from '../context/CartContext';
-import { useFavorites } from '../context/FavoritesContext';
 import '../css/HomePage.css';
 
 const HomePage = () => {
     const navigate = useNavigate();
-    const User = JSON.parse(localStorage.getItem('user'));
-    const [books, setBooks] = useState([]);
-    const { updateCart } = useCart();
-    const { updateFavorites } = useFavorites();
-
-    useEffect(() => {
-        const userData = JSON.parse(localStorage.getItem('user'));
-        if (!userData) {
-            navigate('/login');
-            return;
-        }
-        fetchBooks();
-
-        // Immediately re‐fetch global counts for this user
-        updateCart();
-        updateFavorites();
-    }, [navigate, updateCart, updateFavorites]);
-
-    const fetchBooks = async () => {
-        try {
-            const res = await axios.get('http://localhost:8000/books/all-books/');
-            setBooks(res.data);
-        } catch (err) {
-            console.error('Error fetching books:', err);
-        }
-    };
-
-    if (!User) return null;
 
     return (
         <>

@@ -55,7 +55,7 @@
 }
 
 .nav-item.active {
-    border-bottom: 2px solid white;
+    border-bottom: 3px solid white;
     display: flex;
     align-items: center;
     height: 100%;
@@ -79,6 +79,7 @@
     background-color: #0E4783;
     padding: 0px;
 }
+
 .notification-btn {
     background-color: #0E4783;
     border: none;

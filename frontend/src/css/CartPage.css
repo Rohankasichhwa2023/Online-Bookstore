@@ -1,5 +1,5 @@
 .cart-container {
-    padding: 92px 40px 0px 40px;
+    padding: 92px 40px 180px 40px;
 }
 
 .empty-cart {
@@ -42,32 +42,19 @@
     height: 24px;
 }
 
-.checkout-buttons {
-    display: flex;
-    gap: 16px;
-    width: 100%;
-    margin:0px;
-    padding:0px;
-}
-
-.checkout-btn {
+.order-btn {
+    width: 60%;
     padding: 8px 16px;
-    color: #fff;
+    background-color: #0E4783;
+    color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    font-weight: 500;
 }
 
-.checkout-btn:hover {
+.order-btn:hover {
     transform: scale(1.02);
-}
-
-.checkout-esewa {
-    background-color: #28a745;
-}
-
-.checkout-khalti {
-    background-color: #6633cc;
 }
 
 .filled-cart {
@@ -114,7 +101,7 @@
 }
 
 .price,
-.title,
+.cart-title,
 .author {
     text-align: left;
     padding: 0px;
@@ -126,7 +113,7 @@
     font-weight: 700;
 }
 
-.title {
+.cart-title {
     margin: 0px 0px 2px 0px;
     font-size: 20px;
 }

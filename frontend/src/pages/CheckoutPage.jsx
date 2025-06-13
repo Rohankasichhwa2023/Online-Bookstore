@@ -129,17 +129,15 @@ const CheckoutPage = () => {
                         Order #{orderId}
                     </h3>
 
-                    <div className="checkout-address" style={{ marginBottom: '24px' }}>
-                        <h4 style={{ color: '#0E4783', marginBottom: '8px' }}>
-                            Shipping Address
-                        </h4>
+                    <div className="checkout-address">
+                        <h4 style={{color: "#0E4783"}}>Shipping Address</h4>
                         {defaultAddress
                             ? (
-                                <div style={{ lineHeight: 1.5 }}>
-                                    <strong>{defaultAddress.full_name}</strong><br />
+                                <div style={{ lineHeight: 1.8 }}>
+                                    {defaultAddress.full_name}<br />
                                     {defaultAddress.address_line}<br />
                                     {defaultAddress.city}, {defaultAddress.postal_code}<br />
-                                    Phone: {defaultAddress.phone}
+                                    {defaultAddress.phone}
                                 </div>
                             )
                             : <p style={{ color: 'red' }}>{addressError}</p>
@@ -147,11 +145,9 @@ const CheckoutPage = () => {
                         <button
                             className="change-address-btn"
                             onClick={() => navigate('/address')}
-                            style={{ marginBottom: '16px' }}
                         >
                             Change Shipping Address
                         </button>
-
                     </div>
 
                     <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "24px" }}>
@@ -159,11 +155,12 @@ const CheckoutPage = () => {
                         <p className="price2">Rs {amountInRupees.toFixed(2)}</p>
                     </div>
 
-                    <div style={{ display: "flex", gap: "24px", justifyContent: "center" }}>
+                    <div style={{ display: "flex", gap: "24px"}}>
                         <button
                             onClick={handleEsewa}
                             disabled={isEsewaLoading || isKhaltiLoading}
                             style={{
+                                width: '100%',
                                 padding: '8px 24px',
                                 backgroundColor: '#28a745',
                                 color: '#fff',
@@ -179,6 +176,7 @@ const CheckoutPage = () => {
                             onClick={handleKhalti}
                             disabled={isEsewaLoading || isKhaltiLoading}
                             style={{
+                                width: '100%',
                                 padding: '8px 24px',
                                 backgroundColor: '#6633cc',
                                 color: '#fff',

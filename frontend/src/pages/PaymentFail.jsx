@@ -15,7 +15,7 @@ const PaymentFail = () => {
                     <img src="/icons/failure.png" style={{height: "50px", width: "50px", marginBottom: "8px"}}/>
                     <h2 className="error">Payment Failed or Canceled</h2>
                     <p>Your payment for Order #{orderId} could not be completed.</p>
-                    <p>Please try again.</p>
+                    <p>Please try again!</p>
                 </div>
             </div>
             <Footer />

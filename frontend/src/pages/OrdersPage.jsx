@@ -78,11 +78,11 @@ const OrdersPage = () => {
       <div className="orders-container">
         <h1>Order History</h1>
 
-        {loading && <div className="status-msg">Loading your orders…</div>}
+        {loading && <div className="status-msg" style={{textAlign: "center", paddingBottom: "280px"}}>Loading your orders…</div>}
         {error && <div className="status-msg error">{error}</div>}
 
         {!loading && !error && orders.length === 0 && (
-          <div className="status-msg">You have not placed any orders yet.</div>
+          <div className="status-msg" style={{textAlign: "center", paddingBottom: "280px"}}>You have not placed any orders yet.</div>
         )}
 
         <div className="orders-list">

@@ -12,7 +12,6 @@ const CartPage = () => {
     const [user] = useState(() => JSON.parse(localStorage.getItem('user')));
     const [items, setItems] = useState([]);
     const [loading1, setLoading1] = useState(false);
-    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         if (!user) {
@@ -75,7 +74,6 @@ const CartPage = () => {
     };
 
     const createOrderAndNavigate = async (paymentMethod) => {
-        setLoading(true);
         try {
             const res = await axios.post(
                 'http://localhost:8000/orders/create/',
@@ -102,7 +100,6 @@ const CartPage = () => {
             alert('Failed to create order. Please try again.');
         } finally {
             setLoading1(false);
-            setLoading(false);
         }
     };
 
@@ -126,7 +123,7 @@ const CartPage = () => {
                                         <div style={{ width: "400px" }}>
                                             <div onClick={() => navigate(`/book/${it.book.id}`)}>
                                                 <p className="price">Rs {it.subtotal.toFixed(2)}</p>
-                                                <p className="title">{it.book.title}</p>
+                                                <p className="cart-title">{it.book.title}</p>
                                                 <p className="author">{it.book.author}</p>
                                                 <div className="book-info"><h3>Genre</h3><p>{(it.book.genre || []).join(', ')}</p></div>
                                                 <div className="book-info"><h3>Language</h3><p>{it.book.language}</p></div>
@@ -163,15 +160,15 @@ const CartPage = () => {
                             </div>
 
                             <div className="total" style={{ borderTop: "2px solid #ccc" }}><h4 style={{ color: "#0E4783", margin: "0px" }}>Total</h4><p className="price2">Rs {total}</p></div>
-
-                            <div className="checkout-buttons">
+                            
+                            <div style={{display: "flex", justifyContent: "center"}}>
                                 <button
                                     onClick={() => createOrderAndNavigate('pending')}
                                     disabled={loading1}
-                                    className={`checkout-btn checkout-esewa`}
+                                    className={`order-btn`}
                                     style={{ cursor: loading1 ? 'not-allowed' : 'pointer' }}
                                 >
-                                    {loading1 ? 'Processing…' : 'Order'}
+                                    {loading1 ? 'Processing…' : 'Order Books'}
                                 </button>
                             </div>
                         </div>

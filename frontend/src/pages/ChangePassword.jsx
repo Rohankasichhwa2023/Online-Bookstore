@@ -54,7 +54,7 @@ export default function ChangePassword() {
     return (
         <>
             <Navbar/>
-            <div style={{paddingTop: "140px", paddingBottom: "90px", display: "flex", justifyContent: "center"}}>
+            <div style={{paddingTop: "140px", paddingBottom: "152px", display: "flex", justifyContent: "center"}}>
                 <div className="form-box">
                     <form onSubmit={handleSubmit}>
 

@@ -71,7 +71,7 @@ export default function AddressForm() {
     return (
         <>
             <Navbar/>
-            <div style={{padding: "140px 140px 90px 140px", display: "flex", justifyContent: "center", gap: "40px"}}>
+            <div style={{padding: "140px 100px 122px 100px", display: "flex", justifyContent: "center", gap: "40px"}}>
                 <div className="form-box">
                     <form onSubmit={handleAdd}>
 
@@ -120,7 +120,7 @@ export default function AddressForm() {
                                     <td>{addr.address_line}</td>
                                     <td>{addr.city}</td>
                                     <td>{addr.postal_code}</td>
-                                    <td>
+                                    <td style={{width: "130px"}}>
                                         {addr.is_default
                                             ? 'Yes'
                                             : <button style={{fontSize:"13px", border: "none", backgroundColor: "transparent", textDecoration: "underline", color: "#0a3b6b"}} onClick={() => handleDefault(addr.id)}>Set as default</button>

@@ -69,7 +69,7 @@ function Navbar() {
                         <div className="notification-scroll-container">
                             {notifications.length > 0 ? (
                                 notifications.map((note) => (
-                                    <li key={note.id} className="dropdown-item notification-item" style={{display: "flex", gap: "6px"}}>
+                                    <li key={note.id} className="dropdown-item notification-item" style={{display: "flex", alignItems: "center", gap: "12px"}}>
                                         <img src="/icons/checkbox.png" className="icon"/><div>{note.message}</div>
                                     </li>
                                 ))
