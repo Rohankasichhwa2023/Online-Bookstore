@@ -1,20 +1,7 @@
 .dash-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-.dash-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30px;
-}
-
-.dash-title {
-    font-size: 2rem;
-    color: #333;
+    margin-left: 20%;
+    width: 80%;
+    padding: 0px 32px;
 }
 
 .cards-grid {
@@ -27,12 +14,19 @@
 .card {
     background: #ffffff;
     border-radius: 8px;
+    border: none;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
+    padding: 12px;
     text-align: center;
+    transition: transform 0.2s ease;
+}
+
+.card:hover{
+    transform: translateY(-4px);
 }
 
 .card h3 {
+    padding: 0px;
     margin-bottom: 10px;
     font-size: 1.1rem;
     color: #555;
@@ -40,7 +34,7 @@
 
 .card-value {
     font-size: 1.8rem;
-    color: #111;
+    color: #2B2A33;
     font-weight: bold;
 }
 
@@ -80,29 +74,7 @@
     background: #0E4783;
     color: #fff;
     border-radius: 12px;
-    padding: 2px 8px;
+    padding: 4px 10px;
     font-size: 0.9rem;
     margin-left: 8px;
-}
-
-.dash-footer {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin-top: 20px;
-}
-
-.dash-btn {
-    background: #0E4783;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.dash-btn:hover {
-    background: #09315a;
 }

@@ -13,7 +13,6 @@ const CheckoutPage = () => {
 
     const [isEsewaLoading, setEsewaLoading] = useState(false);
     const [isKhaltiLoading, setKhaltiLoading] = useState(false);
-    const [esewaFormData, setEsewaFormData] = useState(null);
 
     const [defaultAddress, setDefaultAddress] = useState(null);
     const [addressError, setAddressError] = useState('');

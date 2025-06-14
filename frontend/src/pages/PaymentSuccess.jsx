@@ -51,16 +51,10 @@ const PaymentSuccess = () => {
 
                     {!loading && statusData && (
                         <>
-                            <h2>Order #{orderId} — {statusData.status}</h2>
-                            <p><strong>Reference:</strong> {statusData.ref_id}</p>
-                            {statusData.status === 'COMPLETED' ? (
-                                <p className="success">
-                                    <img src="/icons/success.png" alt="ok" /><br />
-                                    Payment confirmed—thank you!
-                                </p>
-                            ) : (
-                                <p className="pending">Status: {statusData.status}</p>
-                            )}
+                            <img src="/icons/success.png" style={{height: "50px", width: "50px", marginBottom: "12px"}}/>
+                            <h2 style={{color: "green"}}>Payment Successful!</h2>
+                            <p>Your order <strong>#{orderId}</strong> has been paid successfully.</p>
+                            <p>Thank you for your purchase!</p>
                         </>
                     )}
                 </div>

@@ -1,7 +1,8 @@
-// src/components/ViewUsers.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-
+import SideNavbar from '../components/SideNavbar';
+import TopNavbar from '../components/TopNavbar';
+import "../css/ViewUsers.css";
 
 const ViewUsers = () => {
     const [users, setUsers] = useState([]);
@@ -29,8 +30,9 @@ const ViewUsers = () => {
 
     return (
         <>
-            <div className="view-users-container">
-                <h1>All Users</h1>
+            <SideNavbar/>
+            <div className="dash-container">
+                <TopNavbar title="View Users"/>
                 <table className="users-table">
                     <thead>
                         <tr>

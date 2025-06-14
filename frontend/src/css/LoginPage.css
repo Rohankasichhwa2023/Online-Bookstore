@@ -129,3 +129,25 @@ p {
 .close-btn2:hover{
     background-color: rgba(14, 71, 131, 0.144)
 }
+
+.form-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.form-group.small {
+  flex: 1;
+  min-width: 140px;
+}
+
+.checkbox-group{
+  display: flex;
+  gap: 24px;
+}
+
+.checkbox-group input:focus{
+  outline: none;
+  border: none;
+  box-shadow: none;
+}

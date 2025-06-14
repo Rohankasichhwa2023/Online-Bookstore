@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import '../css/ViewRatings.css';
+import SideNavbar from '../components/SideNavbar';
+import TopNavbar from '../components/TopNavbar';
+import "../css/ViewUsers.css";
 
 export default function ViewRatings() {
     const [ratings, setRatings] = useState([]);
@@ -17,29 +19,31 @@ export default function ViewRatings() {
     }, []);
 
     return (
-        <div className="ratings-summary-container">
-            <h2>Book Average Ratings</h2>
-            {error && <p className="error">{error}</p>}
-            {ratings.length === 0 ? (
-                <p>No ratings found.</p>
-            ) : (
-                <table className="ratings-summary-table">
-                    <thead>
-                        <tr>
-                            <th>Book Title</th>
-                            <th>Average Rating</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {ratings.map((book) => (
-                            <tr key={book.id}>
-                                <td>{book.title}</td>
-                                <td>{book.avg_rating ? book.avg_rating.toFixed(2) : 'N/A'}</td>
+        <>
+            <SideNavbar/>
+            <div className="dash-container">
+                <TopNavbar title="View Book Ratings"/>
+                {ratings.length === 0 ? (
+                    <p>No ratings found.</p>
+                ) : (
+                    <table className="users-table">
+                        <thead>
+                            <tr>
+                                <th>Book Title</th>
+                                <th>Average Rating</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
-            )}
-        </div>
+                        </thead>
+                        <tbody>
+                            {ratings.map((book) => (
+                                <tr key={book.id}>
+                                    <td>{book.title}</td>
+                                    <td>{book.avg_rating ? book.avg_rating.toFixed(2) : 'N/A'}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                )}
+            </div>
+        </>
     );
 }

@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import axios from 'axios';
-import '../css/ViewBookRequest.css';
+import SideNavbar from '../components/SideNavbar';
+import TopNavbar from '../components/TopNavbar';
+import '../css/ViewUsers.css';
 
 const STATUS_CATEGORIES = ['all', 'pending', 'in_progress', 'fulfilled'];
 const STATUS_LABELS = {
@@ -57,8 +59,8 @@ export default function ViewBookRequest() {
         }
     };
 
-    if (loading) return <p>Loading requests…</p>;
-    if (error) return <p className="error">{error}</p>;
+    if (loading) return <p className="status-msg">Loading requests…</p>;
+    if (error) return <p className="status-msg error">{error}</p>;
 
     const filtered =
         filter === 'all'
@@ -66,50 +68,67 @@ export default function ViewBookRequest() {
             : requests.filter((req) => req.status === filter);
 
     return (
-        <div className="request-container">
-            <h2>Book Requests</h2>
-            <nav className="status-nav">
-                {STATUS_CATEGORIES.map((cat) => (
-                    <button
-                        key={cat}
-                        className={`nav-btn ${filter === cat ? 'active' : ''}`}
-                        onClick={() => setFilter(cat)}
-                    >
-                        {STATUS_LABELS[cat]}
-                    </button>
-                ))}
-            </nav>
-            {filtered.length === 0 ? (
-                <p>No book requests found.</p>
-            ) : (
-                <div className="request-list">
-                    {filtered.map((req) => (
-                        <div key={req.id} className="request-card">
-                            <p>
-                                <strong>User:</strong> {req.user.username} ({req.user.email})
-                            </p>
-                            <p><strong>Book:</strong> {req.book_name}</p>
-                            {req.book_author && <p><strong>Author:</strong> {req.book_author}</p>}
-                            {req.language && <p><strong>Language:</strong> {req.language}</p>}
-                            <p>
-                                <strong>Requested on:</strong>{' '}
-                                {new Date(req.created_at).toLocaleString()}
-                            </p>
-                            <div className="status-control">
-                                <label>Status:</label>
-                                <select
-                                    value={req.status}
-                                    onChange={(e) => handleStatusChange(req.id, e.target.value)}
-                                >
-                                    <option value="pending">Pending</option>
-                                    <option value="in_progress">In Progress</option>
-                                    <option value="fulfilled">Fulfilled</option>
-                                </select>
-                            </div>
-                        </div>
+        <>
+            <SideNavbar />
+            <div className="dash-container">
+                <TopNavbar title="Manage Book Requests" />
+                <nav className="status-nav">
+                    {STATUS_CATEGORIES.map((cat) => (
+                        <button
+                            key={cat}
+                            className={`nav-btn ${filter === cat ? 'active' : ''}`}
+                            onClick={() => setFilter(cat)}
+                        >
+                            {STATUS_LABELS[cat]}
+                        </button>
                     ))}
-                </div>
-            )}
-        </div>
+                </nav>
+
+                {filtered.length === 0 ? (
+                    <p>No book requests found.</p>
+                ) : (
+                    <div className="table-container">
+                        <table className="users-table">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Email</th>
+                                    <th>Book</th>
+                                    <th>Author</th>
+                                    <th>Language</th>
+                                    <th>Requested On</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {filtered.map((req) => (
+                                    <tr key={req.id}>
+                                        <td>{req.user.username}</td>
+                                        <td>{req.user.email}</td>
+                                        <td>{req.book_name}</td>
+                                        <td>{req.book_author || '—'}</td>
+                                        <td>{req.language || '—'}</td>
+                                        <td>{new Date(req.created_at).toLocaleString()}</td>
+                                        <td>
+                                            <select
+                                                className="status-select"
+                                                value={req.status}
+                                                onChange={(e) =>
+                                                    handleStatusChange(req.id, e.target.value)
+                                                }
+                                            >
+                                                <option value="pending">Pending</option>
+                                                <option value="in_progress">In Progress</option>
+                                                <option value="fulfilled">Fulfilled</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
+            </div>
+        </>
     );
 }

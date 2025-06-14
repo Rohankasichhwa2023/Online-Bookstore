@@ -1,0 +1,17 @@
+.top-navbar-container{
+    padding: 24px 0px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.top-navbar-title{
+    color: #0E4783;
+    font-weight: 700;
+}
+
+.month-year{
+    font-weight: 500;
+    color: #34343a;
+    font-size: larger;
+}

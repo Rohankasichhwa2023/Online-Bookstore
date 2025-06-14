@@ -11,7 +11,7 @@ function AdminLogoutButton() {
     };
 
     return (
-        <button onClick={handleLogout}>
+        <button onClick={handleLogout} style={{fontSize: "16px", fontWeight: "500",color: "white", cursor: "pointer", backgroundColor: "transparent", border: "none", padding: "0px"}}>
             Logout
         </button>
     );

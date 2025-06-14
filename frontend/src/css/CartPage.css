@@ -29,7 +29,7 @@
     cursor: pointer;
     font-size: 16px;
     font-weight: 500;
-    transition: background-color 0.3s, color 0.3s;
+    transition: transform 0.2s ease;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
@@ -43,7 +43,7 @@
 }
 
 .order-btn {
-    width: 60%;
+    width: fit-content;
     padding: 8px 16px;
     background-color: #0E4783;
     color: white;

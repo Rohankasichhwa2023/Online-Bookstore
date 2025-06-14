@@ -121,11 +121,13 @@ const OrdersPage = () => {
                     <button
                       className="pay-now-btn esewa"
                       onClick={() => handleEsewaPayNow(order.id)}
+                      style={{backgroundColor: "#28a745"}}
                     >Pay with eSewa</button>
 
                     <button
                       className="pay-now-btn khalti"
                       onClick={() => handleKhaltiPayNow(order.id)}
+                      style={{backgroundColor: "#6633cc"}}
                     >Pay with Khalti</button>
 
                   </div>

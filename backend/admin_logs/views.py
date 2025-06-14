@@ -1,4 +1,4 @@
-from django.db.models import Sum, Count, F, Avg
+from django.db.models import Sum, Count, F, Avg, ExpressionWrapper, FloatField
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAdminUser
@@ -31,21 +31,28 @@ def dashboard_stats(request):
     # highest rated books (top 5)
     highest_rated = (
         Book.objects.annotate(
-            avgRating=Sum('rating__rating')/Count('rating__rating')
+            rating_count=Count('rating__rating'),
+            rating_sum=Sum('rating__rating'),
         )
-        .order_by('-avgRating')[:3]
-        .values('id','title','avgRating')
+        .filter(rating_count__gt=0)  # ✅ exclude books with no ratings
+        .annotate(
+            avgRating=ExpressionWrapper(
+                F('rating_sum') / F('rating_count'),
+                output_field=FloatField()
+            )
+        )
+        .order_by('-avgRating')[:5]
+        .values('id', 'title', 'avgRating')
     )
 
     # most sold books (top 5)
     most_sold = (
         Book.objects.annotate(
-            soldCount=Sum(
-                F('orderitem__quantity')
-            )
+            soldCount=Sum('orderitem__quantity')
         )
-        .order_by('-soldCount')[:3]
-        .values('id','title','soldCount')
+        .filter(soldCount__gt=0)
+        .order_by('-soldCount')[:5]
+        .values('id', 'title', 'soldCount')
     )
 
     return Response({

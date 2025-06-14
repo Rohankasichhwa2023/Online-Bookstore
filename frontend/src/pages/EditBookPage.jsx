@@ -1,111 +1,219 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
+import SideNavbar from '../components/SideNavbar';
+import TopNavbar from '../components/TopNavbar';
+import "../css/LoginPage.css";
 
 const EditBookPage = () => {
-    const { id } = useParams();
-    const navigate = useNavigate();
+  const { id } = useParams();
+  const navigate = useNavigate();
 
-    const [bookData, setBookData] = useState({
-        title: '',
-        author: '',
-        description: '',
-        pages: '',
-        language: '',
-        age_group: '',
-        price: '',
-        stock: '',
-        genres: [],
-        new_genres: [],
+  const [availableGenres, setAvailableGenres] = useState([]);
+  const [selectedGenres, setSelectedGenres] = useState([]);
+  const [newGenres, setNewGenres] = useState('');
+  const [initialCoverUrl, setInitialCoverUrl] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+
+  const [bookData, setBookData] = useState({
+    title: '',
+    author: '',
+    description: '',
+    pages: '',
+    language: '',
+    age_group: '',
+    price: '',
+    stock: '',
+    cover_image: null,
+  });
+
+  useEffect(() => {
+    axios.get('http://localhost:8000/books/genres/')
+      .then(res => setAvailableGenres(res.data))
+      .catch(console.error);
+
+    axios.get(`http://localhost:8000/books/all-books/`)
+      .then(res => {
+        const book = res.data.find(b => b.id === parseInt(id));
+        if (book) {
+          setBookData({
+            title: book.title,
+            author: book.author,
+            description: book.description,
+            pages: book.pages,
+            language: book.language,
+            age_group: book.age_group,
+            price: book.price,
+            stock: book.stock,
+            cover_image: null,
+          });
+          setSelectedGenres(book.genres.map(g => String(g.id)));
+          setInitialCoverUrl(book.cover_image); // Ensure this is full URL or handle with base path
+        }
+      })
+      .catch(console.error);
+  }, [id]);
+
+  const handleChange = e => {
+    const { name, value, files } = e.target;
+    if (name === 'cover_image') {
+      const file = files[0];
+      setBookData({ ...bookData, cover_image: file });
+      setImagePreview(file ? URL.createObjectURL(file) : null);
+    } else {
+      setBookData({ ...bookData, [name]: value });
+    }
+  };
+
+  const handleSubmit = async e => {
+    e.preventDefault();
+    const formData = new FormData();
+
+    Object.entries(bookData).forEach(([key, value]) => {
+      formData.append(key, value);
     });
-    const [genreList, setGenreList] = useState([]);
 
-    useEffect(() => {
-        axios.get(`http://localhost:8000/books/all-books/`)
-            .then(res => {
-                const book = res.data.find(b => b.id === parseInt(id));
-                if (book) {
-                    setBookData({
-                        title: book.title,
-                        author: book.author,
-                        description: book.description,
-                        pages: book.pages,
-                        language: book.language,
-                        age_group: book.age_group,
-                        price: book.price,
-                        stock: book.stock,
-                        genres: book.genres.map(g => g.id),
-                        new_genres: []
-                    });
-                }
-            });
+    selectedGenres.forEach(id => formData.append('genres', id));
 
-        axios.get('http://localhost:8000/books/genres/')
-            .then(res => setGenreList(res.data));
-    }, [id]);
+    newGenres
+      .split(',')
+      .map(n => n.trim())
+      .filter(n => n)
+      .forEach(name => formData.append('new_genres', name));
 
-    const handleChange = (e) => {
-        setBookData({ ...bookData, [e.target.name]: e.target.value });
-    };
+    try {
+      await axios.put(
+        `http://localhost:8000/books/update-book/${id}/`,
+        formData,
+        { headers: { 'Content-Type': 'multipart/form-data' } }
+      );
+      alert("Book updated successfully.");
+      navigate('/view-books');
+    } catch (error) {
+      console.error("Update failed:", error.response?.data || error);
+      alert("Error updating book.");
+    }
+  };
 
-    const handleGenreChange = (e) => {
-        const options = Array.from(e.target.selectedOptions, opt => parseInt(opt.value));
-        setBookData({ ...bookData, genres: options });
-    };
+  return (
+    <>
+      <SideNavbar />
+      <div className="dash-container" style={{ marginBottom: "40px" }}>
+        <TopNavbar title="Edit Book" />
+        <div style={{ display: "flex", gap: "32px" }}>
+          <div>
+            <button className="back-btn" onClick={() => navigate(-1)}>
+              <img src="/icons/left.png" alt="Back" />
+            </button>
+          </div>
+          <div className='form-box' style={{ width: "100%" }}>
+            <form onSubmit={handleSubmit}>
 
-    const handleNewGenres = (e) => {
-        setBookData({ ...bookData, new_genres: e.target.value.split(',').map(s => s.trim()) });
-    };
+              <div className="text-field">
+                <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                    <label>Book Cover</label>
+                    <input name="cover_image" type="file" onChange={handleChange} />
+                  </div>
+                  {(imagePreview || initialCoverUrl) && (
+                    <img
+                      src={imagePreview || initialCoverUrl}
+                      alt="Preview"
+                      style={{ height: '300px', width: '220px', borderRadius: '6px' }}
+                    />
+                  )}
+                </div>
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+                <div className="form-group">
+                  <label>Book Title</label>
+                  <input name="title" value={bookData.title} onChange={handleChange} required />
+                </div>
 
-        const formData = new FormData();
-        for (const key in bookData) {
-            if (Array.isArray(bookData[key])) {
-                bookData[key].forEach(val => formData.append(key, val));
-            } else {
-                formData.append(key, bookData[key]);
-            }
-        }
+                <div className="form-group">
+                  <label>Book Author</label>
+                  <input name="author" value={bookData.author} onChange={handleChange} required />
+                </div>
 
-        try {
-            await axios.put(`http://localhost:8000/books/update-book/${id}/`, formData);
-            alert("Book updated successfully.");
-            navigate('/view-books');
-        } catch (error) {
-            console.error("Update failed:", error);
-            alert("Error updating book.");
-        }
-    };
+                <div className="form-group">
+                  <label>Description</label>
+                  <textarea name="description" value={bookData.description} onChange={handleChange} />
+                </div>
 
-    return (
-        <>
-            <button onClick={() => navigate('/view-books')}> Back to books </button>
-            <div>
-                <h2>Edit Book</h2>
-                <form onSubmit={handleSubmit} encType="multipart/form-data">
-                    <input type="text" name="title" value={bookData.title} onChange={handleChange} placeholder="Title" required />
-                    <input type="text" name="author" value={bookData.author} onChange={handleChange} placeholder="Author" required />
-                    <textarea name="description" value={bookData.description} onChange={handleChange} placeholder="Description" />
-                    <input type="number" name="pages" value={bookData.pages} onChange={handleChange} placeholder="Pages" />
-                    <input type="text" name="language" value={bookData.language} onChange={handleChange} placeholder="Language" />
-                    <input type="text" name="age_group" value={bookData.age_group} onChange={handleChange} placeholder="Age Group" />
-                    <input type="number" name="price" value={bookData.price} onChange={handleChange} placeholder="Price" />
-                    <input type="number" name="stock" value={bookData.stock} onChange={handleChange} placeholder="Stock" />
-                    <label>Select Genres:</label>
-                    <select multiple value={bookData.genres} onChange={handleGenreChange}>
-                        {genreList.map(g => (
-                            <option key={g.id} value={g.id}>{g.name}</option>
-                        ))}
-                    </select>
-                    <input type="text" placeholder="New genres (comma-separated)" onChange={handleNewGenres} />
-                    <input type="file" name="cover_image" onChange={e => setBookData({ ...bookData, cover_image: e.target.files[0] })} />
-                    <button type="submit">Update Book</button>
-                </form>
-            </div>
-        </>
-    );
+                <div className="form-row">
+                  <div className="form-group small">
+                    <label>Pages</label>
+                    <input name="pages" type="number" value={bookData.pages} onChange={handleChange} />
+                  </div>
+
+                  <div className="form-group small">
+                    <label>Language</label>
+                    <input name="language" value={bookData.language} onChange={handleChange} required />
+                  </div>
+
+                  <div className="form-group small">
+                    <label>Age Group</label>
+                    <input name="age_group" value={bookData.age_group} onChange={handleChange} />
+                  </div>
+
+                  <div className="form-group small">
+                    <label>Price</label>
+                    <input name="price" type="number" step="0.01" value={bookData.price} onChange={handleChange} required />
+                  </div>
+
+                  <div className="form-group small">
+                    <label>Stock</label>
+                    <input name="stock" type="number" value={bookData.stock} onChange={handleChange} required />
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label>Select Genres</label>
+                  <div className="checkbox-group">
+                    {availableGenres.map(g => (
+                      <label key={g.id} style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                        <input
+                          type="checkbox"
+                          value={g.id}
+                          checked={selectedGenres.includes(String(g.id)) || selectedGenres.includes(g.id)}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            setSelectedGenres(prev =>
+                              prev.includes(value)
+                                ? prev.filter(id => id !== value)
+                                : [...prev, value]
+                            );
+                          }}
+                        />
+                        {g.name}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                  <label>Add New Genres</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Mystery, Poetry"
+                    value={newGenres}
+                    onChange={e => setNewGenres(e.target.value)}
+                    style={{ width: "300px" }}
+                  />
+                </div>
+              </div>
+
+              <div style={{ marginTop: '1em', textAlign: "right" }}>
+                <button type="submit" className="submit-button" style={{ width: "fit-content", padding: "0px 24px" }}>
+                  Update Book
+                </button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+      </div>
+    </>
+  );
 };
 
 export default EditBookPage;
