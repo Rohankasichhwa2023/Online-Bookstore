@@ -143,7 +143,9 @@ p {
 
 .checkbox-group{
   display: flex;
-  gap: 24px;
+  flex-wrap: wrap;
+  word-break: break-word;
+  gap: 12px;
 }
 
 .checkbox-group input:focus{

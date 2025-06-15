@@ -21,7 +21,7 @@ export default function ViewRatings() {
     return (
         <>
             <SideNavbar/>
-            <div className="dash-container">
+            <div className="dash-container" style={{marginBottom: "40px"}}>
                 <TopNavbar title="View Book Ratings"/>
                 {ratings.length === 0 ? (
                     <p>No ratings found.</p>
