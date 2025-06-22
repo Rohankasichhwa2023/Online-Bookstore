@@ -107,8 +107,8 @@ const FavoritesPage = () => {
     if (!user) return null;
 
     function truncateTitle(title) {
-        if (title.length > 33) {
-            return title.slice(0, 33) + '...';
+        if (title.length > 28) {
+            return title.slice(0, 28) + '...';
         }
         return title;
     }

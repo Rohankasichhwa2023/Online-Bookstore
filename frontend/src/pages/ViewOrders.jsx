@@ -77,7 +77,7 @@ export default function ViewOrders() {
     return (
         <>
             <SideNavbar />
-            <div className="dash-container">
+            <div className="dash-container" style={{marginBottom: "40px"}}>
                 <TopNavbar title="Manage Orders" />
 
                 <div className="status-nav">
