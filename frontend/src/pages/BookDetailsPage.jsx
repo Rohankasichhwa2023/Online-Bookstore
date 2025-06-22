@@ -12,6 +12,7 @@ const BookDetailsPage = () => {
     const navigate = useNavigate();
     const { updateCart } = useCart();
     const { updateFavorites } = useFavorites();
+    const [favoriteBookIds, setFavoriteBookIds] = useState([]);
 
     const [book, setBook] = useState({});
     const [genres, setGenres] = useState([]);
@@ -21,6 +22,7 @@ const BookDetailsPage = () => {
     const [userRating, setUserRating] = useState(null);
     const [averageRating, setAverageRating] = useState(null);
     const [ratingCount, setRatingCount] = useState(0);
+    const User = JSON.parse(localStorage.getItem('user'));
 
     useEffect(() => {
         const user = JSON.parse(localStorage.getItem('user'));
@@ -49,6 +51,7 @@ const BookDetailsPage = () => {
         };
 
         fetchBookDetails();
+        fetchFavorites();
         updateCart();
         updateFavorites();
     }, [id, navigate, updateCart, updateFavorites]);
@@ -127,6 +130,47 @@ const BookDetailsPage = () => {
         }
     };
 
+    const handleToggleFavorite = async (bookId) => {
+        const isFav = favoriteBookIds.includes(bookId);
+
+        // optimistic flip
+        setFavoriteBookIds(prev =>
+            isFav ? prev.filter(id => id !== bookId) : [...prev, bookId]
+        );
+
+        try {
+            const res = await axios.post(
+                'http://localhost:8000/books/toggle-favorite/',
+                { user_id: User.id, book_id: bookId }
+            );
+
+            // update the navbar count
+            await updateFavorites();
+            alert(res.data.message);
+        } catch (err) {
+            console.error('Toggle favorite failed:', err);
+            // rollback if needed
+            setFavoriteBookIds(prev =>
+                isFav ? [...prev, bookId] : prev.filter(id => id !== bookId)
+            );
+            alert('Could not update favorites.');
+        }
+    };
+
+
+    const fetchFavorites = async () => {
+        try {
+            const res = await axios.get('http://localhost:8000/books/list-favorites/', {
+                params: { user_id: User.id }
+            });
+            const favoriteIds = res.data.map(book => book.id);
+            setFavoriteBookIds(favoriteIds);
+        } catch (err) {
+            console.error('Error fetching favorites:', err);
+        }
+    };
+
+
     if (loading) return <div>Loading...</div>;
     if (error) return <div>{error}</div>;
 
@@ -138,16 +182,16 @@ const BookDetailsPage = () => {
                     <button className="back-btn" onClick={() => navigate(-1)}><img src="/icons/left.png" alt="Back" /></button>
                 </div>
                 <div className="book-detail-left">
-                    <img src={book.cover_image} alt={book.title} className="book-image"/>
-                    
-                    <div style={{border: "1px solid #dee2e6", borderRadius: "8px"}}>
+                    <img src={book.cover_image} alt={book.title} className="book-image" />
+
+                    <div style={{ border: "1px solid #dee2e6", borderRadius: "8px" }}>
                         <div className="user-rate">
-                            
-                            <div style={{textAlign: "center"}}>
-                                <h6 style={{color: "#052c65"}}>Rate this book</h6>
+
+                            <div style={{ textAlign: "center" }}>
+                                <h6 style={{ color: "#052c65" }}>Rate this book</h6>
                             </div>
-                            
-                            <div style={{display: "flex", justifyContent: "center"}}>
+
+                            <div style={{ display: "flex", justifyContent: "center" }}>
                                 <div style={{ display: 'flex', gap: '6px' }}>
                                     {[1, 2, 3, 4, 5].map((value) => (
                                         <img
@@ -164,14 +208,14 @@ const BookDetailsPage = () => {
                                 </div>
                             </div>
 
-                            <div style={{textAlign: "right"}}>
+                            <div style={{ textAlign: "right" }}>
                                 <button class="post-btn" onClick={() => handlePost(tempRating)}>Post</button>
                             </div>
 
                         </div>
                     </div>
                 </div>
-                
+
                 <div className="book-detail-right">
 
                     <div>
@@ -179,7 +223,7 @@ const BookDetailsPage = () => {
                         <p className="author-name">{book.author}</p>
                     </div>
 
-                    <div className="rate-fav-bar">                     
+                    <div className="rate-fav-bar">
                         <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                             {[1, 2, 3, 4, 5].map((i) => (
                                 <img
@@ -194,10 +238,23 @@ const BookDetailsPage = () => {
                                     style={{ height: '20px' }}
                                 />
                             ))}
-                            <span style={{color: "#6d6d6d"}}>({ratingCount})</span>
+                            <span style={{ color: "#6d6d6d" }}>({ratingCount})</span>
                         </div>
                         <div>
-                            <button className="btn-favorite" onClick={handleAddToFavorite}><img className="icon" src="/icons/add-to-fav.png" /></button>
+                            <button
+                                className="btn-favorite"
+                                onClick={e => { e.stopPropagation(); handleToggleFavorite(book.id); }}
+                            >
+                                <img
+                                    src={
+                                        favoriteBookIds.includes(book.id)
+                                            ? '/icons/add-to-fav-filled.png'
+                                            : '/icons/add-to-fav.png'
+                                    }
+                                    className="icon"
+                                    alt="♡"
+                                />
+                            </button>
                         </div>
                     </div>
 
@@ -205,13 +262,13 @@ const BookDetailsPage = () => {
                         <div className="accordion" id="accordionExample">
                             <div className="accordion-item">
                                 <h2 className="accordion-header" id="headingOne">
-                                <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                                    <strong>Details</strong>
-                                </button>
+                                    <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                        <strong>Details</strong>
+                                    </button>
                                 </h2>
                                 <div id="collapseOne" className="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                                     <div className="accordion-body1">
-                                        <p style={{textAlign: "left", lineHeight: "1.5", margin: "0px 0px 12px 0px", fontSize: "16px"}}>{book.description}</p>
+                                        <p style={{ textAlign: "left", lineHeight: "1.5", margin: "0px 0px 12px 0px", fontSize: "16px" }}>{book.description}</p>
                                         <div className="book-info">
                                             <h3>Genre</h3>
                                             <p>{genres.map((g) => g.name).join(', ')}</p>
@@ -234,22 +291,22 @@ const BookDetailsPage = () => {
 
                             <div className="accordion-item">
                                 <h2 className="accordion-header" id="headingTwo">
-                                <button className="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
-                                    <strong>Purchase</strong>
-                                </button>
+                                    <button className="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                                        <strong>Purchase</strong>
+                                    </button>
                                 </h2>
                                 <div id="collapseTwo" className="accordion-collapse collapse show" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
                                     <div className="accordion-body2">
-                                    
+
                                         <div className="up-one">
-                                            <p style={{padding: "0px", margin: "0px 0px 8px 0px", fontSize: "20px"}}><strong>Rs {book.price}</strong></p>
+                                            <p style={{ padding: "0px", margin: "0px 0px 8px 0px", fontSize: "20px" }}><strong>Rs {book.price}</strong></p>
                                         </div>
 
                                         <div className="down-one">
-                                            <p className="stock" style={{ color: book.stock > 0 ? "#4CAF50" : "#E74242" }}>{book.stock>0?"in stock":"out of stock"}</p>
-                                            <button onClick={handleAddToCart} disabled={book.stock==0}><div>Add to cart</div><div><img src="/icons/add-to-cart-white.png" className="icon"/></div></button>
+                                            <p className="stock" style={{ color: book.stock > 0 ? "#4CAF50" : "#E74242" }}>{book.stock > 0 ? "in stock" : "out of stock"}</p>
+                                            <button onClick={handleAddToCart} disabled={book.stock == 0}><div>Add to cart</div><div><img src="/icons/add-to-cart-white.png" className="icon" /></div></button>
                                         </div>
-                                        
+
                                     </div>
                                 </div>
                             </div>
@@ -257,7 +314,7 @@ const BookDetailsPage = () => {
                     </div>
                 </div>
             </div>
-            <Footer/>
+            <Footer />
         </>
     );
 };

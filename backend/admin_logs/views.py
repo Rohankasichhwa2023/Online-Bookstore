@@ -1,18 +1,18 @@
 from django.db.models import Sum, Count, F, Avg, ExpressionWrapper, FloatField
-from django.shortcuts import get_object_or_404
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAdminUser
+from django.conf import settings
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
+import os
 
 from orders.models import Order, OrderItem
-from books.models import Book, Rating, BookRequest
+from books.models import Book, BookRequest
 
 @api_view(['GET'])
 def dashboard_stats(request):
     # total revenue from completed orders
-    total_revenue = Order.objects.filter(payment_status='completed').aggregate(
-        total=Sum('total_amount')
-    )['total'] or 0
+    total_revenue = Order.objects.filter(
+        payment_status='completed'
+    ).aggregate(total=Sum('total_amount'))['total'] or 0
 
     # total books sold
     total_books_sold = OrderItem.objects.filter(
@@ -28,13 +28,13 @@ def dashboard_stats(request):
     # out of stock books
     out_of_stock = Book.objects.filter(stock__lte=0).count()
 
-    # highest rated books (top 5)
-    highest_rated = (
+    # highest rated books (top 5), include cover_image
+    highest_rated_qs = (
         Book.objects.annotate(
             rating_count=Count('rating__rating'),
             rating_sum=Sum('rating__rating'),
         )
-        .filter(rating_count__gt=0)  # ✅ exclude books with no ratings
+        .filter(rating_count__gt=0)
         .annotate(
             avgRating=ExpressionWrapper(
                 F('rating_sum') / F('rating_count'),
@@ -42,18 +42,46 @@ def dashboard_stats(request):
             )
         )
         .order_by('-avgRating')[:5]
-        .values('id', 'title', 'avgRating')
+        .values('id', 'title', 'avgRating', 'cover_image')
     )
+    highest_rated = []
+    for b in highest_rated_qs:
+        if b['cover_image']:
+            img_url = request.build_absolute_uri(
+                os.path.join(settings.MEDIA_URL, b['cover_image'])
+            )
+        else:
+            img_url = ''
+        highest_rated.append({
+            'id': b['id'],
+            'title': b['title'],
+            'avgRating': b['avgRating'],
+            'cover_image': img_url
+        })
 
-    # most sold books (top 5)
-    most_sold = (
+    # most sold books (top 5), include cover_image
+    most_sold_qs = (
         Book.objects.annotate(
             soldCount=Sum('orderitem__quantity')
         )
         .filter(soldCount__gt=0)
         .order_by('-soldCount')[:5]
-        .values('id', 'title', 'soldCount')
+        .values('id', 'title', 'soldCount', 'cover_image')
     )
+    most_sold = []
+    for b in most_sold_qs:
+        if b['cover_image']:
+            img_url = request.build_absolute_uri(
+                os.path.join(settings.MEDIA_URL, b['cover_image'])
+            )
+        else:
+            img_url = ''
+        most_sold.append({
+            'id': b['id'],
+            'title': b['title'],
+            'soldCount': b['soldCount'],
+            'cover_image': img_url
+        })
 
     return Response({
         'totalRevenue': total_revenue,
@@ -61,11 +89,13 @@ def dashboard_stats(request):
         'pendingOrders': pending_orders,
         'pendingRequests': pending_requests,
         'outOfStock': out_of_stock,
-        'highestRated': list(highest_rated),
-        'mostSold': list(most_sold),
+        'highestRated': highest_rated,
+        'mostSold': most_sold
     })
 
 @api_view(['GET'])
 def ratings_summary(request):
-    books = Book.objects.annotate(avg_rating=Avg('rating__rating')).values('id', 'title', 'avg_rating').order_by('-avg_rating')
+    books = Book.objects.annotate(
+        avg_rating=Avg('rating__rating')
+    ).values('id', 'title', 'avg_rating').order_by('-avg_rating')
     return Response(list(books))
