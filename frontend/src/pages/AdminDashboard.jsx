@@ -72,6 +72,16 @@ export default function AdminDashboard() {
 
         <div className="tables-section">
           <div className="table-card">
+            <h3>Top 5 Most Ordered Books</h3>
+            <ul>
+              {stats.mostSold.map((b) => (
+                <li key={b.id}>
+                  <span className="badge" style={{width: "42px"}}>{b.soldCount}</span>&nbsp;&nbsp;<span>{b.title}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="table-card">
             <h3>Top 5 Highest Rated Books</h3>
             <ul>
               {stats.highestRated.map((b) => (
@@ -80,16 +90,6 @@ export default function AdminDashboard() {
                     {b.avgRating != null ? b.avgRating.toFixed(1) : 'N/A'}
                   </span>
                   &nbsp;&nbsp;{b.title}
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="table-card">
-            <h3>Top 5 Most Ordered Books</h3>
-            <ul>
-              {stats.mostSold.map((b) => (
-                <li key={b.id}>
-                  <span className="badge" style={{width: "42px"}}>{b.soldCount}</span>&nbsp;&nbsp;<span>{b.title}</span>
                 </li>
               ))}
             </ul>
