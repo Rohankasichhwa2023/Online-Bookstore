@@ -1,5 +1,3 @@
-# books/views.py
-
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -19,29 +17,18 @@ User = get_user_model()
 
 @api_view(['GET'])
 def get_all_books(request):
-    """
-    GET /books/all-books/
-    Returns a list of all books (no rating fields here).
-    """
     books = Book.objects.all().order_by('-created_at')
     serializer = BookSerializer(books, many=True, context={'request': request})
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 def get_book_detail(request, pk):
-    """
-    GET /books/book-detail/<pk>/?user_id=<int>
-    Returns all Book fields + genres (via BookSerializer) plus:
-      - average_rating (float)
-      - rating_count (int)
-      - user_rating (int or null) for that user_id
-    """
-    from .serializers import BookSerializer  # Import here to avoid circularity
+
+    from .serializers import BookSerializer 
 
     book = get_object_or_404(Book, pk=pk)
     book_data = BookSerializer(book, context={'request': request}).data
 
-    # Compute average rating & count
     agg = (
         Rating.objects
         .filter(book=book)
@@ -67,22 +54,17 @@ def get_book_detail(request, pk):
     
 @api_view(['GET'])
 def list_genres(request):
-    """
-    GET /books/genres/
-    Returns [{ id, name }, …] for all genres.
-    """
     genres = Genre.objects.all().values('id', 'name')
     return Response(genres, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
 def add_book(request):
-    # … your existing add_book code …
     try:
         data      = request.data
         file      = request.FILES.get('cover_image')
-        genre_ids = data.getlist('genres')      # existing genre IDs
-        new_names = data.getlist('new_genres')  # new names from frontend
+        genre_ids = data.getlist('genres')      
+        new_names = data.getlist('new_genres')  
 
         book = Book.objects.create(
             title       = data.get('title'),
@@ -112,7 +94,6 @@ def add_book(request):
 
 @api_view(['DELETE'])
 def delete_book(request, pk):
-    # … your existing delete_book code …
     try:
         book = Book.objects.get(pk=pk)
         book.delete()
@@ -123,7 +104,7 @@ def delete_book(request, pk):
 
 @api_view(['PUT'])
 def update_book(request, pk):
-    # … your existing update_book code …
+    
     try:
         book = Book.objects.get(pk=pk)
         data = request.data
@@ -231,7 +212,6 @@ def toggle_favorite(request):
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    # verify book exists
     try:
         book = Book.objects.get(pk=book_id)
     except Book.DoesNotExist:
@@ -243,14 +223,12 @@ def toggle_favorite(request):
     fav_qs = Favorite.objects.filter(user_id=user_id, book_id=book_id)
 
     if fav_qs.exists():
-        # already favorited → remove
         fav_qs.delete()
         return Response(
             {"message": "Removed from favorites.", "favorited": False},
             status=status.HTTP_200_OK
         )
     else:
-        # create new favorite
         fav = Favorite.objects.create(user_id=user_id, book_id=book_id)
         return Response(
             {"message": "Added to favorites.", "favorited": True},
@@ -260,24 +238,16 @@ def toggle_favorite(request):
 
 @api_view(['POST'])
 def rate_book(request, book_id):
-    """
-    POST /books/rate/<book_id>/
-    Body: { "user_id": <int>, "rating": <int> }
-    Creates or updates a Rating for (user_id, book_id) and returns
-    the updated average_rating & rating_count.
-    """
     data = request.data
     user_id = data.get('user_id')
     rating_value = data.get('rating')
 
-    # 1) Validate presence of user_id & rating
     if user_id is None or rating_value is None:
         return Response(
             {"error": "'user_id' and 'rating' are required."},
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    # 2) Validate that rating_value is integer 1–5
     try:
         rating_value = int(rating_value)
         if rating_value < 1 or rating_value > 5:
@@ -288,18 +258,13 @@ def rate_book(request, book_id):
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    # 3) Validate that book exists
     book = get_object_or_404(Book, pk=book_id)
-
-    # 4) Create or update Rating by setting user_id directly
-    #    (this avoids User.objects.get(...) entirely)
     rating_obj, created = Rating.objects.update_or_create(
         user_id=user_id,
         book=book,
         defaults={'rating': rating_value}
     )
 
-    # 5) Recompute average & count
     agg = (
         Rating.objects
         .filter(book=book)
@@ -315,10 +280,7 @@ def rate_book(request, book_id):
 
 @api_view(['GET'])
 def get_book_rating(request, book_id):
-    """
-    GET /books/rating/<book_id>/
-    Returns { average_rating, rating_count }.
-    """
+
     book = get_object_or_404(Book, pk=book_id)
     agg = (
         Rating.objects
@@ -340,10 +302,9 @@ def request_book(request):
         serializer = BookRequestSerializer(qs, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    # POST
     serializer = BookRequestSerializer(data=request.data)
     if serializer.is_valid():
-        serializer.save()  # status defaults to 'pending'
+        serializer.save()  
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -383,11 +344,9 @@ def update_book_request_status(request, pk):
     if new_status not in valid_statuses:
         return Response({"detail": "Invalid status value."}, status=status.HTTP_400_BAD_REQUEST)
 
-    # Update status manually
     book_request.status = new_status
     book_request.save()
 
-    # Send notification to the user
     message = f"Your book request for '{book_request.book_name}' is {new_status.replace('_', ' ').title()}."
     Notification.objects.create(user=book_request.user, message=message)
 

@@ -67,7 +67,6 @@ const CheckoutPage = () => {
 
     const amountInRupees = parseFloat(totalAmount);
 
-    // … inside handleEsewa() …
     const handleEsewa = async () => {
         setEsewaLoading(true);
         try {
@@ -75,7 +74,7 @@ const CheckoutPage = () => {
                 'http://localhost:8000/orders/get-esewa-payment-data/',
                 { order_id: orderId }
             );
-            // build & submit form:
+
             const form = document.createElement('form');
             form.method = 'POST';
             form.action = 'https://rc-epay.esewa.com.np/api/epay/main/v2/form';
@@ -129,7 +128,7 @@ const CheckoutPage = () => {
                     </h3>
 
                     <div className="checkout-address">
-                        <h4 style={{color: "#0E4783"}}>Shipping Address</h4>
+                        <h4 style={{ color: "#0E4783" }}>Shipping Address</h4>
                         {defaultAddress
                             ? (
                                 <div style={{ lineHeight: 1.8 }}>
@@ -154,7 +153,7 @@ const CheckoutPage = () => {
                         <p className="price2">Rs {amountInRupees.toFixed(2)}</p>
                     </div>
 
-                    <div style={{ display: "flex", gap: "24px"}}>
+                    <div style={{ display: "flex", gap: "24px" }}>
                         <button
                             onClick={handleEsewa}
                             disabled={isEsewaLoading || isKhaltiLoading}

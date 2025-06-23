@@ -28,7 +28,6 @@ def dashboard_stats(request):
     # out of stock books
     out_of_stock = Book.objects.filter(stock__lte=0).count()
 
-    # highest rated books (top 5), include cover_image
     highest_rated_qs = (
         Book.objects.annotate(
             rating_count=Count('rating__rating'),
@@ -59,7 +58,6 @@ def dashboard_stats(request):
             'cover_image': img_url
         })
 
-    # most sold books (top 5), include cover_image
     most_sold_qs = (
         Book.objects.annotate(
             soldCount=Sum('orderitem__quantity')

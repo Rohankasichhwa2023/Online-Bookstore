@@ -1,4 +1,3 @@
-# orders/serializers.py
 from rest_framework import serializers
 from .models import Order, OrderItem, Payment
 from books.serializers import BookSerializer
@@ -67,4 +66,3 @@ class AdminOrderSerializer(serializers.ModelSerializer):
             'items',
             'payment',
         )
-

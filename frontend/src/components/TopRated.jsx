@@ -3,7 +3,7 @@ import axios from 'axios';
 import "../css/TopRated.css";
 
 export default function TopRated() {
-  // Default fallback data
+
   const defaultItems = [
     { cover_image: '/book-images/hp1.jpg', title: "Harry Potter and the Philosopher's Stone" },
     { cover_image: '/book-images/hp2.jpg', title: "Harry Potter and the Chamber of Secrets" },
@@ -16,12 +16,12 @@ export default function TopRated() {
   const [mainIndex, setMainIndex] = useState(2);
 
   useEffect(() => {
-    // Fetch top-rated books from server
+
     axios.get('http://localhost:8000/admin_logs/dashboard-stats/')
       .then(({ data }) => {
         if (data.highestRated && data.highestRated.length > 0) {
           const fetched = data.highestRated.map(b => ({
-            cover_image: b.cover_image,  // ensure your API returns this
+            cover_image: b.cover_image,
             title: b.title
           }));
           setItems(fetched);

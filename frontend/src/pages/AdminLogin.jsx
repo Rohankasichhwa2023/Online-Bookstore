@@ -17,7 +17,7 @@ const AdminLogin = () => {
       });
 
       localStorage.setItem('adminUser', JSON.stringify(res.data.user));
-      window.location.href = '/admin-dashboard'; // Redirect to admin dashboard
+      window.location.href = '/admin-dashboard';
     } catch (err) {
       if (err.response) {
         setError(err.response.data.error);
@@ -33,10 +33,10 @@ const AdminLogin = () => {
         <form onSubmit={handleLogin}>
           <div className="header">
             <img src="/logo/blue.png" alt="Best Reads Logo" height="52px" />&nbsp;
-            <h2 style={{color: '#0E4783', margin: '0px' }}>best reads</h2>
+            <h2 style={{ color: '#0E4783', margin: '0px' }}>best reads</h2>
           </div>
 
-          <p className="title2" style={{margin: "0px", padding: "0px"}}>Hello Admin!</p>
+          <p className="title2" style={{ margin: "0px", padding: "0px" }}>Hello Admin!</p>
           <p className="error-text" aria-live="polite">{error || '\u00A0'}</p>
 
           <div className="text-field">

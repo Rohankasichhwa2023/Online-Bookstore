@@ -1,10 +1,9 @@
-# orders/urls.py
 from django.urls import path
 from . import views
 
 
 urlpatterns = [
-    # public/user endpoints
+    # user endpoints
     path('list/',            views.list_user_orders,        name='list_user_orders'),
     path('create/',          views.create_order,            name='create_order'),
     path('change-address/<int:order_id>/', views.update_order_address, name='change-order-address'),
@@ -28,12 +27,10 @@ urlpatterns = [
         views.admin_get_order,
         name='admin_get_order'
     ),
-    # Update status (expects user_id + status in body)
+
     path(
         'admin/orders/<int:order_id>/status/',
         views.admin_update_status,
         name='admin_update_status'
     ),
-
-    
 ]

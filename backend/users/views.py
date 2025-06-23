@@ -84,7 +84,6 @@ def user_detail(request, pk):
         serializer = UserSerializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    # PUT: partial update
     serializer = UserSerializer(user, data=request.data, partial=True)
     if serializer.is_valid():
         serializer.save()
@@ -109,11 +108,9 @@ def change_password(request, pk):
     except User.DoesNotExist:
         return Response({'error': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
 
-    # Validate current password
     if current != user.password:
         return Response({'error': 'Current password is incorrect.'}, status=status.HTTP_401_UNAUTHORIZED)
 
-    # Update to new password
     user.password = new
     user.save()
 
@@ -130,10 +127,10 @@ def addresses_list(request):
         qs = Address.objects.filter(user_id=user_id).order_by('-is_default','-updated_at')
         return Response(AddressSerializer(qs, many=True).data)
 
-    # POST: create new
+
     serializer = AddressSerializer(data=request.data)
     if serializer.is_valid():
-        # if new address is_default, unset old defaults
+
         if serializer.validated_data.get('is_default'):
             Address.objects.filter(user_id=serializer.validated_data['user'].id).update(is_default=False)
         serializer.save()
@@ -153,10 +150,9 @@ def address_detail(request, pk):
         addr.delete()
         return Response({'message': 'Address deleted.'}, status=status.HTTP_200_OK)
 
-    # PUT: update partial
     serializer = AddressSerializer(addr, data=request.data, partial=True)
     if serializer.is_valid():
-        # if marking default, unset others
+
         if serializer.validated_data.get('is_default') is True:
             Address.objects.filter(user_id=addr.user_id).update(is_default=False)
         serializer.save()
@@ -182,11 +178,7 @@ def list_user_notifications(request):
 
 @api_view(['PATCH'])
 def mark_notification_read(request, pk):
-    """
-    PATCH /notifications/<pk>/read/
-    Body JSON: { "user_id": <user_id> }
-    Marks that single notification as read.
-    """
+
     user_id = request.data.get('user_id')
     if not user_id:
         return Response(
@@ -205,14 +197,6 @@ def mark_notification_read(request, pk):
 
 @api_view(['GET'])
 def non_admin_users(request):
-    """
-    GET /users/non-admins/
-    Returns a list of all users where is_admin=False.
-    """
-    # If you only want admins to call this, uncomment:
-    # if not request.user.is_admin:
-    #     return Response({'detail': 'Permission denied.'}, status=status.HTTP_403_FORBIDDEN)
-
     users = User.objects.filter(is_admin=False).order_by('username')
     serializer = NonAdminUserSerializer(users, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)

@@ -30,7 +30,6 @@ const FavoritesPage = () => {
                 params: { user_id: user.id }
             });
 
-            // Also fetch ratings for each favorite
             const favoritesWithRatings = await Promise.all(
                 res.data.map(async (book) => {
                     try {
@@ -115,17 +114,17 @@ const FavoritesPage = () => {
 
     return (
         <>
-            <Navbar/>
-            <div className="favorite-container">                
+            <Navbar />
+            <div className="favorite-container">
                 {favorites.length === 0 ? (
                     <div className="empty-cart">
                         <p>You have not favorited any books yet.</p>
-                        <button className="explore-books-btn" onClick={() => navigate('/shop')}><div>Explore books</div><div><img src="/icons/explore-white.png" className="icon-explore" /></div></button>                    
-                    </div> 
-                ) : (   
-                    <div>           
-                        <h1 style={{textAlign: "center"}}>Your Favorites</h1>      
-                        <div className="book-grid">                            
+                        <button className="explore-books-btn" onClick={() => navigate('/shop')}><div>Explore books</div><div><img src="/icons/explore-white.png" className="icon-explore" /></div></button>
+                    </div>
+                ) : (
+                    <div>
+                        <h1 style={{ textAlign: "center" }}>Your Favorites</h1>
+                        <div className="book-grid">
                             {favorites.map((book) => (
                                 <div className="book-card" key={book.id} onClick={() => navigate(`/book/${book.id}`)}>
 
@@ -196,7 +195,7 @@ const FavoritesPage = () => {
                     </div>
                 )}
             </div>
-            <Footer/>
+            <Footer />
         </>
     );
 };

@@ -33,7 +33,7 @@ const BookDetailsPage = () => {
 
         const fetchBookDetails = async () => {
             try {
-                // Include ?user_id=… so backend returns user_rating, average_rating, rating_count
+
                 const res = await axios.get(
                     `http://localhost:8000/books/book-detail/${id}/?user_id=${user.id}`
                 );
@@ -72,20 +72,6 @@ const BookDetailsPage = () => {
         }
     };
 
-    const handleAddToFavorite = async () => {
-        const user = JSON.parse(localStorage.getItem('user'));
-        try {
-            const res = await axios.post('http://localhost:8000/books/add-favorite/', {
-                user_id: user.id,
-                book_id: id,
-            });
-            await updateFavorites();
-            alert(res.data.message || 'Book favorited.');
-        } catch (err) {
-            console.error('Error adding to favorites:', err);
-            alert('Could not add to favorites.');
-        }
-    };
 
     const handleRating = (value) => {
         setTempRating(value);
@@ -94,7 +80,7 @@ const BookDetailsPage = () => {
     const handlePost = async (tempRating) => {
         const user = JSON.parse(localStorage.getItem('user'));
         try {
-            // 1) POST new rating to /books/rate/<book_id>/
+
             const response = await fetch(`http://localhost:8000/books/rate/${id}/`, {
                 method: 'POST',
                 headers: {
@@ -109,10 +95,10 @@ const BookDetailsPage = () => {
             const data = await response.json();
 
             if (response.ok) {
-                // 2) Immediately update UI
+
                 setUserRating(tempRating);
 
-                // 3) Re‐fetch book‐detail so averageRating, ratingCount, and userRating stay in sync
+
                 const res2 = await fetch(
                     `http://localhost:8000/books/book-detail/${id}/?user_id=${user.id}`
                 );

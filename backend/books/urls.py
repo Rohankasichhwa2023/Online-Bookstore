@@ -1,5 +1,3 @@
-# books/urls.py
-
 from django.urls import path
 from . import views
 
@@ -16,8 +14,6 @@ urlpatterns = [
     path('remove-favorite/', views.remove_favorite, name='remove-favorite'),
     path('toggle-favorite/', views.toggle_favorite, name='toggle-favorite'),
 
-
-    # **Ratings endpoints:**
     path('rate/<int:book_id>/', views.rate_book, name='rate-book'),
     path('rating/<int:book_id>/', views.get_book_rating, name='get-book-rating'),
 

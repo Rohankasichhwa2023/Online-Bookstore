@@ -30,9 +30,9 @@ const ViewUsers = () => {
 
     return (
         <>
-            <SideNavbar/>
-            <div className="dash-container" style={{marginBottom: "40px"}}>
-                <TopNavbar title="View Users"/>
+            <SideNavbar />
+            <div className="dash-container" style={{ marginBottom: "40px" }}>
+                <TopNavbar title="View Users" />
                 <table className="users-table">
                     <thead>
                         <tr>

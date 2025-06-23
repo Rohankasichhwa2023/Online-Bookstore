@@ -16,13 +16,13 @@ export default function BestSellers() {
     const [mainIndex, setMainIndex] = useState(0);
 
     useEffect(() => {
-        // Fetch most-sold books from server
+
         axios.get('http://localhost:8000/admin_logs/dashboard-stats/', {
-            params: { limit: 5 }  // adjust as needed
+            params: { limit: 5 }
         })
             .then(({ data }) => {
                 if (data.mostSold && data.mostSold.length > 0) {
-                    // Map API response to our component's expected shape
+
                     const fetched = data.mostSold.map(b => ({
                         cover_image: b.cover_image,
                         title: b.title

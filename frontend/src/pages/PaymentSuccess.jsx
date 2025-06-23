@@ -14,7 +14,7 @@ const PaymentSuccess = () => {
     useEffect(() => {
         const poll = async () => {
             try {
-                // wait a few seconds for eSewa → backend update
+                // waits a few seconds for eSewa and backend update
                 await new Promise(r => setTimeout(r, 5000));
                 const res = await axios.get(
                     `http://localhost:8000/orders/esewa/status-check/${orderId}/`
@@ -51,8 +51,8 @@ const PaymentSuccess = () => {
 
                     {!loading && statusData && (
                         <>
-                            <img src="/icons/success.png" style={{height: "50px", width: "50px", marginBottom: "12px"}}/>
-                            <h2 style={{color: "green"}}>Payment Successful!</h2>
+                            <img src="/icons/success.png" style={{ height: "50px", width: "50px", marginBottom: "12px" }} />
+                            <h2 style={{ color: "green" }}>Payment Successful!</h2>
                             <p>Your order <strong>#{orderId}</strong> has been paid successfully.</p>
                             <p>Thank you for your purchase!</p>
                         </>

@@ -5,7 +5,6 @@ import Footer from '../components/Footer';
 import '../css/LoginPage.css';
 
 export default function EditPersonalInfo() {
-    // assume localStorage.user = { id, username, email, is_admin, ... }
     const stored = JSON.parse(localStorage.getItem('user') || '{}');
     const userId = stored.id;
 
@@ -57,13 +56,13 @@ export default function EditPersonalInfo() {
 
     return (
         <>
-            <Navbar/>
-            <div style={{paddingTop: "140px", paddingBottom: "152px", display: "flex", justifyContent: "center"}}>
+            <Navbar />
+            <div style={{ paddingTop: "140px", paddingBottom: "152px", display: "flex", justifyContent: "center" }}>
                 <div className="form-box">
                     <form onSubmit={handleSubmit}>
 
-                        <p className="title2" style={{margin: "0px", padding: "0px"}}>Edit Personal Info</p>
-                        <p style={{fontSize: "12px"}} aria-live="polite">{message || '\u00A0'}</p>
+                        <p className="title2" style={{ margin: "0px", padding: "0px" }}>Edit Personal Info</p>
+                        <p style={{ fontSize: "12px" }} aria-live="polite">{message || '\u00A0'}</p>
 
                         <div className="text-field">
                             <div className="form-group">
@@ -103,7 +102,7 @@ export default function EditPersonalInfo() {
                     </form>
                 </div>
             </div>
-            <Footer/>
+            <Footer />
         </>
     );
 }

@@ -48,7 +48,7 @@ const EditBookPage = () => {
             cover_image: null,
           });
           setSelectedGenres(book.genres.map(g => String(g.id)));
-          setInitialCoverUrl(book.cover_image); // Ensure this is full URL or handle with base path
+          setInitialCoverUrl(book.cover_image);
         }
       })
       .catch(console.error);

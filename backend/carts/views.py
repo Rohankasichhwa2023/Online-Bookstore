@@ -1,5 +1,3 @@
-# carts/views.py
-
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -14,27 +12,20 @@ def add_to_cart(request):
     book_id = request.data.get('book_id')
     quantity = int(request.data.get('quantity', 1))
 
-    # 1) Validate user and book
     try:
         user = User.objects.get(pk=user_id)
         book = Book.objects.get(pk=book_id)
     except (User.DoesNotExist, Book.DoesNotExist):
         return Response({'error': 'Invalid user or book.'}, status=status.HTTP_400_BAD_REQUEST)
 
-    # 2) Try to find an ACTIVE cart for this user
     cart = Cart.objects.filter(user=user, status='active').first()
     if not cart:
-        # a) If no active cart exists, check if any cart row exists for the user
         cart = Cart.objects.filter(user=user).first()
         if cart:
-            # b) Flip its status back to 'active'
             cart.status = 'active'
             cart.save()
         else:
-            # c) No cart row exists at all, so create a new one
             cart = Cart.objects.create(user=user, status='active')
-
-    # 3) Create or update the CartItem in that ACTIVE cart
     item, created = CartItem.objects.get_or_create(
         cart=cart,
         book=book,
@@ -59,7 +50,7 @@ def view_cart(request):
 
     for item in items:
         book = item.book
-        genres = book.bookgenre_set.all().values_list('genre__name', flat=True)  # list of genre names
+        genres = book.bookgenre_set.all().values_list('genre__name', flat=True)  
 
         data.append({
             'id': item.id,
@@ -70,12 +61,12 @@ def view_cart(request):
                     if book.cover_image else None,
                 'price_snapshot': float(item.price_snapshot),
                 'author': book.author,
-                'genre': list(genres),  # list of genre names
+                'genre': list(genres), 
                 'language': book.language,
                 'pages': book.pages,
                 'age_group': book.age_group,
                 'book_stock': book.stock,
-                'in_stock': book.stock > 0  # boolean based on stock
+                'in_stock': book.stock > 0  
             },
             'quantity': item.quantity,
             'subtotal': float(item.price_snapshot) * item.quantity,

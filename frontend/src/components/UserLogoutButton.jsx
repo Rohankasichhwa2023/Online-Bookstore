@@ -6,7 +6,7 @@ function UserLogoutButton() {
     const handleLogout = () => {
         if (window.confirm("Are you sure you want to logout?")) {
             localStorage.removeItem('user'); // Clear user data
-            navigate('/login'); // Redirect to login
+            navigate('/login');
         }
     };
 

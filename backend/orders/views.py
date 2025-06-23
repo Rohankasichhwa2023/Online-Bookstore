@@ -1,5 +1,3 @@
-# orders/views.py
-
 import uuid
 import json
 import base64
@@ -37,10 +35,8 @@ def list_user_orders(request):
 
 
 
-# -------------------------------
-# 1) Create Order (eSewa or Khalti)
-# -------------------------------
 
+# Create Order (eSewa or Khalti)
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def create_order(request):
@@ -147,10 +143,8 @@ def update_order_address(request, order_id):
     order.save()
     return Response(OrderSerializer(order).data, status=200)
 
-# -------------------------------
-# 2) eSewa: Provide Payment Data
-# -------------------------------
 
+#  esewa
 ESEWA_UAT_SECRET_KEY = b'8gBm/:&EnhH.1/q'
 
 def generate_esewa_signature(total_amount: str, transaction_uuid: str, product_code: str) -> str:
@@ -186,7 +180,7 @@ def get_esewa_payment_data(request):
 
     sig = generate_esewa_signature(amt, txn_uuid, code)
 
-    BE = settings.BACKEND_BASE_URL.rstrip('/')  # e.g. "http://localhost:8000"
+    BE = settings.BACKEND_BASE_URL.rstrip('/')
     data = {
       "amount":                  amt,
       "tax_amount":              "0.00",
@@ -195,7 +189,6 @@ def get_esewa_payment_data(request):
       "product_code":            code,
       "product_service_charge":  "0.00",
       "product_delivery_charge": "0.00",
-      # now using path-param URLs:
       "success_url": f"{BE}/orders/esewa/complete/{order.id}/",
       "failure_url": f"{BE}/orders/esewa/fail/{order.id}/",
       "signed_field_names":      "total_amount,transaction_uuid,product_code",
@@ -207,9 +200,6 @@ def get_esewa_payment_data(request):
 @api_view(['GET','POST'])
 @permission_classes([AllowAny])
 def esewa_complete(request, order_id):
-    """
-    Handle eSewa success. Accept both POST (real callback) & GET (for manual testing).
-    """
     # extract the Base64 payload from POST body or GET ?data=
     if request.method == 'POST':
         raw = request.body.decode()
@@ -238,14 +228,13 @@ def esewa_complete(request, order_id):
     order.status         = 'processing'
     order.save()
 
-    # redirect back to React
     return redirect(f"{settings.FRONTEND_BASE_URL}/payment-success/{order.id}")
 
 
 @api_view(['GET','POST'])
 @permission_classes([AllowAny])
 def esewa_fail(request, order_id):
-    """Handle eSewa failure/cancel; same dual-method support."""
+ 
     if request.method == 'POST':
         raw = request.body.decode()
     else:
@@ -275,15 +264,13 @@ def esewa_status_check(request, order_id):
         "product_code":     "EPAYTEST",
         "transaction_uuid": payment.transaction_id,
         "total_amount":     float(order.total_amount),
-        "status":           order.payment_status.upper(),  # COMPLETED, PENDING, etc.
+        "status":           order.payment_status.upper(),  
         "ref_id":           payment.transaction_id or ""
     })
     
 
 
-# -------------------------------
-# 3) Khalti: Initiate & Verify
-# -------------------------------
+# Khalti
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -314,7 +301,7 @@ def initiate_khalti_payment(request):
 
     payload = {
         "return_url":          data['return_url'],
-        "website_url":         "http://localhost:3000",  # your React origin
+        "website_url":         "http://localhost:3000",  
         "amount":              data['amount'],
         "purchase_order_id":   data['purchase_order_id'],
         "purchase_order_name": data['purchase_order_name'],
@@ -325,7 +312,7 @@ def initiate_khalti_payment(request):
     }
     
 
-    khalti_url = settings.KHALTI_INITIATE_URL  # e.g. "https://a.khalti.com/api/v2/epayment/initiate/"
+    khalti_url = settings.KHALTI_INITIATE_URL  
     response = requests.post(khalti_url, json=payload, headers=headers)
 
     try:
@@ -339,7 +326,7 @@ def initiate_khalti_payment(request):
 def verify_khalti_payment(request):
  
     pidx     = request.GET.get('pidx')
-    order_id = request.GET.get('order_id')  # ensure your return_url included &order_id=...
+    order_id = request.GET.get('order_id')  
 
     if not pidx or not order_id:
         return Response({'error': 'Missing pidx or order_id'}, status=status.HTTP_400_BAD_REQUEST)
@@ -347,7 +334,7 @@ def verify_khalti_payment(request):
     headers = {
         "Authorization": f"Key {settings.KHALTI_SECRET_KEY}"
     }
-    lookup_url = settings.KHALTI_LOOKUP_URL  # e.g. "https://a.khalti.com/api/v2/epayment/lookup/"
+    lookup_url = settings.KHALTI_LOOKUP_URL 
     lookup_resp = requests.post(lookup_url, json={"pidx": pidx}, headers=headers)
     result = lookup_resp.json()
 
@@ -357,12 +344,11 @@ def verify_khalti_payment(request):
         except Order.DoesNotExist:
             return Response({'error': 'Order not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        # Create the Payment record now that we have transaction_id
         Payment.objects.create(
             order=order,
             method='khalti',
             status='completed',
-            amount=result['total_amount'] / 100,  # convert paisa → rupees
+            amount=result['total_amount'] / 100, 
             transaction_id=result['transaction_id'],
             paid_at=timezone.now()
         )
@@ -379,13 +365,9 @@ def verify_khalti_payment(request):
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def pay_existing_order_with_khalti(request, order_id):
-    """
-    When the user clicks “Pay Now” on an existing, pending Khalti order,
-    redirect them to Khalti’s payment page exactly as if they had just created it.
-    """
+
     order = get_object_or_404(Order, id=order_id, payment_method='pending')
 
-    # Only allow if still pending:
     if order.payment_status != 'pending':
         return Response(
             {'detail': 'Order is not pending payment.'}, 
@@ -395,7 +377,6 @@ def pay_existing_order_with_khalti(request, order_id):
     order.payment_method = 'khalti'
     order.save(update_fields=['payment_method'])
 
-    # Re‐use the same logic as initiate_khalti_payment, but using this order:
     amount_paisa = int(order.total_amount * 100)
     payload = {
       "return_url":         f"http://localhost:8000/orders/khalti/verify/?order_id={order_id}",
@@ -456,13 +437,11 @@ def admin_update_status(request, order_id):
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    # 1) Check admin privileges
     admin = get_object_or_404(User, pk=user_id)
     if not admin.is_admin:
         return Response({'detail': 'Permission denied.'},
                         status=status.HTTP_403_FORBIDDEN)
 
-    # 2) Fetch and update the order
     order = get_object_or_404(Order, pk=order_id)
     if new_status not in dict(order.STATUS_CHOICES):
         return Response(
@@ -473,15 +452,13 @@ def admin_update_status(request, order_id):
     order.status = new_status
     order.save(update_fields=['status','updated_at'])
 
-    # Decrement stock when delivered
+
     if new_status == 'delivered':
         for item in order.orderitem_set.select_related('book').all():
             book = item.book
             book.stock = max(0, book.stock - item.quantity)
             book.save(update_fields=['stock'])
 
-    # 3) Build notification message
-    #    Gather all product (book) names on this order
     items = order.orderitem_set.select_related('book').all()
     product_list = ", ".join(item.book.title for item in items)
     message = (
@@ -489,13 +466,11 @@ def admin_update_status(request, order_id):
         f"is now {new_status}."
     )
 
-    # 4) Create the Notification record
     Notification.objects.create(
         user=order.user,
         message=message
     )
 
-    # 5) Return the updated order
     serializer = AdminOrderSerializer(order)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
