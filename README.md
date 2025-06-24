@@ -63,7 +63,7 @@ To develop a feature-rich and user-friendly online bookstore that:
 
 ## Use Case Diagram
 
-<img src="public/img/use-case.png">
+<img src="frontend/public/img/use-case.png">
 
 ### Use Cases of User
 
@@ -101,58 +101,58 @@ To develop a feature-rich and user-friendly online bookstore that:
 > Below are some screenshots of the website interface and admin dashboard:
 
 ### Home Page
-<img src="public/img/1.png"><br/>
+<img src="frontend/public/img/1.png"><br/>
 
 ### Shop Page
-<img src="public/img/2.png"><br/>
+<img src="frontend/public/img/2.png"><br/>
 
-<img src="public/img/3.png"><br/>
+<img src="frontend/public/img/3.png"><br/>
 
-<img src="public/img/4.png"><br/>
+<img src="frontend/public/img/4.png"><br/>
 
 ### Cart Page
-<img src="public/img/5.png"><br/>
+<img src="frontend/public/img/5.png"><br/>
 
 ### Favorites Page
-<img src="public/img/6.png"><br/>
+<img src="frontend/public/img/6.png"><br/>
 
 ### Notification UI
-<img src="public/img/7.png"><br/>
+<img src="frontend/public/img/7.png"><br/>
 
 ### Settings UI
-<img src="public/img/8.png"><br/>
+<img src="frontend/public/img/8.png"><br/>
 
 ### Order Page
-<img src="public/img/15.png"><br/>
+<img src="frontend/public/img/15.png"><br/>
 
 ### Payment Flow
-<img src="public/img/16.png"><br/>
+<img src="frontend/public/img/16.png"><br/>
 
-<img src="public/img/17.png"><br/>
+<img src="frontend/public/img/17.png"><br/>
 
-<img src="public/img/18.png"><br/>
+<img src="frontend/public/img/18.png"><br/>
 
-<img src="public/img/19.png"><br/>
+<img src="frontend/public/img/19.png"><br/>
 
 ### Admin Dashboard
-<img src="public/img/9.png"><br/>
+<img src="frontend/public/img/9.png"><br/>
 
-<img src="public/img/10.png"><br/>
+<img src="frontend/public/img/10.png"><br/>
 
-<img src="public/img/11.png"><br/>
+<img src="frontend/public/img/11.png"><br/>
 
-<img src="public/img/12.png"><br/>
+<img src="frontend/public/img/12.png"><br/>
 
-<img src="public/img/13.png"><br/>
+<img src="frontend/public/img/13.png"><br/>
 
-<img src="public/img/14.png"><br/>
+<img src="frontend/public/img/14.png"><br/>
 
 ## Demo Video
 
 > Watch the working demo of Best Reads by clicking the image below:
 
 <a href="https://drive.google.com/file/d/1G3j4JbT_KHAQf6pxQ0wNzEqh3_VqLtMn/view?usp=drive_link" target="_blank">
-  <img src="public/img/1.png" alt="Demo Video" width="600"/>
+  <img src="frontend/public/img/1.png" alt="Demo Video" width="600"/>
 </a>
 
 ## Conclusion
